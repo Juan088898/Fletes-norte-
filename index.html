@@ -91,6 +91,7 @@ body.rev #mini:not(.big){opacity:0}body.rev .mapcard{background:transparent;back
 .cap{position:absolute;left:9px;top:6px;font:700 10px/1 var(--display);letter-spacing:.16em;color:var(--ink-dim);pointer-events:none;z-index:3}
 #btnRange{position:absolute;right:5px;top:4px;z-index:5;height:20px;padding:0 6px;border-radius:6px;font:700 10px/1 var(--display);letter-spacing:.1em;background:#2b3a32;color:var(--route);border:1px solid var(--route);cursor:pointer}
 #btnRange.hi{background:#3a3424;color:var(--amber);border-color:var(--amber)}
+#btnSplit{position:absolute;left:5px;top:4px;z-index:5;height:20px;padding:0 6px;border-radius:6px;font:700 10px/1 var(--display);letter-spacing:.1em;background:#2b3a32;color:var(--route);border:1px solid var(--route);cursor:pointer}#btnSplit.hi{background:#3a3424;color:var(--amber);border-color:var(--amber)}#btnSplit.pend{opacity:.6}
 #wheelCtl{width:min(40vh,170px);aspect-ratio:1;display:grid;place-items:center;border-radius:50%;background:radial-gradient(circle,rgba(12,14,17,.15),rgba(12,14,17,.6));border:1px solid var(--edge);position:relative}
 #wheelSvg{width:92%;height:92%;filter:drop-shadow(0 6px 8px rgba(0,0,0,.6));will-change:transform}
 #wheelDeg{position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);font:400 11px/1 var(--mono);color:var(--amber);background:var(--glass);padding:2px 5px;border-radius:5px;pointer-events:none}
@@ -421,7 +422,7 @@ body.cine .quick{display:none}
   <div class="ctrl r">
     <div class="pad-box" id="shifterCtl">
       
-      <button id="btnRange" hidden>BAJA</button>
+      <button id="btnRange" hidden>BAJA</button><button id="btnSplit" hidden>½ B</button>
       <div class="gate" id="gate">
         <svg class="gate-svg" viewBox="-1.5 -1.5 3 3" aria-hidden="true">
           <path class="slot-o" d="M-1.2 -1V0M-.4 -1V1M.4 -1V1M1.2 -1V1M-1.2 0H1.2"/>
@@ -466,7 +467,7 @@ body.cine .quick{display:none}
           <button class="st-opt" id="startTruck">Camión <small>Semi Lowpoly</small></button>
           <button class="st-opt" id="startSet">Ajustes <small>Manejo y sonido</small></button>
         </div>
-        <div class="st-foot"><span>v103 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
+        <div class="st-foot"><span>v104 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
       </div>
       <div class="st-garage" id="startGarage" hidden>
         <h3>TU CAMIÓN</h3><div class="n">Semi Lowpoly</div>
@@ -4202,6 +4203,7 @@ const MODELS={
 };
 const UPG=[{k:'motor',name:'Motor reprogramado',lv:[25000,45000],desc:'+15% de fuerza por nivel'},{k:'frenos',name:'Frenos reforzados',lv:[15000],desc:'Frena 20% más fuerte'},
   {k:'tanque',name:'Tanque grande',lv:[12000],desc:'600 L en lugar de 400 L'},{k:'box10',name:'Caja de 10 velocidades',lv:[20000],desc:'Palanca con rango alta y baja'},
+  {k:'box18',need:'box10',name:'Splitter · caja de 18',lv:[26000],desc:'Medias marchas de 1ª a 8ª con el botón ½ junto a la palanca: el motor se queda en su zona de fuerza'},
   {k:'susp',name:'Suspensión reforzada',lv:[18000],desc:'Amortiguadores de uso rudo: en brecha, topes y baches se desgastan menos de la mitad'},{k:'tt',name:'Llantas todo terreno',lv:[16000],desc:'Mucho más agarre en tierra, grava y lodo; un poco menos en asfalto'}];
 const MT=()=>{if(!save.mt)save.mt={};return save.mt[S.model]||(save.mt[S.model]={odo:0,oil:0,tire:0});},suspW=()=>MT().susp||0;
 const PAINT=[0x2a63a8,0x7a1f2b,0xf2f2f2,0x1e1f22,0xe8b021,0x2f6b4f,0xd4541c,0x6d4ea0];
@@ -4244,6 +4246,7 @@ const gName=g=>g===0?'N':g===-1?'R':String(g);
 let MASS=15000;
 const MD=()=>MODELS[S.model];
 const box10=()=>!!(MD().box10||UP(S.model).box10);
+const box18=()=>box10()&&!!UP(S.model).box18,splitK=g=>(box18()&&S.split&&g>0&&g<=8)?1/1.17:1;
 const tankCap=()=>UP(S.model).tanque?600:400;
 
 /* ================= audio ================= */
@@ -4391,21 +4394,22 @@ function vnoise(x,z){const i=Math.floor(x),j=Math.floor(z),fx=x-i,fz=z-j,u=fx*fx
 function fbm(x,z){let q=0,a=.5,f=1;for(let o=0;o<4;o++){q+=a*vnoise(x*f,z*f);f*=2.03;a*=.5;}return q;}
 /* ===== v96 · Brechas del Norte: zona de terracería con relieve real en el baldío del noroeste (lejos de toda calle) ===== */
 const OFF={x0:-3250,x1:-1250,z0:-4400,z1:-3260};
-const TRACK=[[-2600,-3262],[-2610,-3450],[-2620,-3640],[-2840,-3840],[-2900,-4080],[-2600,-4240],[-2150,-4210],[-1800,-3980],[-1640,-3720],[-1880,-3570],[-2300,-3610],[-2620,-3640]];
-function trackD(x,z){let b=1e9;for(let i=1;i<TRACK.length;i++){const ax=TRACK[i-1][0],az=TRACK[i-1][1],dx=TRACK[i][0]-ax,dz=TRACK[i][1]-az,t=clamp(((x-ax)*dx+(z-az)*dz)/(dx*dx+dz*dz),0,1),d=Math.hypot(x-ax-dx*t,z-az-dz*t);if(d<b)b=d;}return b;}
-const trackK=(x,z)=>1-smoothstep(5,14,trackD(x,z));
+const TRACK_MAIN=[[-2600,-3262],[-2610,-3450],[-2620,-3640],[-2840,-3840],[-2900,-4080],[-2600,-4240],[-2150,-4210],[-1800,-3980],[-1640,-3720],[-1880,-3570],[-2300,-3610],[-2620,-3640]];
+const TRACK2=[[-1800,-3980],[-1640,-4060],[-1530,-4170],[-1700,-4240],[-1950,-4235],[-2150,-4210]];   // v104: Atajo de las Lomas, más bravo (casi no se empareja)
+function trackD(x,z,TRACK=TRACK_MAIN){let b=1e9;for(let i=1;i<TRACK.length;i++){const ax=TRACK[i-1][0],az=TRACK[i-1][1],dx=TRACK[i][0]-ax,dz=TRACK[i][1]-az,t=clamp(((x-ax)*dx+(z-az)*dz)/(dx*dx+dz*dz),0,1),d=Math.hypot(x-ax-dx*t,z-az-dz*t);if(d<b)b=d;}return b;}
+const TRACK=TRACK_MAIN,trackK=(x,z)=>1-smoothstep(5,14,Math.min(trackD(x,z),trackD(x,z,TRACK2)));
 function offMask(x,z){if(x<=OFF.x0||x>=OFF.x1||z<=OFF.z0||z>=OFF.z1)return 0;return smoothstep(0,170,Math.min(x-OFF.x0,OFF.x1-x,z-OFF.z0,OFF.z1-z));}
 // zanjas y vados: franjas angostas donde el ruido cruza por la mitad
 const zanjaK=(x,z)=>1-smoothstep(0,.3,Math.abs(vnoise(x/70+20,z/70+4)*2-1));
 const TER={x0:OFF.x0,x1:OFF.x1,z0:OFF.z0,z1:OFF.z1};
 function natural(x,z){const m=offMask(x,z);if(m<=0)return 0;
   const hl=fbm(x/330+11,z/330+5),rd=1-Math.abs(fbm(x/170+3,z/170+9)*2-1),lm=vnoise(x/46,z/46),zj=zanjaK(x,z),base=3+20*hl*hl;
-  let h=base+7*rd*rd+2.2*lm-2*zj;const tk=1-smoothstep(12,44,trackD(x,z));if(tk>0)h+=(base+.5*lm-.7*zj-h)*tk;   // la brecha va más pareja, pero cruza los vados
+  let h=base+7*rd*rd+2.2*lm-2*zj;const tk=Math.max(1-smoothstep(12,44,trackD(x,z)),.72*(1-smoothstep(9,34,trackD(x,z,TRACK2))));if(tk>0)h+=(base+.5*lm-.7*zj-h)*tk;   // la brecha va más pareja, pero cruza los vados
   return m*Math.max(.3,h);}
 // piedra suelta: rugosidad fina que no se dibuja pero se siente en las llantas (menos sobre la brecha)
 function offRough(x,z){const m=offMask(x,z);if(m<=0)return 0;const k=m*(1-.6*trackK(x,z));return k*(.07*(vnoise(x*.45,z*.45)-.5)+.03*(vnoise(x*1.3+3,z*1.3+1)-.5));}
 const SIER_E=edges.filter(e=>e.type==='mtn');SIER_E.forEach(e=>{e.bx0=Math.min(e.ax,e.bx)-70;e.bx1=Math.max(e.ax,e.bx)+70;e.bz0=Math.min(e.az,e.bz)-70;e.bz1=Math.max(e.az,e.bz)+70;});
-const FLATS=[];const PEDRERA={x:-2600,z:-4240,r:50,y:natural(-2600,-4240)};FLATS.push(PEDRERA);
+const FLATS=[];const PEDRERA={x:-2600,z:-4240,r:50,y:natural(-2600,-4240)};FLATS.push(PEDRERA);const MIRADOR={x:-1530,z:-4170,r:15,y:natural(-1530,-4170)};FLATS.push(MIRADOR);
 function sierraNear(x,z){let best=null;for(const e of SIER_E){if(x<e.bx0||x>e.bx1||z<e.bz0||z>e.bz1)continue;const q=segDist(x,z,e);if(!best||q.d<best.d){best=q;best.e=e;}}return best;}
 function H(x,z,mesh){let n=natural(x,z);for(const f of FLATS){const d=Math.hypot(x-f.x,z-f.z);if(d<f.r+45){const t=smoothstep(f.r,f.r+45,d);n=(mesh?f.y-.3:f.y)*(1-t)+n*t;}}
   const q=sierraNear(x,z);if(!q)return n;const e=q.e,hr=e.ay+(e.by-e.ay)*q.t-(mesh?.8:0),core=e.w/2+(mesh?6:2);if(q.d<=core)return hr;const t=smoothstep(core,core+45,q.d);return hr*(1-t)+n*t;}
@@ -4821,6 +4825,7 @@ const VADOS=[];{const wm=new THREE.MeshLambertMaterial({color:0x5d7078,transpare
  box(scene,5,7,5,0x6b7078,f.x+30,y+3.5,f.z+22).castShadow=true;box(scene,15,.6,2,0x4f545b,f.x+21,y+5.2,f.z+22).rotation.z=.33;for(const dx of[14,22])box(scene,.35,4,.35,0x4f545b,f.x+dx,y+2,f.z+22);ob(30,22,2.6,2.6);
  box(scene,4.5,2.8,3.2,0xf4efe2,f.x-34,y+1.4,f.z+24).castShadow=true;box(scene,5,.25,3.7,0x8c2a22,f.x-34,y+2.9,f.z+24);ob(-34,24,2.3,1.7);
  for(const dx of[-7,7])box(scene,.4,6.4,.4,0x8e9399,f.x+dx,y+3.2,f.z+f.r-3);signAt('PEDRERA EL NORTE',f.x,f.z+f.r-2.75,0,y+5.2,16,'#3a3d42','#ffb53d');signAt('PEDRERA EL NORTE',f.x,f.z+f.r-3.25,Math.PI,y+5.2,16,'#3a3d42','#ffb53d');
+ {const f=MIRADOR,d2=new THREE.Mesh(new THREE.CircleGeometry(f.r+4,28),M(0x9a958a));d2.rotation.x=-Math.PI/2;d2.position.set(f.x,f.y+.03,f.z);scene.add(d2);for(const dx of[-4,4])box(scene,.3,3.4,.3,0x8e9399,f.x+dx,f.y+1.7,f.z-f.r+2);signAt('MIRADOR · ATAJO DE LAS LOMAS',f.x,f.z-f.r+2.2,0,f.y+3,9,'#6b4a2f','#ffffff');box(scene,3,.45,.6,0x6b4a2f,f.x,f.y+.25,f.z+6);}
  for(const dx of[-5,5])box(scene,.35,4.6,.35,0x8e9399,-2590+dx,2.3,-3196);signAt('BRECHA · PEDRERA EL NORTE',-2590,-3195.8,0,3.6,11,'#6b4a2f','#ffffff');signAt('TERRACERÍA · BAJE LA VELOCIDAD',-2590,-3195.8,0,1.6,9,'#f1c22b','#1e1f22');}
 function mergeGeos(list){const geos=list.map(g=>g.index?g.toNonIndexed():g);let n=0;geos.forEach(g=>n+=g.attributes.position.count);const P=new Float32Array(n*3),Nn=new Float32Array(n*3);let o=0;
   geos.forEach(g=>{P.set(g.attributes.position.array,o*3);Nn.set(g.attributes.normal.array,o*3);o+=g.attributes.position.count;});const r=new THREE.BufferGeometry();r.setAttribute('position',new THREE.BufferAttribute(P,3));r.setAttribute('normal',new THREE.BufferAttribute(Nn,3));return r;}
@@ -5113,6 +5118,24 @@ const beam=new THREE.Mesh(new THREE.PlaneGeometry(10,30),beamMat);beam.rotation.
 
 /* interior basado en cabina real */
 const cabin=new THREE.Group();body.add(cabin);const CRACKSLOT=new THREE.Group();cabin.add(CRACKSLOT);
+/* v104 · lluvia en el parabrisas (gotas y salpicones de charco) y limpiaparabrisas que se ven desde la cabina. Va 6 cm por fuera del cristal, así los postes lo tapan bien. */
+const RAING=new THREE.Group();cabin.add(RAING);RAING.position.set(.11,3.13,-4.99);RAING.rotation.x=.455;RAING.visible=false;
+const RGW=2.36,RGH=1.3,rgCv=document.createElement('canvas');rgCv.width=512;rgCv.height=282;const rgCtx=rgCv.getContext('2d'),rgTex=new THREE.CanvasTexture(rgCv);
+{const m=new THREE.Mesh(new THREE.PlaneGeometry(RGW,RGH),new THREE.MeshBasicMaterial({map:rgTex,transparent:true,depthWrite:false}));m.renderOrder=4;RAING.add(m);}
+const RGWIP=[-.72,.3].map(x=>{const p=new THREE.Group();p.position.set(x,-RGH/2+.03,.012);const a=new THREE.Mesh(new THREE.BoxGeometry(.03,.98,.016),new THREE.MeshBasicMaterial({color:0x0c0d0f}));a.position.y=.49;p.add(a);const b=new THREE.Mesh(new THREE.BoxGeometry(.06,.82,.022),new THREE.MeshBasicMaterial({color:0x060708}));b.position.set(.014,.56,0);p.add(b);RAING.add(p);return p;});
+let rgWet=0,rgPrev=null,rgSplashT=-9;
+function rainGlass(dt,wa,wv){if(S.view!==0){RAING.visible=false;return;}const sp=Math.abs(S.v),g=rgCtx,W=512,Hh=282,K=W/RGW;
+  const splash=S.t-rgSplashT>.7&&((S.hydro||0)>.2||(puddleAt(S.x,S.z)&&sp>5&&!S.offroad)||(S.offroad&&(S.gw||0)>.05&&sp>2.5&&offMask(S.x,S.z)>.3&&zanjaK(S.x,S.z)>.75));
+  let n=env.rain>.05?env.rain*dt*(140+sp*6):0;if(splash){rgSplashT=S.t;n+=140;S.wipeT=S.t+4.5;}
+  if(n>0){rgWet=Math.min(1,rgWet+n*.004);n=Math.floor(n)+(Math.random()<n%1?1:0);g.globalCompositeOperation='source-over';
+    for(let i=0;i<n;i++){const x=Math.random()*W,y=splash?Hh*(.2+Math.random()*.8):Math.random()*Hh,r=splash?2+Math.random()*6:1.2+Math.random()*3.2;g.fillStyle='rgba(205,222,238,'+(.35+Math.random()*.3).toFixed(2)+')';g.beginPath();g.ellipse(x,y,r*.8,r,0,0,7);g.fill();g.fillStyle='rgba(255,255,255,.5)';g.beginPath();g.arc(x-r*.25,y-r*.3,r*.25,0,7);g.fill();}}
+  if(rgWet<=.002&&!wv){if(RAING.visible){RAING.visible=false;g.clearRect(0,0,W,Hh);rgTex.needsUpdate=true;}rgPrev=null;return;}
+  RAING.visible=true;g.globalCompositeOperation='destination-out';g.fillStyle='rgba(0,0,0,'+Math.min(.5,dt*(env.rain>.05?.35:1.1)).toFixed(3)+')';g.fillRect(0,0,W,Hh);rgWet=Math.max(0,rgWet-dt*(env.rain>.05?.15:.5));
+  // cada pluma borra el sector que barrió desde el cuadro anterior
+  g.fillStyle='#000';RGWIP.forEach(p=>{p.rotation.z=wa;p.visible=wv;if(!wv)return;const px=(p.position.x/RGW+.5)*W,py=(.5-p.position.y/RGH)*Hh,L=.97*K,a0=rgPrev==null?wa:rgPrev;
+    g.beginPath();for(let k=0;k<=6;k++){const a=a0+(wa-a0)*k/6;g.lineTo(px-Math.sin(a)*L,py-Math.cos(a)*L);}for(let k=6;k>=0;k--){const a=a0+(wa-a0)*k/6;g.lineTo(px-Math.sin(a)*L*.16,py-Math.cos(a)*L*.16);}g.closePath();g.fill();
+    g.lineWidth=9;g.strokeStyle='#000';g.beginPath();g.moveTo(px-Math.sin(wa)*L*.16,py-Math.cos(wa)*L*.16);g.lineTo(px-Math.sin(wa)*L,py-Math.cos(wa)*L);g.stroke();});
+  rgPrev=wv?wa:null;g.globalCompositeOperation='source-over';rgTex.needsUpdate=true;}
 const dMat=new THREE.MeshLambertMaterial({color:0x2c2e32}),tMat=new THREE.MeshLambertMaterial({color:0x222428}),soft=new THREE.MeshLambertMaterial({color:0x36393e}),blk=M(0x111214),rimMat=new THREE.MeshLambertMaterial({color:0x17181b}),hubMat=new THREE.MeshLambertMaterial({color:0x1f2124}),spkMat=new THREE.MeshLambertMaterial({color:0x24262a}),accMat=new THREE.MeshLambertMaterial({color:0xb9bec4}),doorMat=new THREE.MeshLambertMaterial({color:0x3a3e44});
 box(cabin,2.36,.04,1.6,M(0x26282c),0,1.45,-4.4);
 {const fw=new THREE.Mesh(new THREE.BoxGeometry(2.36,.6,1.6),new THREE.MeshLambertMaterial({color:0x3a3e44,side:THREE.BackSide}));fw.position.set(0,1.72,-4.6);cabin.add(fw);}
@@ -5369,7 +5392,7 @@ const REALCAL={
  amer:{el:'glbSemi',mode:'fz',s:1,zR:-3.815,y0:.01,fZ:1.78,rearZ:[-.55,.55],rearX:.97,frontX:.94,hideName:/^(Trailer$|Wheel_|SteeringWheel$)/,gpsDy:.24,glass:/^Window$/,inter:{wheel:[.69,1.81,.35],paint:/^Material$/},wS:.62,cz:.26,cs:.54,axle:/^Axle_/,cab:1,seat:0x5e564b,trim:[0x3a3e45,0x50555d],dash:[0x4a4e55,0x24272b],mir:{x:1.29,y:2.32,z:-4.378,sx:1,sy:1.25,ry:.4,ux:.61},mir2:{pts:[[-1.414,2.153,.474],[-1.348,2.136,.515],[-1.319,2.06,.54],[-1.353,1.983,.527],[-1.421,1.964,.488],[-1.474,2.014,.452],[-1.471,2.101,.445]]}}};
 let CAB_KEEP=null;
 // con interior real: el volante y el tablero son los del modelo; dejamos el retrovisor, el GPS, el rosario y el parabrisas estrellado
-function cabKeep(){if(CAB_KEEP)return CAB_KEEP;const K=new Set([RVM,INT.ros,GPSSCR.sc.parent,CRACKSLOT,leverPiv,pbLever,wheelBase,armL.u,armL.h,armR.u,armR.h,legL.sh,legL.f,legR.sh,legR.f]);for(const k in pedals3)K.add(pedals3[k].piv);cabin.children.forEach(o=>{if(o.position.distanceTo(new THREE.Vector3(-.04,2.12,-4.42))<.01)K.add(o);});CLUKEEP.forEach(o=>K.add(o));return CAB_KEEP=K;}
+function cabKeep(){if(CAB_KEEP)return CAB_KEEP;const K=new Set([RVM,INT.ros,GPSSCR.sc.parent,CRACKSLOT,RAING,leverPiv,pbLever,wheelBase,armL.u,armL.h,armR.u,armR.h,legL.sh,legL.f,legR.sh,legR.f]);for(const k in pedals3)K.add(pedals3[k].piv);cabin.children.forEach(o=>{if(o.position.distanceTo(new THREE.Vector3(-.04,2.12,-4.42))<.01)K.add(o);});CLUKEEP.forEach(o=>K.add(o));return CAB_KEEP=K;}
 function realVis(){const K=REALCAL[S.model],R0=REAL[S.model];CLUKEEP.forEach(o=>{if(o.userData.p0){o.position.copy(o.userData.p0);o.scale.set(1,1,1);}});for(const k in REAL)REAL[k].visible=false;
   if(!R0){wheelBase.position.set(-.58,2.6,-4.47);wheelBase.scale.setScalar(1);cabin.visible=true;cabin.children.forEach(o=>o.visible=true);cabin.position.set(0,0,MODELS[S.model].dz);GPSSCR.sc.parent.position.y=2.83;if(EXT[S.model])EXT[S.model].visible=true;return;}
   const inter=!!REALI[S.model];R0.visible=inter||S.view!==0;
@@ -5556,7 +5579,7 @@ function grind(msg){if(S.t-S.grindT>.35){buzz([30,20,30,20,30]);noise(.3,2400,'b
 function setKnob(x,y){x=clamp(x,-1.2,1.2);y=clamp(y,-1,1);
   if(Math.abs(y)>.7){const g=posToGear(posAt(colIdx(x),Math.sign(y)));
     if(g!==null&&S.gear!==g){let why=null;
-      const gr=g>0?(box10()?R10[g]*.95:RATIO[g])*MD().final:0,lk=gr?Math.abs(S.v)/(2*Math.PI*RW)*60*gr:0;
+      const gr=g>0?(box10()?R10[g]*.95:RATIO[g])*MD().final*splitK(g):0,lk=gr?Math.abs(S.v)/(2*Math.PI*RW)*60*gr:0;
       if(S.running&&S.ped.clutch<.6)why='¡Crrrk! Pisa el clutch para cambiar';else if(g>0&&lk>REDLINE+150)why=`Vas muy rápido para meter ${g}ª, frena un poco`;else if(g===-1&&S.v>1.2)why='Detén el tráiler antes de meter reversa';else if(g>0&&S.v<-1.2)why='Detén el tráiler antes de ir hacia adelante';
       if(why){S.kx=x;S.ky=Math.sign(y)*.62;grind(why);dragTarget=null;gLatch=false;return false;}S.gear=g;clunk();S.lastShift=S.t;}
     else if(g===null){y=Math.sign(y)*.6;}
@@ -5579,7 +5602,9 @@ shC.addEventListener('pointermove',e=>{if(S.drag)moveGate(e);});
 const gateUp=()=>{if(!S.drag)return;clearTimeout(gTimer);gCand=null;S.drag=false;S.lastShift=S.t;knobEl.classList.remove('held');};shC.addEventListener('pointerup',gateUp);shC.addEventListener('pointercancel',gateUp);
 const glabs=[...document.querySelectorAll('.glab')];
 glabs.forEach(b=>{b.addEventListener('pointerdown',e=>e.stopPropagation());b.addEventListener('click',()=>shiftTo(+b.dataset.g));});
-function updateGateLabels(){const b10=box10();btnRange.hidden=!b10;btnRange.textContent=S.range==='H'?'ALTA':'BAJA';btnRange.classList.toggle('hi',S.range==='H');
+const btnSplit=$('#btnSplit');btnSplit.addEventListener('pointerdown',e=>e.stopPropagation());
+btnSplit.addEventListener('click',()=>{S.splitWant=!(S.splitWant??!!S.split);if(!S.splitHint){S.splitHint=1;toast('Splitter preseleccionado: suelta el acelerador o pisa el clutch para que entre',true);}updateGateLabels();});
+function updateGateLabels(){const b10=box10();{const w=S.splitWant??!!S.split;btnSplit.hidden=!box18();btnSplit.textContent='½ '+(w?'A':'B');btnSplit.classList.toggle('hi',!!w);btnSplit.classList.toggle('pend',w!==!!S.split);}btnRange.hidden=!b10;btnRange.textContent=S.range==='H'?'ALTA':'BAJA';btnRange.classList.toggle('hi',S.range==='H');
   glabs.forEach(b=>{const p=+b.dataset.g;if(p>0){b.textContent=b10?(p===6?'':String(p+(S.range==='H'?5:0))):String(p);b.dataset.gear=b10?(p===6?'x':p+(S.range==='H'?5:0)):p;}else b.dataset.gear=p;});lastUI.gl=null;}
 btnRange.addEventListener('pointerdown',e=>e.stopPropagation());
 btnRange.addEventListener('click',()=>{S.range=S.range==='L'?'H':'L';if(S.gear!==0)toast('Rango '+(S.range==='H'?'ALTA':'BAJA')+' listo: entra al pasar por neutral',true);updateGateLabels();});
@@ -5757,11 +5782,11 @@ function driveShare(md){const tr=md.rigid?7500:8000,mT=Math.max(0,MASS-tr),ld=mi
   let N=md.rigid?MASS*AXL.rigid:AXL.drv0+(S.hitched?AXL.kp*mT:0);const h=AXL.hcg+(AXL.hcgL-AXL.hcg)*clamp(ld,0,1);
   N+=MASS*((S.accel||0)+9.8*(S.gsin||0))*h/(9.8*md.lw);S.driveN=clamp(N/MASS,.3,.92);return S.driveN;}
 function physics(dt){
-  const md=MD(),u=UP(S.model),b10=box10(),ratio=S.gear===0?0:(b10?R10[S.gear]:RATIO[S.gear])*md.final*(b10?.95:1),engage=clamp((.8-S.ped.clutch)/.55,0,1),n=10,h=dt/n,v0=S.v;
-  const torque=md.torque*(1+.15*u.motor)*(1-clamp(((S.et||0)-.9)*5,0,.5))*(S.oilBad?.9:1),wet=env.rain,ldk=mission?mission.t*(mission.frac||0)/25:0;
+  const md=MD(),u=UP(S.model),b10=box10(),ratio=S.gear===0?0:(b10?R10[S.gear]:RATIO[S.gear])*md.final*(b10?.95:1)*splitK(S.gear),engage=clamp((.8-S.ped.clutch)/.55,0,1)*(1-.4*(MT().clu||0)),n=10,h=dt/n,v0=S.v;   // v104: clutch gastado no acopla completo
+  const torque=md.torque*(1-.2*(MT().tur||0))*(1+.15*u.motor)*(1-clamp(((S.et||0)-.9)*5,0,.5))*(S.oilBad?.9:1),wet=env.rain,ldk=mission?mission.t*(mission.frac||0)/25:0;
   // piso mojado: frena más largo (más con carga) y si frenas a fondo rápido las llantas se bloquean
   const hardB=wet>.25&&Math.max(S.ped.brake,S.pbrake?1:0)>.8&&Math.abs(S.v)>7;S.abs=hardB&&(S.air??1)>.3;S.skid=hardB&&!S.abs;
-  if(S.abs){if(Math.random()<dt*9)noise(.05,160,'lowpass',.07);if(S.t-(S.absT??-99)>40){S.absT=S.t;toast('ABS trabajando: frena fuerte y sigue girando',true);}}const brakeK=9.2*(1+.2*u.frenos)*(1-wet*(.38+.15*ldk))*(S.skid?.72:1)*(1-.28*ldk)*(1-.62*clamp(((S.bt||0)-.6)/.4,0,1))*(.45+.55*clamp((S.air??1)/.55,0,1));
+  if(S.abs){if(Math.random()<dt*9)noise(.05,160,'lowpass',.07);if(S.t-(S.absT??-99)>40){S.absT=S.t;toast('ABS trabajando: frena fuerte y sigue girando',true);}}const brakeK=9.2*(1-.4*(MT().brk||0))*(1+.2*u.frenos)*(1-wet*(.38+.15*ldk))*(S.skid?.72:1)*(1-.28*ldk)*(1-.62*clamp(((S.bt||0)-.6)/.4,0,1))*(.45+.55*clamp((S.air??1)/.55,0,1));
   const airLock=(S.air??1)<.22;
   // frenos propios del remolque: cada unidad frena con su capacidad (TBRK) y su agarre (peso en sus ejes); con carga se alcanza la capacidad y se frena menos
   if(S.dlock&&Math.abs(S.v)>8.3){S.dlock=false;btnDiff.classList.remove('on');toast('Diferencial desbloqueado: ya vas rápido');}
@@ -6081,7 +6106,9 @@ function openShop(){menu.hidden=true;$('#shopMoney').textContent=fmtMoney(save.m
   if(shopTab==='trucks'){{if(!save.mt)save.mt={};const mt=save.mt[S.model]||(save.mt[S.model]={odo:0,oil:0,tire:0});
     grid.appendChild(opt(mt.oil>OIL_KM?'URGENTE':'ACEITE','Cambio de aceite',[`${Math.round(mt.oil)} de ${OIL_KM} km desde el último`,mt.oil>OIL_KM?'El motor pierde fuerza y se calienta':'Mantén el motor sano'],fmtMoney(2500)+(save.money<2500?' · no te alcanza':''),save.money<2500||mt.oil<5,()=>{save.money-=2500;mt.oil=0;S.oilW=0;persist();toast('Aceite cambiado',true);openShop();}));
     grid.appendChild(opt(mt.tire>TIRE_KM?'URGENTE':'LLANTAS','Llantas nuevas',[`${Math.round(mt.tire)} de ${TIRE_KM} km de uso`,mt.tire>TIRE_KM?'Se ponchan seguido y agarran menos':'Buen agarre'],fmtMoney(6000)+(save.money<6000?' · no te alcanza':''),save.money<6000||mt.tire<5,()=>{save.money-=6000;mt.tire=0;S.tireW=0;persist();toast('Llantas nuevas puestas',true);openShop();}));}
-    {const w=mt.susp||0,cost=Math.round((3000+w*9000)/50)*50;grid.appendChild(opt(w>=.7?'URGENTE':'SUSPENSIÓN','Amortiguadores y muelles',[`${Math.round(w*100)}% de desgaste por golpes`,w>=.35?'El camión rebota y se mece más de lo normal':'Absorbe bien los golpes'],fmtMoney(cost)+(save.money<cost?' · no te alcanza':''),save.money<cost||w<.03,()=>{save.money-=cost;mt.susp=0;persist();toast('Suspensión como nueva',true);openShop();}));}
+    {const mt=MT(),w=mt.susp||0,cost=Math.round((3000+w*9000)/50)*50;grid.appendChild(opt(w>=.7?'URGENTE':'SUSPENSIÓN','Amortiguadores y muelles',[`${Math.round(w*100)}% de desgaste por golpes`,w>=.35?'El camión rebota y se mece más de lo normal':'Absorbe bien los golpes'],fmtMoney(cost)+(save.money<cost?' · no te alcanza':''),save.money<cost||w<.03,()=>{save.money-=cost;mt.susp=0;persist();toast('Suspensión como nueva',true);openShop();}));}
+    for(const[k,tag,name,l0,l1,base,per]of[['clu','CLUTCH','Clutch (disco y plato)','Acopla completo','Patina: el motor sube de vueltas pero no jala igual',5000,9000],['brk','FRENOS','Balatas y tambores','Frenan parejo','Cristalizados: frena hasta 40% menos',3500,6000],['tur','TURBO','Turbocompresor','Sopla completo','Dañado: el motor pierde fuerza',7000,12000]]){const mt=MT(),w=mt[k]||0;if(w<.03)continue;const cost=Math.round((base+w*per)/50)*50;
+      grid.appendChild(opt(w>=.7?'URGENTE':tag,name,[`${Math.round(w*100)}% de desgaste`,w>=.35?l1:l0],fmtMoney(cost)+(save.money<cost?' · no te alcanza':''),save.money<cost,()=>{save.money-=cost;mt[k]=0;persist();toast(name+' como nuevo',true);openShop();}));}
     const dm=tdmg();if(dm>0){const cost=Math.round(dm*90/50)*50+500;grid.appendChild(opt('REPARAR','Reparar tu '+MD().name,[`Daño ${Math.round(dm)}%: pintura, faros, frente y parabrisas`,'Queda como nuevo'],fmtMoney(cost)+(save.money<cost?' · no te alcanza':' · toca para reparar'),save.money<cost,()=>{save.money-=cost;save.tdmg[S.model]=0;persist();applyDmgVis();toast('Camión reparado',true);openShop();}));}
     for(const k in MODELS){const m=MODELS[k],own=save.owned.includes(k),cant=!own&&save.money<m.price;
     grid.appendChild(opt(S.model===k?'EN USO':own?'TUYO':'EN VENTA',m.name,[m.kind,m.desc],own?(S.model===k?'Manejando este':'Toca para usarlo'):fmtMoney(m.price)+(cant?` · te faltan ${fmtMoney(m.price-save.money)}`:' · toca para comprar'),cant,()=>{
@@ -6092,7 +6119,7 @@ function openShop(){menu.hidden=true;$('#shopMoney').textContent=fmtMoney(save.m
       grid.appendChild(opt(d?'CON CHOFER':'SIN CHOFER',m.name,d?[`Chofer: ${d.name}`,`${d.trips||0} viajes · ganó ${fmtMoney(d.earn||0)}`]:['Camión parado en el patio','Contrata un chofer para ponerlo a trabajar'],d?'Toca para despedirlo':fmtMoney(cost)+(save.money<cost?' · no te alcanza':' · toca para contratar'),!d&&save.money<cost,()=>{
         if(d){save.drivers=save.drivers.filter(x=>x!==d);toast(`Despediste a ${d.name}`);}else{const nm=DRV_NAMES.find(n=>!save.drivers.some(x=>x.name===n))||'Chofer';save.money-=cost;save.drivers.push({name:nm,model:k,t:0,earn:0,trips:0});toast(`Contrataste a ${nm} para el ${m.name}`,true);}persist();openShop();}));}}
   else if(shopTab==='up'){const u=UP(S.model),md=MD();const h=document.createElement('p');h.textContent='Mejoras para tu '+md.name+':';body.insertBefore(h,grid);
-    for(const g of UPG){if(g.only&&!g.only.includes(S.model))continue;if(g.k==='box10'&&md.box10)continue;
+    for(const g of UPG){if(g.only&&!g.only.includes(S.model))continue;if(g.need&&!u[g.need])continue;if(g.k==='box10'&&md.box10)continue;
     if(g.k==='box10'&&u.box10){grid.appendChild(opt('INSTALADA','Quitar caja de 10',['Regresa a la caja de 6 velocidades: cambios más espaciados'],'Gratis · toca para quitarla',Math.abs(S.v)>.5,()=>{u.box10=false;S.range='L';if(S.gear>6)S.gear=0;persist();toast('Volviste a la caja de 6 velocidades',true);updateGateLabels();openShop();}));continue;}const lvl=g.k==='box10'?(u.box10?1:0):(u[g.k]||0),max=g.lv.length,price=g.lv[lvl],done=lvl>=max,cant=!done&&save.money<price;
       grid.appendChild(opt(done?'INSTALADO':'NIVEL '+(lvl+1)+'/'+max,g.name,[g.desc],done?'Listo':fmtMoney(price)+(cant?` · te faltan ${fmtMoney(price-save.money)}`:''),done||cant,()=>{
         save.money-=price;if(g.k==='box10')u.box10=true;else u[g.k]=(u[g.k]||0)+1;persist();toast(g.name+' instalado',true);updateGateLabels();openShop();}));}}
@@ -6180,7 +6207,7 @@ function drawMap(cv=mini,ctx=mctx,Wc,Hc,dpr0,bigOv){const dpr=dpr0||Math.min(win
   const g=ctx;g.setTransform(dpr,0,0,dpr,0,0);g.fillStyle='#1c231b';g.fillRect(0,0,W,H);g.save();let sc;
   if(big){sc=Math.min(W/(BB.x1-BB.x0),H/(BB.z1-BB.z0));g.translate(W/2,H/2);g.scale(sc,sc);g.translate(-(BB.x0+BB.x1)/2,-(BB.z0+BB.z1)/2);}
   else{sc=W/620;g.translate(W/2,H*.58);g.rotate(S.h);g.scale(sc,sc);g.translate(-S.x,-S.z);}
-  g.fillStyle='#4a4636';for(const m of MOUNTS){g.beginPath();g.arc(m.x,m.z,m.r*.85,0,7);g.fill();}g.fillStyle='#2b4f86';g.beginPath();PREPA.poly.forEach((p,i)=>i?g.lineTo(p.x,p.z):g.moveTo(p.x,p.z));g.closePath();g.fill();g.fillStyle='rgba(156,122,82,.28)';g.fillRect(OFF.x0,OFF.z0,OFF.x1-OFF.x0,OFF.z1-OFF.z0);g.strokeStyle='#b08a5c';g.lineWidth=big?Math.max(10,2/sc):10;g.setLineDash([24,18]);g.beginPath();TRACK.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.stroke();g.setLineDash([]);
+  g.fillStyle='#4a4636';for(const m of MOUNTS){g.beginPath();g.arc(m.x,m.z,m.r*.85,0,7);g.fill();}g.fillStyle='#2b4f86';g.beginPath();PREPA.poly.forEach((p,i)=>i?g.lineTo(p.x,p.z):g.moveTo(p.x,p.z));g.closePath();g.fill();g.fillStyle='rgba(156,122,82,.28)';g.fillRect(OFF.x0,OFF.z0,OFF.x1-OFF.x0,OFF.z1-OFF.z0);g.strokeStyle='#b08a5c';g.lineWidth=big?Math.max(10,2/sc):10;g.setLineDash([24,18]);g.beginPath();TRACK.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.stroke();g.strokeStyle='#c96f4a';g.beginPath();TRACK2.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.stroke();g.setLineDash([]);
   g.lineCap='round';g.lineJoin='round';for(const e of edges){g.strokeStyle=e.type==='hwy'?'#b9a46a':'#8a9098';g.lineWidth=big?Math.max(e.w,2.4/sc):e.w*1.1;g.beginPath();g.moveTo(e.ax,e.az);g.lineTo(e.bx,e.bz);g.stroke();}
   for(const d of DEPOTS){g.fillStyle=mission&&curDep()===d?'#ffb53d':'#d8d3c3';const s=big?6/sc:22;g.fillRect(d.zone.x-s,d.zone.z-s,s*2,s*2);}
   if(PARK.placed&&!S.hitched){g.save();g.translate(PARK.x,PARK.z);g.rotate(-PARK.h);g.fillStyle='#7cc4ff';const w=big?3/sc:3,l=big?6/sc:13;g.fillRect(-w,0,w*2,l);g.restore();}
@@ -6201,7 +6228,7 @@ function drawMap(cv=mini,ctx=mctx,Wc,Hc,dpr0,bigOv){const dpr=dpr0||Math.min(win
 const lastUI={};function setText(el,key,v){if(lastUI[key]!==v){el.textContent=v;lastUI[key]=v;}}
 const els={lim:$('#hudLim'),grade:$('#hudGrade'),cop:$('#cop'),spd:$('#hudSpd'),gear:$('#hudGear'),rpm:$('#hudRpm'),hint:$('#hint'),hs:$('#hintStep'),ht:$('#hintTxt'),gpsA:$('#gpsArrow'),gpsT:$('#gpsTxt'),cond:$('#mCond'),time:$('#mTime'),money:$('#mMoney'),park:$('#park'),warn:$('#warn'),wd:$('#wheelDeg'),clock:$('#hudClock'),wx:$('#hudWx'),fuel:$('#hudFuel')};
 let BRECHA_JOB=save.brecha||null;
-function gpsInfo(){if(!mission&&BRECHA_JOB){const inZ=offMask(S.x,S.z)>0,t=inZ?[PEDRERA.x,PEDRERA.z]:TRACK[0],d=Math.hypot(t[0]-S.x,t[1]-S.z);return{txt:inZ?'Sigue la brecha hasta la Pedrera El Norte':'Ve al inicio de la brecha, al norte del Blvd. Humberto Ramos Lozano',sub:(d/1000).toFixed(1)+' km en línea recta',ang:(Math.atan2(t[0]-S.x,-(t[1]-S.z))+S.h)*180/Math.PI};}
+function gpsInfo(){if(!mission&&BRECHA_JOB){const bk=BRECHA_JOB.back,inZ=offMask(S.x,S.z)>0,t=bk?TRACK[0]:inZ?[PEDRERA.x,PEDRERA.z]:TRACK[0],d=Math.hypot(t[0]-S.x,t[1]-S.z);return{txt:bk?'Lleva las muestras de piedra a la salida de la brecha':inZ?'Sigue la brecha hasta la Pedrera El Norte':'Ve al inicio de la brecha, al norte del Blvd. Humberto Ramos Lozano',sub:(d/1000).toFixed(1)+' km en línea recta',ang:(Math.atan2(t[0]-S.x,-(t[1]-S.z))+S.h)*180/Math.PI};}
   const p=gps.pts;if(!mission||p.length<2)return{txt:'Elige una carga',sub:'—',ang:0};
   const dz=mission.dest?mission.dest.zone:DEPOTS[mission.to].zone,left=Math.hypot(S.x-dz.x,S.z-dz.z),N=gps.names,m10=x=>Math.round(x/10)*10;
   let acc=Math.hypot(p[1][0]-S.x,p[1][1]-S.z),txt=null,k=1;
@@ -6217,7 +6244,8 @@ function gpsInfo(){if(!mission&&BRECHA_JOB){const inZ=offMask(S.x,S.z)>0,t=inZ?[
 function ui(){
   wheelSvg.style.transform=`rotate(${S.steer.toFixed(1)}deg)`;setText(els.wd,'wd',Math.round(S.steer)+'°');
   const shk=S.running?(.004+.006*S.ped.gas+.03*(S.jud||0)+.02*(S.camKick||0))*Math.sin(S.t*2*Math.PI*Math.max(S.rpm,300)/60*1.5):0;knobEl.style.left=(S.kx+shk+1.5)/3*100+'%';knobEl.style.top=(S.ky+shk*.6+1.5)/3*100+'%';const gw=gate.clientWidth,dx=S.kx/3*gw,dy=S.ky/3*gw;shaftEl.style.width=Math.hypot(dx,dy)+'px';shaftEl.style.transform=`rotate(${Math.atan2(dy,dx)}rad)`;
-  const gn=gName(S.gear);setText(knobTxt,'kt',gn);setText(els.gear,'g',gn);
+  if(S.splitWant!=null&&S.splitWant!==!!S.split&&(S.ped.gas<.15||S.ped.clutch>.5)){S.split=S.splitWant;updateGateLabels();noise(.06,1400,'bandpass',.12);}
+  const gn=gName(S.gear);setText(knobTxt,'kt',gn);setText(els.gear,'g',gn+(box18()&&S.gear>0&&S.gear<=8?(S.split?'A':'B'):''));
   if(lastUI.gl!==S.gear){glabs.forEach(b=>b.classList.toggle('on',b.dataset.gear==String(S.gear)));lastUI.gl=S.gear;}
   for(const kk in pedals){const p=pedals[kk],v=S.ped[kk];if(Math.abs(p.last-v)<.002)continue;p.last=v;p.arm.style.transform=`rotateX(${(v*42).toFixed(2)}deg) translateY(${(v*6).toFixed(1)}%)`;p.pad.style.filter=`brightness(${1+v*.35})`;p.val.textContent=Math.round(v*100)+'%';p.fill.style.height=(v*55)+'%';}
   {const lim=(S.curEdge&&S.curEdge.lim)||60,kmh=Math.abs(S.v)*3.6;setText(els.lim,'lim',String(lim));els.lim.classList.toggle('over',kmh>lim+5);
@@ -6445,8 +6473,8 @@ function loopBody(now){
   followWheels(WHEELS[S.model].front,truck,.35);followWheels(WHEELS[S.model].rear,truck,.35);if(S.hitched)followWheels(trWheels,trailer,.35);
   const W=WHEELS[S.model],spin=S.v/RW*dt;W.front.forEach(w=>{w.w.rotation.x-=spin;w.piv.rotation.y=delta;});W.rear.forEach(w=>w.w.rotation.x-=spin);if(S.hitched){const tsp=spin*Math.cos(S.th-S.h);trWheels.forEach(w=>w.w.rotation.x-=tsp);}
   // limpiadores: con lluvia barren; al dejar de llover terminan su vuelta y se quedan abajo (antes con pocos cuadros por segundo se brincaban el alto y nunca paraban)
-  {const inc=dt*(.7+env.rain*.6);if(env.rain>.2)wipe+=inc;else if(wipe!==Math.floor(wipe)){const nx=Math.ceil(wipe);wipe=Math.min(nx,wipe+inc);}}
-  const wa=-1.52+Math.abs(Math.sin(wipe*Math.PI))*1.4;const wv=env.rain>.2||wipe!==Math.floor(wipe);(WIPERS[S.model]||[]).forEach(w=>{w.rotation.z=wa;w.visible=wv;});
+  {const inc=dt*(.7+env.rain*.6);if(env.rain>.2||(S.wipeT||0)>S.t)wipe+=inc;else if(wipe!==Math.floor(wipe)){const nx=Math.ceil(wipe);wipe=Math.min(nx,wipe+inc);}}
+  const wa=-1.52+Math.abs(Math.sin(wipe*Math.PI))*1.4;const wv=env.rain>.2||wipe!==Math.floor(wipe);(WIPERS[S.model]||[]).forEach(w=>{w.rotation.z=wa;w.visible=wv;});rainGlass(dt,wa,wv);
   fxTick(dt);if(S.view===0)interiorTick(dt);tireTick(dt);sigTick(dt);if(frame%3===0)turnTick();if(frame%6===0)tempUI();
   atStation=STATIONS.find(s=>inObb(s.area,S.x,S.z))||null;fuelBtn.hidden=!(atStation&&Math.abs(S.v)<.3&&S.fuel<tankCap()-1);
   if(!fuelBtn.hidden)fuelBtn.textContent=`Cargar diésel · ${Math.round(tankCap()-S.fuel)} L · ${fmtMoney((tankCap()-S.fuel)*(atStation?atStation.price:FUEL_PRICE))}`;
@@ -6563,18 +6591,23 @@ try{corpOffline();drawCluster();updateGateLabels();if(!restoreJob())openJobs();}
   const d=+m[1],key=m[2];if(key!==vKey){vKey=key;vStage=0;}if(vStage===0&&d<=320){vStage=1;if(d>100)say('En '+d+' metros, '+key);}if(vStage<=1&&d<=80){vStage=2;say(key.charAt(0).toUpperCase()+key.slice(1));}}
  // ---- avisos del camión ----
  function alerts(){const a=[],mt=MT();if(S.fuel/tankCap()<.15)a.push('Diésel bajo');if((S.bt||0)>.75)a.push('Frenos muy calientes');if((S.et||0)>.75)a.push('Motor muy caliente');if((S.air??1)<.3)a.push('Poco aire de frenos');
-  if(S.flat)a.push('Llanta ponchada');else if((S.minP??1)<.85)a.push('Llanta baja de presión');const w=suspW();if(w>=.7)a.push('Suspensión muy dañada');else if(w>=.35)a.push('Suspensión golpeada');if((mt.oil||0)>OIL_KM)a.push('Cambio de aceite vencido');return a;}
+  if(S.flat)a.push('Llanta ponchada');else if((S.minP??1)<.85)a.push('Llanta baja de presión');const w=suspW();if(w>=.7)a.push('Suspensión muy dañada');else if(w>=.35)a.push('Suspensión golpeada');if((mt.oil||0)>OIL_KM)a.push('Cambio de aceite vencido');if((mt.clu||0)>=.35)a.push('Clutch gastado, patina');if((mt.brk||0)>=.35)a.push('Frenos cristalizados');if((mt.tur||0)>=.35)a.push('Turbo dañado');return a;}
+ // desgaste por mal manejo: clutch quemado al patinarlo, frenos cristalizados al sobrecalentarlos, turbo dañado al apagar en caliente
+ let prevRun=false,turboHot=0;
+ function wearTick(){const mt=MT(),b=S.running?(S.boost||0):0;if((S.cheat||0)>1)mt.clu=Math.min(1,(mt.clu||0)+.003*(S.cheat-.7));if((S.bt||0)>.8)mt.brk=Math.min(1,(mt.brk||0)+.0025*((S.bt-.8)/.2+.3));
+  if(prevRun&&!S.running&&turboHot>.45&&S.fuel>0){mt.tur=Math.min(1,(mt.tur||0)+.12*turboHot);persist();toast('Apagaste con el turbo caliente y se dañó un poco. Déjalo en ralentí unos 20 s antes de apagar');}
+  turboHot+=(b-turboHot)*(b>turboHot?.05:.012);prevRun=S.running;}
  let alPrev=[];function alertVoice(){const a=alerts();for(const x of a)if(!alPrev.includes(x)){say('Atención. '+x);break;}alPrev=a;return a;}
  // ---- encargo de brecha: llevar refacciones a la Pedrera, sin remolque ----
- function brechaTick(){const B=BRECHA_JOB;if(!B)return;if(mission){BRECHA_JOB=null;return;}if(Math.hypot(S.x-PEDRERA.x,S.z-PEDRERA.z)<PEDRERA.r-6&&Math.abs(S.v)<1.2){const dw=Math.max(0,suspW()-B.w0),pen=Math.min(Math.round(B.pay*.6/50)*50,Math.round(dw*22000/50)*50),tot=B.pay-pen;
-   save.money+=tot;save.xp=(save.xp||0)+350;BRECHA_JOB=null;persist();toast('Encargo entregado en la Pedrera: '+fmtMoney(tot)+(pen?' (descuento de '+fmtMoney(pen)+' por maltratar la suspensión)':' · suspensión intacta'),true);say('Encargo entregado en la Pedrera');if(app==='jobs')render();}}
+ function brechaTick(){const B=BRECHA_JOB;if(!B)return;if(mission){BRECHA_JOB=null;return;}const tg=B.back?{x:TRACK[0][0],z:TRACK[0][1],r:36}:PEDRERA;if(Math.hypot(S.x-tg.x,S.z-tg.z)<tg.r-6&&Math.abs(S.v)<1.2){const dw=Math.max(0,suspW()-B.w0),pen=Math.min(Math.round(B.pay*.6/50)*50,Math.round(dw*22000/50)*50),tot=B.pay-pen;
+   save.money+=tot;save.xp=(save.xp||0)+350;BRECHA_JOB=B.back?null:{pay:6000,w0:suspW(),back:1};persist();toast((B.back?'Muestras entregadas: ':'Entregado en la Pedrera: ')+fmtMoney(tot)+(B.back?'':' · Nuevo encargo: lleva muestras de piedra a la salida de la brecha por $6,000')+(pen?' (descuento de '+fmtMoney(pen)+' por maltratar la suspensión)':' · suspensión intacta'),true);say(B.back?'Muestras entregadas':'Entregado. Nuevo encargo: lleva las muestras a la salida de la brecha');if(app==='jobs')render();}}
  // ---- Fletes: la misma bolsa de cargas del juego, mostrada dentro de la pantalla ----
  const jl=$('#jobList'),rl=$('#routeList'),bb=$('#btnBack');
  function jobsBack(){const card=$('#jobs .card'),ref=card.querySelector('.rrow');if(jl.parentNode!==card){card.insertBefore(jl,ref);card.insertBefore(rl,ref);card.insertBefore(bb,ref);}}
  window.__auJobsBack=jobsBack;
  const repList=()=>'<h3 class="au-h" style="margin-top:14px;font-size:16px">Tus clientes</h3><div class="au-rows">'+DEPOTS.map(d=>`<div class="au-row"><div><span>${esc(d.name)}</span><b style="color:var(--amber);letter-spacing:.08em">${repStars(d.name)}</b></div></div>`).join('')+'</div>';
  function jobsApp(){if(mission){jobsBack();view.innerHTML=`<h3 class="au-h">${esc(mission.cargo)} · ${mission.t} t</h3><p class="au-sub">${esc(DEPOTS[mission.from].name)} → ${esc(DEPOTS[mission.to].name)} · carga al ${Math.round(mission.cond)}%. Para cancelar: Menú → Cancelar flete.</p>`+repList();return;}
-  if(BRECHA_JOB){jobsBack();view.innerHTML=`<h3 class="au-h">Encargo de brecha</h3><p class="au-sub">Refacciones a la Pedrera El Norte · ${fmtMoney(BRECHA_JOB.pay)}. Detente dentro del patio de la pedrera para entregar.</p><div class="au-ctl"><button class="au-b" id="auBrX">Cancelar encargo</button></div>`+repList();$('#auBrX').onclick=()=>{BRECHA_JOB=null;render();};return;}
+  if(BRECHA_JOB){jobsBack();view.innerHTML=`<h3 class="au-h">Encargo de brecha</h3><p class="au-sub">${BRECHA_JOB.back?'Muestras de piedra a la salida de la brecha':'Refacciones a la Pedrera El Norte'} · ${fmtMoney(BRECHA_JOB.pay)}. ${BRECHA_JOB.back?'Detente donde empieza la brecha, junto al letrero.':'Detente dentro del patio de la pedrera para entregar.'}</p><div class="au-ctl"><button class="au-b" id="auBrX">Cancelar encargo</button></div>`+repList();$('#auBrX').onclick=()=>{BRECHA_JOB=null;render();};return;}
   if(jl.parentNode&&jl.parentNode.id==='auJobs')return;
   view.innerHTML='<h3 class="au-h">Bolsa de fletes</h3><p class="au-sub">Toca una carga y luego elige la ruta.</p><div id="auJobs"></div><div class="opts" id="auBr" style="margin-bottom:6px"></div>'+repList();
   openJobs();$('#jobs').hidden=true;$('#auJobs').append(jl,rl,bb);
@@ -6584,14 +6617,24 @@ try{corpOffline();drawCluster();updateGateLabels();if(!restoreJob())openJobs();}
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const AK={yt:'yt',pod:'pod',mus:'radio'};
  // caja para pegar un enlace + mosaicos de lo guardado (la usan YouTube, Podcasts y Música)
- function wire(a,bad){const go=()=>{const it=parse($('#auUrl').value);if(!it){toast(bad);return;}play(it,a);};$('#auGo').onclick=go;$('#auUrl').addEventListener('keydown',e=>{if(e.key==='Enter')go();});
+ function wire(a,bad){const go=()=>{const it=parse($('#auUrl').value);if(!it){toast(bad);return;}play(it,a);};$('#auGo').onclick=go;$('#auUrl').addEventListener('keydown',e=>{if(e.key==='Enter')$('#auGo').click();});
   const box=$('#auFavs'),fv=ST().fav.filter(x=>(x.a||'yt')===a);if(!fv.length){const p=document.createElement('p');p.className='au-sub';p.style.gridColumn='1/-1';p.textContent='Lo que reproduzcas se guarda aquí para volver a ponerlo con un toque.';box.appendChild(p);}
   for(const x of fv){const it=parse(x.u);if(!it)continue;it.t=x.t||it.t;const b=document.createElement('button');b.className='au-fav';b.style.setProperty('--c',APPS[AK[a]].c);b.innerHTML='<i></i><span></span><em role="button" aria-label="Quitar">✕</em>';
    const th=b.querySelector('i');if(it.th)th.style.backgroundImage=`url("${it.th}")`;else th.innerHTML=APPS[AK[a]].i;b.querySelector('span').textContent=it.t;
    b.onclick=e=>{if(e.target.tagName==='EM'){ST().fav=ST().fav.filter(y=>y!==x);persist();render();}else play(it,a);};box.appendChild(b);}}
  const inBox=ph=>`<div class="au-in"><input id="auUrl" type="url" inputmode="url" autocomplete="off" placeholder="${ph}" aria-label="Enlace"><button class="au-b go" id="auGo">Reproducir</button></div><div class="au-favs" id="auFavs"></div>`;
- function mediaApp(a){const yt=a==='yt';view.innerHTML=`<h3 class="au-h">${yt?'YouTube':'Podcasts'}</h3><p class="au-sub">${yt?'Pega el enlace de un video o de una lista de YouTube.':'Pega el enlace de un podcast en YouTube o en Spotify.'} Necesita internet.</p>`+inBox(yt?'https://youtu.be/…':'https://www.youtube.com/playlist?list=…');
-  wire(a,yt?'Ese enlace no es de YouTube':'Pega un enlace de YouTube o de Spotify');}
+ const YK=()=>{try{return localStorage.getItem('fn_ytkey')||'';}catch(e){return '';}};let ytCache=null;
+ function ytShow(items,title){const box=$('#auYt');if(!box)return;box.innerHTML='';const h=document.createElement('p');h.className='au-sub';h.style.gridColumn='1/-1';h.style.margin='0';h.textContent=title;box.appendChild(h);
+  for(const v of items){const b=document.createElement('button');b.className='au-fav';b.style.setProperty('--c',APPS.yt.c);b.innerHTML='<i></i><span></span>';b.querySelector('i').style.backgroundImage=`url("https://i.ytimg.com/vi/${v.id}/mqdefault.jpg")`;b.querySelector('span').textContent=v.t;b.onclick=()=>{const it=parse('https://youtu.be/'+v.id);it.t=v.t;play(it,'yt');};box.appendChild(b);}}
+ async function ytLoad(q){const box=$('#auYt');if(!box)return;if(!q&&ytCache){ytShow(ytCache,'Tendencias en México');return;}box.innerHTML='<p class="au-sub" style="grid-column:1/-1">Cargando…</p>';
+  try{const base='https://www.googleapis.com/youtube/v3/',u=q?base+'search?part=snippet&type=video&maxResults=12&regionCode=MX&q='+encodeURIComponent(q)+'&key='+YK():base+'videos?part=snippet&chart=mostPopular&regionCode=MX&maxResults=12&key='+YK(),j=await(await fetch(u)).json();if(j.error)throw new Error(j.error.message);
+   const items=(j.items||[]).map(x=>({id:typeof x.id==='string'?x.id:x.id&&x.id.videoId,t:x.snippet?x.snippet.title:''})).filter(x=>x.id);if(!q)ytCache=items;ytShow(items,q?'Resultados de "'+q+'"':'Tendencias en México');}
+  catch(e){const b2=$('#auYt');if(b2){b2.innerHTML='';const p=document.createElement('p');p.className='au-sub';p.style.gridColumn='1/-1';p.textContent='No se pudo cargar YouTube: '+e.message;b2.appendChild(p);}}}
+ function mediaApp(a){const yt=a==='yt';view.innerHTML=`<h3 class="au-h">${yt?'YouTube':'Podcasts'}</h3><p class="au-sub">${yt?(YK()?'Busca un video o pega un enlace.':'Pega el enlace de un video o de una lista. Para buscar y ver tendencias agrega tu clave gratuita de Google.'):'Pega el enlace de un podcast en YouTube o en Spotify.'} Necesita internet.</p>`+inBox(yt?(YK()?'Buscar en YouTube o pegar enlace':'https://youtu.be/…'):'https://www.youtube.com/playlist?list=…')+(yt?'<div class="au-favs" id="auYt" style="margin-top:10px"></div><div class="au-ctl" style="margin-top:10px"><button class="au-b" id="auKeyB"></button></div><div id="auKeyP" hidden><p class="au-sub">1) Entra a console.cloud.google.com y crea un proyecto. 2) En “APIs y servicios” habilita “YouTube Data API v3”. 3) En “Credenciales” crea una “Clave de API” y limítala a tu sitio. 4) Pégala aquí. Se guarda solo en este navegador.</p><div class="au-in"><input id="auKey" type="text" autocomplete="off" placeholder="Clave de API" aria-label="Clave de API"><button class="au-b go" id="auKeyS">Guardar</button></div></div>':'');
+  wire(a,yt?'Ese enlace no es de YouTube':'Pega un enlace de YouTube o de Spotify');if(!yt)return;
+  $('#auGo').onclick=()=>{const v=$('#auUrl').value.trim(),it=parse(v);if(it)play(it,'yt');else if(!v)return;else if(YK())ytLoad(v);else toast('Para buscar agrega tu clave de API (botón de abajo); sin clave, pega un enlace');};
+  const kb=$('#auKeyB');kb.textContent=YK()?'Cambiar clave de API':'Agregar clave de API para buscar';kb.onclick=()=>{$('#auKeyP').hidden=!$('#auKeyP').hidden;};
+  $('#auKeyS').onclick=()=>{const k=$('#auKey').value.trim();try{if(k)localStorage.setItem('fn_ytkey',k);else localStorage.removeItem('fn_ytkey');}catch(e){}ytCache=null;render();};if(YK())ytLoad('');}
  function bar(n,v,txt,bad){v=clamp(v,0,1);return `<div class="au-row${bad>1?' b':bad?' w':''}"><div><span>${n}</span><b>${txt}</b></div><u><s style="width:${Math.round(v*100)}%"></s></u></div>`;}
  function truckApp(){const mt=MT(),fu=S.fuel/tankCap(),et=S.et||0,bt=S.bt||0,air=S.air??1,tp=S.minP??1,sw=suspW(),dm=tdmg()/100,pc=x=>Math.round(x*100)+'%';
   view.innerHTML=`<h3 class="au-h">${esc(MD().name)}</h3><p class="au-sub">Nivel ${LVL()} · ${fmtMoney(save.money)} · ${Math.round(mt.odo||0)} km recorridos</p><div class="au-rows">`+
@@ -6624,7 +6667,7 @@ try{corpOffline();drawCluster();updateGateLabels();if(!restoreJob())openJobs();}
   bar.addEventListener('pointermove',e=>{if(!d)return;A.style.left=clamp(e.clientX-d.x,0,innerWidth-A.offsetWidth)+'px';A.style.top=clamp(e.clientY-d.y,0,innerHeight-A.offsetHeight)+'px';});const end=()=>{d=null;};bar.addEventListener('pointerup',end);bar.addEventListener('pointercancel',end);}
  // lo que se teclea o se toca dentro de la pantalla no llega a los controles del camión
  for(const ev of['keydown','keyup','keypress','wheel','touchstart','touchmove','mousedown'])A.addEventListener(ev,e=>e.stopPropagation(),{passive:true});
- setInterval(()=>{tick++;let al=[];try{gpsVoice();brechaTick();if((save.brecha||null)!==BRECHA_JOB){save.brecha=BRECHA_JOB;persist();}if(tick%4===0){al=alertVoice();if(cur)setVol();}else al=alPrev;}catch(e){}
+ setInterval(()=>{tick++;let al=[];try{gpsVoice();brechaTick();wearTick();if((save.brecha||null)!==BRECHA_JOB){save.brecha=BRECHA_JOB;persist();}if(tick%4===0){al=alertVoice();if(cur)setVol();}else al=alPrev;}catch(e){}
   if(!DH.hidden)try{devPaint();}catch(e){}
   if(!isOpen())return;const hh=Math.floor(env.tod),mm=Math.floor((env.tod-hh)*60);$('#auClock').textContent=String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');A.classList.toggle('night',env.day<.4);
   const nw=$('#auNow'),showAl=al.length&&(!cur||tick%32<14);nw.classList.toggle('al',!!showAl);nw.textContent=showAl?'⚠ '+al[0]:cur?'▶ '+(cur.now||cur.t):(radio.on?'♪ '+$('#rNow').textContent:'');
