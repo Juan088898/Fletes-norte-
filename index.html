@@ -286,7 +286,6 @@ body.cine .quick{display:none}
 /* v100 */
 #hudSem{display:flex;align-items:center;gap:5px;font:400 16px/1 var(--mono);color:var(--ink)}#hudSem i{width:15px;height:15px;border-radius:50%;background:#555;flex:none}
 #hudSem[data-s=r] i{background:#ff3b2f;box-shadow:0 0 9px #ff3b2f}#hudSem[data-s=y] i{background:#ffc21a;box-shadow:0 0 9px #ffc21a}#hudSem[data-s=g] i{background:#2fe07a;box-shadow:0 0 9px #2fe07a}
-.whb{cursor:pointer;pointer-events:auto}.whb circle{fill:#10151b;stroke:#6b7682;stroke-width:2}.whb text{fill:#e9ecef;font:700 11px sans-serif;text-anchor:middle;pointer-events:none}
 .au-pl{display:flex;gap:4px}.au-pl[hidden]{display:none}.au-pl button{width:28px}
 #auNow.al{color:var(--brake)}
 #auto.mini .au-brand,#auto.mini #auClock,#auto.mini .au-pl [data-m^=v]{display:none}#auto.mini .au-bar{gap:5px;padding-left:6px}
@@ -398,7 +397,6 @@ body.cine .quick{display:none}
             <g stroke="#9aa1a8" stroke-width="10" stroke-linecap="round"><path d="M100 100L22 118"/><path d="M100 100L178 118"/><path d="M100 100V184"/></g>
             <circle cx="100" cy="100" r="26" fill="#1b2128" stroke="#434c56" stroke-width="3"/><text x="100" y="105" text-anchor="middle" font-family="Share Tech Mono, monospace" font-size="15" fill="#8c98a5">FN</text>
             <rect x="94" y="8" width="12" height="16" rx="2" style="fill:var(--amber)"/>
-            <g id="whMedia" style="display:none"><g class="whb" data-m="vdn"><circle cx="38" cy="114" r="13"/><text x="38" y="119">−</text></g><g class="whb" data-m="vup"><circle cx="67" cy="107.500" r="13"/><text x="67" y="112.500">+</text></g><g class="whb" data-m="tog"><circle cx="133" cy="107.500" r="13"/><text x="133" y="112">▮▮</text></g><g class="whb" data-m="next"><circle cx="162" cy="114" r="13"/><text x="162" y="118.500">▶▶</text></g></g>
           </g>
         </svg>
         <span id="wheelDeg">0°</span>
@@ -455,7 +453,7 @@ body.cine .quick{display:none}
           <button class="st-opt" id="startTruck">Camión <small>Semi Lowpoly</small></button>
           <button class="st-opt" id="startSet">Ajustes <small>Manejo y sonido</small></button>
         </div>
-        <div class="st-foot"><span>v100 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
+        <div class="st-foot"><span>v101 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
       </div>
       <div class="st-garage" id="startGarage" hidden>
         <h3>TU CAMIÓN</h3><div class="n">Semi Lowpoly</div>
@@ -6513,13 +6511,12 @@ try{corpOffline();drawCluster();updateGateLabels();if(!restoreJob())openJobs();}
  let duckUntil=0;const volNow=()=>Math.round((ST().vol??40)*(performance.now()<duckUntil?.3:1));
  function setVol(){cmd('setVolume',[volNow()]);}
  function duck(ms){duckUntil=performance.now()+ms;setVol();setTimeout(setVol,ms+80);}
- function paintPl(){$('#auPl').hidden=!cur;$('#whMedia').style.display=cur?'':'none';const p=cur&&cur.state===2;A.querySelector('#auPl [data-m=tog]').textContent=p?'▶':'❚❚';$('#whMedia [data-m=tog] text').textContent=p?'▶':'▮▮';}
+ function paintPl(){$('#auPl').hidden=!cur;const p=cur&&cur.state===2;A.querySelector('#auPl [data-m=tog]').textContent=p?'▶':'❚❚';}
  function mediaBtn(m){if(m==='vup'||m==='vdn'){const o=ST();o.vol=clamp((o.vol??40)+(m==='vup'?10:-10),0,100);persist();setVol();toast('Volumen de FN Auto: '+o.vol+'%',true);return;}
   if(!cur){toast('No hay nada sonando en FN Auto');return;}if(m==='tog'){const pl=cur.state!==2;cmd(pl?'pauseVideo':'playVideo');cur.state=pl?2:1;}else cmd(m==='next'?'nextVideo':'previousVideo');paintPl();}
  window.addEventListener('message',e=>{if(!cur||!/youtube/.test(e.origin||''))return;let d=e.data;try{if(typeof d==='string')d=JSON.parse(d);}catch(x){return;}const i=d&&d.info;if(!i)return;
   if(i.playerState===1||i.playerState===2){cur.state=i.playerState;paintPl();}if(i.videoData&&i.videoData.title)cur.now=i.videoData.title;});
  $('#auPl').addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(b)mediaBtn(b.dataset.m);});
- $('#whMedia').addEventListener('pointerdown',e=>{const b=e.target.closest('[data-m]');if(!b)return;e.stopPropagation();e.preventDefault();mediaBtn(b.dataset.m);});
  // ---- voz (GPS y avisos): baja la música mientras habla ----
  function say(t){try{if(!('speechSynthesis' in window)||ST().voice===false)return;const u=new SpeechSynthesisUtterance(t);u.lang='es-MX';u.rate=1.03;u.onstart=()=>duck(7000);u.onend=()=>{duckUntil=0;setVol();};speechSynthesis.speak(u);}catch(e){}}
  let vKey='',vStage=0;
