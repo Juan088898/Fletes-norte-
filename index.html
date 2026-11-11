@@ -292,6 +292,19 @@ body.cine .quick{display:none}
 #auto.night{filter:brightness(.7) saturate(.92)}
 #auView #jobList,#auView #routeList{grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:8px}#auView .opt{padding:8px 10px;gap:3px}#auView .opt b{font-size:15px}#auView .opt span{font-size:12px;line-height:1.2}#auView #btnBack{margin-bottom:8px}
 .au-al{display:grid;gap:5px;margin-bottom:10px}.au-al div{padding:7px 11px;border-radius:11px;background:rgba(255,92,77,.14);border:1px solid rgba(255,92,77,.4);font:700 13px/1.2 var(--display);color:#ffb3aa}
+/* v102 · pantalla del tablero nítida: se dibuja a la resolución real del celular y se acomoda en perspectiva sobre el aparato */
+#devHud{position:fixed;left:0;top:0;width:660px;height:400px;transform-origin:0 0;z-index:12;pointer-events:none;background:#0a0e12;color:#f2f4f5;font-family:var(--display);overflow:hidden;display:grid;grid-template-rows:150px 56px 134px 60px;will-change:transform}
+#devHud[hidden]{display:none}#devHud.night{filter:brightness(.72)}
+.dh-top{display:flex;align-items:center;gap:18px;padding:0 20px;background:#10161c;min-width:0}
+#dhArrow{width:112px;height:112px;flex:none}#dhArrow circle{fill:rgba(63,208,138,.14);stroke:#3fd08a;stroke-width:1.6}#dhArrow path{fill:#3fd08a}
+#dhDist{flex:1;min-width:0;font:800 88px/1 var(--display);white-space:nowrap;overflow:hidden}
+.dh-sem{display:flex;align-items:center;gap:12px;font:400 76px/1 var(--mono);flex:none}.dh-sem[hidden]{display:none}.dh-sem i{width:60px;height:60px;border-radius:50%;background:#555}
+.dh-sem[data-s=r] i{background:#ff3b2f;box-shadow:0 0 22px #ff3b2f}.dh-sem[data-s=y] i{background:#ffc21a;box-shadow:0 0 22px #ffc21a}.dh-sem[data-s=g] i{background:#2fe07a;box-shadow:0 0 22px #2fe07a}
+.dh-street{padding:0 20px;font:700 44px/56px var(--display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#0d1217;color:#d5dbe0}
+#dhMap{width:660px;height:134px;display:block}
+.dh-bot{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 20px;font:700 40px/1 var(--display);background:#10161c;white-space:nowrap;overflow:hidden}
+.dh-bot span{min-width:0;overflow:hidden;text-overflow:ellipsis}.dh-bot b{color:var(--amber);flex:none}.dh-bot.al{background:#b0261e;color:#fff}
+#devHud.vid{grid-template-rows:150px 190px 60px}#devHud.vid .dh-street{display:none}#devHud.vid #dhMap{width:297px;height:190px}
 </style>
 
 <div id="app">
@@ -453,7 +466,7 @@ body.cine .quick{display:none}
           <button class="st-opt" id="startTruck">Camión <small>Semi Lowpoly</small></button>
           <button class="st-opt" id="startSet">Ajustes <small>Manejo y sonido</small></button>
         </div>
-        <div class="st-foot"><span>v101 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
+        <div class="st-foot"><span>v102 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
       </div>
       <div class="st-garage" id="startGarage" hidden>
         <h3>TU CAMIÓN</h3><div class="n">Semi Lowpoly</div>
@@ -461,6 +474,7 @@ body.cine .quick{display:none}
       </div>
     </div>
   </div>
+  <div id="devHud" hidden aria-hidden="true"><div class="dh-top"><svg id="dhArrow" viewBox="-15 -15 30 30"><circle r="14"/><path d="M0 -10 L7 6 L0 2 L-7 6 Z"/></svg><b id="dhDist"></b><div class="dh-sem" id="dhSem" hidden><i></i><b></b></div></div><div class="dh-street" id="dhStreet"></div><canvas id="dhMap" width="660" height="134"></canvas><div class="dh-bot" id="dhBot"><span id="dhL"></span><b id="dhR"></b></div></div>
   <div id="auto" hidden role="dialog" aria-label="Pantalla multimedia del camión">
     <div class="au-bar" id="auBar"><span class="au-brand">FN<b>AUTO</b></span><span id="auNow"></span><span class="au-pl" id="auPl" hidden><button data-m="prev" aria-label="Anterior">⏮</button><button data-m="tog" aria-label="Pausar o reproducir">❚❚</button><button data-m="next" aria-label="Siguiente">⏭</button><button data-m="vdn" aria-label="Bajar volumen">−</button><button data-m="vup" aria-label="Subir volumen">+</button></span><span id="auClock">09:00</span><button id="auMini" aria-label="Cambiar tamaño" title="Tamaño">▭</button><button id="auClose" aria-label="Cerrar pantalla" title="Cerrar">✕</button></div>
     <div class="au-body"><nav class="au-rail" id="auRail" aria-label="Aplicaciones"></nav><div class="au-main"><div id="auView"></div><div id="auMedia" class="bg"></div></div></div>
@@ -5353,11 +5367,11 @@ let CAB_KEEP=null;
 // con interior real: el volante y el tablero son los del modelo; dejamos el retrovisor, el GPS, el rosario y el parabrisas estrellado
 function cabKeep(){if(CAB_KEEP)return CAB_KEEP;const K=new Set([RVM,INT.ros,GPSSCR.sc.parent,CRACKSLOT,leverPiv,pbLever,wheelBase,armL.u,armL.h,armR.u,armR.h,legL.sh,legL.f,legR.sh,legR.f]);for(const k in pedals3)K.add(pedals3[k].piv);cabin.children.forEach(o=>{if(o.position.distanceTo(new THREE.Vector3(-.04,2.12,-4.42))<.01)K.add(o);});CLUKEEP.forEach(o=>K.add(o));return CAB_KEEP=K;}
 function realVis(){const K=REALCAL[S.model],R0=REAL[S.model];CLUKEEP.forEach(o=>{if(o.userData.p0){o.position.copy(o.userData.p0);o.scale.set(1,1,1);}});for(const k in REAL)REAL[k].visible=false;
-  if(!R0){wheelBase.position.set(-.58,2.6,-4.47);wheelBase.scale.setScalar(1);cabin.visible=true;cabin.children.forEach(o=>o.visible=true);cabin.position.set(0,0,MODELS[S.model].dz);GPSSCR.sc.parent.position.y=2.74;if(EXT[S.model])EXT[S.model].visible=true;return;}
+  if(!R0){wheelBase.position.set(-.58,2.6,-4.47);wheelBase.scale.setScalar(1);cabin.visible=true;cabin.children.forEach(o=>o.visible=true);cabin.position.set(0,0,MODELS[S.model].dz);GPSSCR.sc.parent.position.y=2.83;if(EXT[S.model])EXT[S.model].visible=true;return;}
   const inter=!!REALI[S.model];R0.visible=inter||S.view!==0;
   if(K.box){EXT[S.model].visible=true;EXT[S.model].children.forEach(o=>{if(o.userData.cab)o.visible=false;});}else if(EXT[S.model])EXT[S.model].visible=!inter&&S.view===0;
-  if(inter){const keep=cabKeep();cabin.visible=true;cabin.children.forEach(o=>o.visible=keep.has(o));const c=REALI[S.model];cabin.position.set(c.x,c.y,c.z);CLUKEEP.forEach(o=>{const p=o.userData.p0||(o.userData.p0=o.position.clone());o.position.set(p.x,p.y+(K.cy||0),p.z+(K.cz||0));o.scale.set(K.cs||1,K.cs||1,1);});wheelBase.position.set(-.58+(K.wDx||0),2.6+(K.wDy||0),-4.47+(K.wDz||0));wheelBase.scale.setScalar(K.wS||1);GPSSCR.sc.parent.position.y=2.74+(K.gpsDy||0);}
-  else{cabin.visible=S.view===0;cabin.children.forEach(o=>o.visible=true);cabin.position.set(0,0,MODELS[S.model].dz);GPSSCR.sc.parent.position.y=2.74;wheelBase.position.set(-.58,2.6,-4.47);wheelBase.scale.setScalar(1);}}
+  if(inter){const keep=cabKeep();cabin.visible=true;cabin.children.forEach(o=>o.visible=keep.has(o));const c=REALI[S.model];cabin.position.set(c.x,c.y,c.z);CLUKEEP.forEach(o=>{const p=o.userData.p0||(o.userData.p0=o.position.clone());o.position.set(p.x,p.y+(K.cy||0),p.z+(K.cz||0));o.scale.set(K.cs||1,K.cs||1,1);});wheelBase.position.set(-.58+(K.wDx||0),2.6+(K.wDy||0),-4.47+(K.wDz||0));wheelBase.scale.setScalar(K.wS||1);GPSSCR.sc.parent.position.y=2.83+(K.gpsDy||0);}
+  else{cabin.visible=S.view===0;cabin.children.forEach(o=>o.visible=true);cabin.position.set(0,0,MODELS[S.model].dz);GPSSCR.sc.parent.position.y=2.83;wheelBase.position.set(-.58,2.6,-4.47);wheelBase.scale.setScalar(1);}}
 function loadRealTruck(k){try{if(!THREE.GLTFLoader)return;const C=REALCAL[k],b=atob(document.getElementById(C.el).textContent.trim()),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);
   new THREE.GLTFLoader().parse(u.buffer,'',g=>{try{const root=g.scene,piv=new THREE.Group(),wrap=new THREE.Group();piv.add(root);wrap.add(piv);wrap.scale.setScalar(C.s);
     if(C.mode==='pca'){root.position.set(-C.mx,-C.y0,-C.mz);piv.rotation.y=Math.atan2(-C.ux,C.uz);wrap.position.set(0,0,-.15-C.tandem*C.s);}
@@ -6587,22 +6601,42 @@ try{corpOffline();drawCluster();updateGateLabels();if(!restoreJob())openJobs();}
  // lo que se teclea o se toca dentro de la pantalla no llega a los controles del camión
  for(const ev of['keydown','keyup','keypress','wheel','touchstart','touchmove','mousedown'])A.addEventListener(ev,e=>e.stopPropagation(),{passive:true});
  setInterval(()=>{tick++;let al=[];try{gpsVoice();brechaTick();if(tick%4===0){al=alertVoice();if(cur)setVol();}else al=alPrev;}catch(e){}
+  if(!DH.hidden)try{devPaint();}catch(e){}
   if(!isOpen())return;const hh=Math.floor(env.tod),mm=Math.floor((env.tod-hh)*60);$('#auClock').textContent=String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');A.classList.toggle('night',env.day<.4);
   const nw=$('#auNow'),showAl=al.length&&(!cur||tick%32<14);nw.classList.toggle('al',!!showAl);nw.textContent=showAl?'⚠ '+al[0]:cur?'▶ '+(cur.now||cur.t):(radio.on?'♪ '+$('#rNow').textContent:'');
   if($('#auMap'))drawAuMap();else if(app==='truck'&&tick%4===0&&view.style.visibility!=='hidden')truckApp();},250);
  // ===== v99 · FN Auto en la pantalla del tablero: tocarla acerca la cámara; el video o podcast se queda pegado a esa pantalla =====
  const sc=GPSSCR.sc,v3a=new THREE.Vector3(),vW=new THREE.Vector3(),vN=new THREE.Vector3(),vT=new THREE.Vector3(),q0=new THREE.Quaternion(),q1=new THREE.Quaternion(),CW=660,CH=400;
- function quad(sub){if(!sc||S.view!==0)return null;const P=[];for(const[x,y]of(sub?[[.004,.046],[.16,.046],[.16,-.066],[.004,-.066]]:[[-.165,.1],[.165,.1],[.165,-.1],[-.165,-.1]])){v3a.set(x,y,0);sc.localToWorld(v3a);v3a.project(camera);if(v3a.z>1||v3a.z<-1)return null;P.push([(v3a.x+1)/2*innerWidth,(1-v3a.y)/2*innerHeight]);}return P;}
- function place(){const q=quad(A.classList.contains('far'));if(!q){A.style.visibility='hidden';return;}A.style.visibility='';const[[x0,y0],[x1,y1],[x2,y2],[x3,y3]]=q,dx1=x1-x2,dx2=x3-x2,sx=x0-x1+x2-x3,dy1=y1-y2,dy2=y3-y2,sy=y0-y1+y2-y3,den=dx1*dy2-dx2*dy1;if(Math.abs(den)<1e-6)return;
-  const g=(sx*dy2-dx2*sy)/den,h=(dx1*sy-sx*dy1)/den,a=(x1-x0+g*x1)/CW,b=(x3-x0+h*x3)/CH,d=(y1-y0+g*y1)/CW,e=(y3-y0+h*y3)/CH;A.style.transform=`matrix3d(${a},${d},0,${g/CW},${b},${e},0,${h/CH},0,0,1,0,${x0},${y0},0,1)`;}
+ function quad(sub){if(!sc||S.view!==0)return null;const P=[];for(const[x,y]of(sub?[[-.0165,.025],[.165,.025],[.165,-.07],[-.0165,-.07]]:[[-.165,.1],[.165,.1],[.165,-.1],[-.165,-.1]])){v3a.set(x,y,0);sc.localToWorld(v3a);v3a.project(camera);if(v3a.z>1||v3a.z<-1)return null;P.push([(v3a.x+1)/2*innerWidth,(1-v3a.y)/2*innerHeight]);}return P;}
+ function place(el,sub){if(!el){el=A;sub=A.classList.contains('far');}const q=quad(sub);if(!q){el.style.visibility='hidden';return;}el.style.visibility='';const[[x0,y0],[x1,y1],[x2,y2],[x3,y3]]=q,dx1=x1-x2,dx2=x3-x2,sx=x0-x1+x2-x3,dy1=y1-y2,dy2=y3-y2,sy=y0-y1+y2-y3,den=dx1*dy2-dx2*dy1;if(Math.abs(den)<1e-6)return;
+  const g=(sx*dy2-dx2*sy)/den,h=(dx1*sy-sx*dy1)/den,a=(x1-x0+g*x1)/CW,b=(x3-x0+h*x3)/CH,d=(y1-y0+g*y1)/CW,e=(y3-y0+h*y3)/CH;el.style.transform=`matrix3d(${a},${d},0,${g/CW},${b},${e},0,${h/CH},0,0,1,0,${x0},${y0},0,1)`;}
  function enterDash(){dash=true;zoomed=true;A.hidden=false;A.classList.remove('mini','pos','ghost','far');A.classList.add('dash');A.style.left=A.style.top='';render();place();}
  function leaveDash(){dash=false;zoomed=false;A.classList.remove('dash','far');A.style.transform='';A.style.visibility='';if(cur)A.classList.add('ghost');else A.hidden=true;render();}
  // la cámara se acerca a la pantalla (se llama desde el bucle del juego, en vista de cabina)
  window.__auCam=dt=>{zk+=((zoomed&&dash?1:0)-zk)*lerpK(7,dt);if(zk<.004){if(wasZ){wasZ=false;zk=0;camera.rotation.set(camera.rotation.x,-.03,0);camera.fov=70;camera.updateProjectionMatrix();}return;}
-  wasZ=true;camera.rotation.y=-.03;camera.rotation.z=0;const k=zk*zk*(3-2*zk);sc.getWorldPosition(vW);vN.set(0,0,1).transformDirection(sc.matrixWorld);vT.copy(vW).addScaledVector(vN,.43);cabin.worldToLocal(vT);
+  wasZ=true;camera.rotation.y=-.03;camera.rotation.z=0;const k=zk*zk*(3-2*zk);sc.getWorldPosition(vW);vN.set(0,0,1).transformDirection(sc.matrixWorld);vT.copy(vW).addScaledVector(vN,.43*sc.parent.scale.x);cabin.worldToLocal(vT);
   q0.copy(camera.quaternion);camera.position.lerp(vT,k);camera.lookAt(vW);q1.copy(camera.quaternion);camera.quaternion.copy(q0).slerp(q1,k);camera.fov=70+(33-70)*k;camera.updateProjectionMatrix();};
- (function fr(){requestAnimationFrame(fr);if(!dash)return;if(S.view!==0){leaveDash();return;}const far=!zoomed&&zk<.06;if(far!==A.classList.contains('far')){A.classList.toggle('far',far);render();}
+ (function fr(){requestAnimationFrame(fr);try{devFrame();}catch(e){}if(!dash)return;if(S.view!==0){leaveDash();return;}const far=!zoomed&&zk<.06;if(far!==A.classList.contains('far')){A.classList.toggle('far',far);render();}
   const hide=far&&!(cur&&cur.app!=='mus');A.classList.toggle('ghost',hide);if(!hide)place();})();   // lejos: solo video o podcast sobre la pantalla; con música o sin nada, se ve el mapa del GPS
+ // ===== v102 · pantalla del tablero nítida (HTML sobre el aparato) con información grande =====
+ sc.parent.scale.setScalar(1.5);
+ const DH=$('#devHud'),dhMap=$('#dhMap'),dhCtx=dhMap.getContext('2d'),mo=document.createElement('canvas'),moCtx=mo.getContext('2d');let dhKey='';
+ const km=n=>n>=1000?(n/1000).toFixed(1)+' km':n+' m';
+ function devPaint(){const gi=gpsInfo(),al=alPrev,vid=!!cur&&cur.app!=='mus';let dist='',street=gi.txt,m;
+  if(m=gi.txt.match(/^En (\d+) m gira a la (derecha|izquierda)(?: en (.*))?$/)){dist=km(+m[1]);street=(m[2]==='derecha'?'Gira a la derecha':'Gira a la izquierda')+(m[3]?' · '+m[3]:'');}
+  else if(m=gi.txt.match(/^En (\d+) m entra a la glorieta y sal a (.*)$/)){dist=km(+m[1]);street='Glorieta · sal a '+m[2];}
+  else if(m=gi.txt.match(/^Sigue (\d+) m por (.*)$/)){dist=km(+m[1]);street='Sigue por '+m[2];}
+  else if(!mission&&!BRECHA_JOB){dist='Sin flete';street='Toca esta pantalla → Fletes';}
+  else dist=(gi.sub||'').replace(' al destino','').replace(' en línea recta','');
+  $('#dhArrow').style.transform='rotate('+(gi.ang||0).toFixed(0)+'deg)';
+  let L,R='';if(al.length)L='⚠ '+al[0];else if(cur&&cur.app==='mus')L=(cur.state===2?'❚❚ ':'♪ ')+(cur.now||cur.t);else if(mission){L=mission.cargo+' · '+Math.round(mission.cond)+'%';R=$('#mTime').textContent;}else L=gi.sub&&gi.sub!=='—'?gi.sub:'FN Auto';
+  const k=[dist,street,L,R,al.length,vid].join('|');if(k!==dhKey){dhKey=k;$('#dhDist').textContent=dist;$('#dhStreet').textContent=street;$('#dhL').textContent=L;$('#dhR').textContent=R;$('#dhBot').classList.toggle('al',!!al.length);
+   if(DH.classList.contains('vid')!==vid){DH.classList.toggle('vid',vid);dhMap.width=vid?297:660;dhMap.height=vid?190:134;}}
+  const se=$('#dhSem');se.hidden=!SEMA;if(SEMA){se.dataset.s=SEMA.st;se.lastChild.textContent=Math.ceil(SEMA.left);}
+  // mapa con el doble de acercamiento: se dibuja al doble y se recorta el centro
+  const w=dhMap.width,h=dhMap.height;if(mo.width!==w*2){mo.width=w*2;mo.height=h*2;}try{drawMap(mo,moCtx,w*2,h*2,1,false);dhCtx.drawImage(mo,w/2,h*.58,w,h,0,0,w,h);}catch(e){}
+  DH.classList.toggle('night',env.day<.4);}
+ function devFrame(){const show=S.view===0&&!REV.on&&!(dash&&!A.classList.contains('far'));if(show===DH.hidden){DH.hidden=!show;if(show)devPaint();}if(show)place(DH,false);}
  // lo que FN Auto dibuja sobre el lienzo del GPS del tablero (512×310): semáforo con segundos, aviso y canción
  window.__auDev=(g,W,H)=>{g.textAlign='left';g.textBaseline='middle';
   if(SEMA){g.fillStyle='rgba(10,14,18,.9)';g.fillRect(10,88,158,66);g.fillStyle={r:'#ff3b2f',y:'#ffc21a',g:'#2fe07a'}[SEMA.st];g.beginPath();g.arc(44,121,23,0,7);g.fill();g.fillStyle='#f2f4f5';g.font='700 40px "Share Tech Mono",monospace';g.fillText(Math.ceil(SEMA.left)+'s',78,123);}
