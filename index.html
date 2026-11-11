@@ -283,6 +283,16 @@ body.cine .quick{display:none}
 .au-row u{display:block;height:8px;border-radius:5px;background:#1c222b;overflow:hidden;text-decoration:none}.au-row u s{display:block;height:100%;border-radius:5px;background:var(--route)}
 .au-row.w u s{background:var(--amber)}.au-row.b u s{background:var(--brake)}
 .au-ctl{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+/* v100 */
+#hudSem{display:flex;align-items:center;gap:5px;font:400 16px/1 var(--mono);color:var(--ink)}#hudSem i{width:15px;height:15px;border-radius:50%;background:#555;flex:none}
+#hudSem[data-s=r] i{background:#ff3b2f;box-shadow:0 0 9px #ff3b2f}#hudSem[data-s=y] i{background:#ffc21a;box-shadow:0 0 9px #ffc21a}#hudSem[data-s=g] i{background:#2fe07a;box-shadow:0 0 9px #2fe07a}
+.whb{cursor:pointer;pointer-events:auto}.whb circle{fill:#10151b;stroke:#6b7682;stroke-width:2}.whb text{fill:#e9ecef;font:700 11px sans-serif;text-anchor:middle;pointer-events:none}
+.au-pl{display:flex;gap:4px}.au-pl[hidden]{display:none}.au-pl button{width:28px}
+#auNow.al{color:var(--brake)}
+#auto.mini .au-brand,#auto.mini #auClock,#auto.mini .au-pl [data-m^=v]{display:none}#auto.mini .au-bar{gap:5px;padding-left:6px}
+#auto.night{filter:brightness(.7) saturate(.92)}
+#auView #jobList,#auView #routeList{grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:8px}#auView .opt{padding:8px 10px;gap:3px}#auView .opt b{font-size:15px}#auView .opt span{font-size:12px;line-height:1.2}#auView #btnBack{margin-bottom:8px}
+.au-al{display:grid;gap:5px;margin-bottom:10px}.au-al div{padding:7px 11px;border-radius:11px;background:rgba(255,92,77,.14);border:1px solid rgba(255,92,77,.4);font:700 13px/1.2 var(--display);color:#ffb3aa}
 </style>
 
 <div id="app">
@@ -336,7 +346,7 @@ body.cine .quick{display:none}
     </div>
     <div class="midcol">
       <div class="chip" id="cop" hidden>🚓 Patrulla cerca · respeta el límite</div>
-      <div class="chip hudcard"><div class="hrow"><div class="lim" id="hudLim">60</div><div class="spd"><span id="hudSpd">0</span><small>KM/H</small><b id="hudGear">N</b><i id="hudGrade"></i></div></div><div class="rpmbar"><i id="hudRpm"></i></div></div>
+      <div class="chip hudcard"><div class="hrow"><div class="lim" id="hudLim">60</div><div id="hudSem" hidden><i></i><b>0</b></div><div class="spd"><span id="hudSpd">0</span><small>KM/H</small><b id="hudGear">N</b><i id="hudGrade"></i></div></div><div class="rpmbar"><i id="hudRpm"></i></div></div>
       <div class="hint chip" id="hint" style="display:none"><span id="hintStep">PASO 1</span><em id="hintTxt" style="font-style:normal">Toca la llave 🔑</em></div>
     </div>
     <div class="rightcol">
@@ -388,6 +398,7 @@ body.cine .quick{display:none}
             <g stroke="#9aa1a8" stroke-width="10" stroke-linecap="round"><path d="M100 100L22 118"/><path d="M100 100L178 118"/><path d="M100 100V184"/></g>
             <circle cx="100" cy="100" r="26" fill="#1b2128" stroke="#434c56" stroke-width="3"/><text x="100" y="105" text-anchor="middle" font-family="Share Tech Mono, monospace" font-size="15" fill="#8c98a5">FN</text>
             <rect x="94" y="8" width="12" height="16" rx="2" style="fill:var(--amber)"/>
+            <g id="whMedia" style="display:none"><g class="whb" data-m="vdn"><circle cx="38" cy="114" r="13"/><text x="38" y="119">−</text></g><g class="whb" data-m="vup"><circle cx="67" cy="107.500" r="13"/><text x="67" y="112.500">+</text></g><g class="whb" data-m="tog"><circle cx="133" cy="107.500" r="13"/><text x="133" y="112">▮▮</text></g><g class="whb" data-m="next"><circle cx="162" cy="114" r="13"/><text x="162" y="118.500">▶▶</text></g></g>
           </g>
         </svg>
         <span id="wheelDeg">0°</span>
@@ -444,7 +455,7 @@ body.cine .quick{display:none}
           <button class="st-opt" id="startTruck">Camión <small>Semi Lowpoly</small></button>
           <button class="st-opt" id="startSet">Ajustes <small>Manejo y sonido</small></button>
         </div>
-        <div class="st-foot"><span>v99 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
+        <div class="st-foot"><span>v100 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
       </div>
       <div class="st-garage" id="startGarage" hidden>
         <h3>TU CAMIÓN</h3><div class="n">Semi Lowpoly</div>
@@ -453,7 +464,7 @@ body.cine .quick{display:none}
     </div>
   </div>
   <div id="auto" hidden role="dialog" aria-label="Pantalla multimedia del camión">
-    <div class="au-bar" id="auBar"><span class="au-brand">FN<b>AUTO</b></span><span id="auNow"></span><span id="auClock">09:00</span><button id="auMini" aria-label="Cambiar tamaño" title="Tamaño">▭</button><button id="auClose" aria-label="Cerrar pantalla" title="Cerrar">✕</button></div>
+    <div class="au-bar" id="auBar"><span class="au-brand">FN<b>AUTO</b></span><span id="auNow"></span><span class="au-pl" id="auPl" hidden><button data-m="prev" aria-label="Anterior">⏮</button><button data-m="tog" aria-label="Pausar o reproducir">❚❚</button><button data-m="next" aria-label="Siguiente">⏭</button><button data-m="vdn" aria-label="Bajar volumen">−</button><button data-m="vup" aria-label="Subir volumen">+</button></span><span id="auClock">09:00</span><button id="auMini" aria-label="Cambiar tamaño" title="Tamaño">▭</button><button id="auClose" aria-label="Cerrar pantalla" title="Cerrar">✕</button></div>
     <div class="au-body"><nav class="au-rail" id="auRail" aria-label="Aplicaciones"></nav><div class="au-main"><div id="auView"></div><div id="auMedia" class="bg"></div></div></div>
   </div>
   <div id="pipLbl" hidden>ATRÁS</div>
@@ -4855,7 +4866,15 @@ nodes.forEach((n,ni)=>{if(!LSET.has(ni)||n.edges.length<3)return;
     box(LG,.22,5.5,.22,0x3a3e44,px,2.75,pz);const hd=box(LG,.7,1.9,.45,0x1a1c1f,px,5.6,pz);hd.rotation.y=Math.atan2(dx,dz);
     [['r',6.2],['y',5.6],['g',5.0]].forEach(([c,y])=>{const s=new THREE.Mesh(sphG,n.mats[grp][c]);s.position.set(px+dx*.25,y,pz+dz*.25);LG.add(s);});}
   LIGHTS.push(ni);});
-function lightState(n,grp){const t=(S.t+n.off)%26;if(grp===0)return t<11?'g':t<13?'y':'r';return t<13?'r':t<24?'g':'y';}
+// v100: ciclo de 2 minutos (1 min de paso con 4 s de amarillo, 1 min de alto) y cuenta regresiva
+const SEMC=120;
+function lightInfo(n,grp){const t=(S.t+n.off*SEMC/26)%SEMC,a=grp===0?t:(t+SEMC/2)%SEMC;return a<56?{st:'g',left:56-a}:a<60?{st:'y',left:60-a}:{st:'r',left:SEMC-a};}
+function lightState(n,grp){return lightInfo(n,grp).st;}
+// el siguiente semáforo sobre la calle del camión (sigue la calle por sus curvas hasta 260 m)
+let SEMA=null;
+function semAhead(){SEMA=null;const e=S.curEdge;if(!e||S.offroad||S.v<-.5)return;const[fx,fz]=fwdOf(S.h);let dir=fx*e.ux+fz*e.uz>=0?1:-1,ce=e;const q=segDist(S.x,S.z,e);let dist=dir>0?e.L*(1-q.t):e.L*q.t;
+  for(let k=0;k<16&&dist<260;k++){const ni=dir>0?ce.b:ce.a,n=nodes[ni];if(n.light){const ap=Math.atan2(dir>0?-ce.uz:ce.uz,dir>0?-ce.ux:ce.ux);if((n.post||[]).some(a=>Math.abs(Math.atan2(Math.sin(a-ap),Math.cos(a-ap)))<.6)){const li=lightInfo(n,n.groupOf(ap));SEMA={st:li.st,left:li.left,d:dist};}return;}
+    if(n.edges.length!==2)return;const ne=edges[n.edges[0]===ce.i?n.edges[1]:n.edges[0]];dir=ne.a===ni?1:-1;ce=ne;dist+=ne.L;}}
 const LCOL={r:[0xff3b2f,0x330a08],y:[0xffc21a,0x33290a],g:[0x2fe07a,0x0a3318]};
 function lightsTick(){for(const ni of LIGHTS){const n=nodes[ni];for(const grp of [0,1]){const st=lightState(n,grp);if(n.st[grp]===st)continue;n.st[grp]=st;for(const c of ['r','y','g'])n.mats[grp][c].color.setHex(LCOL[c][c===st?0:1]);}}}
 
@@ -5322,6 +5341,9 @@ const REVMATS=[],revGuides=new THREE.Group(),revRing=new THREE.Mesh(new THREE.Ri
 {const gm=c=>{const m=new THREE.MeshBasicMaterial({color:c,depthTest:false,transparent:true,opacity:.95});m.userData.base=new THREE.Color(c);REVMATS.push(m);return m;},R0=gm(0xff3b30),Y0=gm(0xffc23d),G0=gm(0x3fd08a),strip=(m,w,l,x,z)=>{const o=new THREE.Mesh(new THREE.PlaneGeometry(w,l).rotateX(-Math.PI/2),m);o.position.set(x,.06,z);o.renderOrder=5;o.layers.set(3);revGuides.add(o);};
  for(const sx of[-1,1]){strip(R0,.2,1,sx*1.3,.5);strip(Y0,.2,2,sx*1.3,2);strip(G0,.2,5,sx*1.3,5.5);strip(R0,.5,.1,sx*1.1,1);strip(Y0,.5,.1,sx*1.1,3);strip(G0,.5,.1,sx*1.1,6);}
  revRing.layers.set(3);revRing.renderOrder=5;revRing.visible=false;}
+// v100: con remolque, la reversa se ve desde arriba (camión y caja completos; arriba de la imagen = hacia donde retrocedes)
+const topCam=new THREE.OrthographicCamera(-31.3,31.3,19,-19,1,160);topCam.layers.enable(3);
+function topCamUpd(){const[hx,hz]=hinge(),[tx,tz]=fwdOf(S.th),cx=hx-tx*8,cz=hz-tz*8;topCam.position.set(cx,70,cz);topCam.up.set(-tx,0,-tz);topCam.lookAt(cx,0,cz);topCam.updateMatrixWorld(true);return topCam;}
 function updateRearCam(){const k=S.model,nt=NT(),par=nt?truck:trailer;par.add(rearCam);rearCam.position.set(0,nt?3.5:4.1,nt?(MODELS[k].rear||1.6)+.5:12.8);
   REV.rz=nt?(MODELS[k].rear||1.6):12.45;par.add(revCam);revCam.position.set(0,nt?3.2:3.9,REV.rz+.1);par.add(revGuides);revGuides.position.set(0,0,REV.rz);REV.parent=par;}
 /* ===== camión con modelo 3D real ("Lowpoly Semi", CC BY-NC-SA) ===== */
@@ -5485,6 +5507,7 @@ function drawGpsDev(){const g=gpsCtx,W=512,H=310;drawMap(gpsCv,g,W,H,2,false);g.
   g.fillStyle='rgba(10,14,18,.85)';g.fillRect(0,H-46,W,46);g.font='600 27px "Barlow Condensed",sans-serif';g.textBaseline='middle';g.fillStyle='#d8dde2';
   if(mission){g.fillText(`${mission.cargo} · ${Math.round(mission.cond)}%`,14,H-23);g.textAlign='right';g.fillStyle='#ffb53d';g.fillText(els.time?els.time.textContent:'',W-14,H-23);}
   else g.fillText('Sin carga · Menú → Ver cargas',14,H-23);
+  if(window.__auDev)window.__auDev(g,W,H);
   gpsTex.needsUpdate=true;}
 
 /* ================= controles ================= */
@@ -5894,7 +5917,7 @@ function makeJobs(){const md=MD(),lv=LVL(),cargos=CARGO.filter(c=>(md.rigid?(c[2
     const c=cargos[Math.floor(Math.random()*cargos.length)],dp=DEPOTS[P],r=planRoute(dp.E.x,dp.E.z,Math.atan2(-dp.e.ux,-dp.e.uz),DEPOTS[D],'dist'),toP=planRoute(S.x,S.z,S.h,DEPOTS[P],'dist');
     const j={from:P,to:D,cargo:c[0],t:c[1],tt:c[2],col:c[3],len:r.len,toP:toP.len};if(FRAGILE.includes(c[0]))j.fragile=true;if(lv>=2&&Math.random()<.22)j.urgent=true;if(Math.random()<.22&&c[2]!=='tanque'&&!j.fragile){j.over=true;j.t=Math.round(grossLim()-emptyT(c[2])+rr(2,4));}out.push(j);}
   return out.sort((a,b)=>a.len-b.len);}
-function openJobs(){$('#jFrom').textContent='BOLSA DE FLETES';$('#jTitle').textContent='Elige tu flete';jobs=makeJobs();
+function openJobs(){if(window.__auJobsBack)window.__auJobsBack();$('#jFrom').textContent='BOLSA DE FLETES';$('#jTitle').textContent='Elige tu flete';jobs=makeJobs();
   const list=$('#jobList');list.innerHTML='';list.hidden=false;$('#routeList').hidden=true;$('#btnBack').hidden=true;const md=MD();
   jobs.forEach((j,k)=>{const last=k===jobs.length-1,tg=k===0?['CORTA','']:last?['LARGA','l']:['MEDIA','m'];j.pay=payFor(j.len,j.t)+Math.round(j.toP/1000*600/50)*50+(last?1500:0);if(j.over)j.pay=Math.round(j.pay*1.3/50)*50;if(j.fragile)j.pay=Math.round(j.pay*1.35/50)*50;if(j.urgent)j.pay=Math.round(j.pay*2/50)*50;j.pay=Math.round(j.pay*(1+.05*(LVL()-1))/50)*50;j.pay=Math.round(j.pay*repMul(DEPOTS[j.to].name)/50)*50;
     if(j.urgent)tg[0]='URGENTE '+tg[0];else if(j.fragile)tg[0]='FRÁGIL · '+tg[0];const b=document.createElement('button');b.className='opt';b.innerHTML=`<em class="tag ${tg[1]}">${tg[0]}</em><b></b><span></span><span></span><span class="rep"></span><span class="pay"></span>`;
@@ -6148,7 +6171,9 @@ function drawMap(cv=mini,ctx=mctx,Wc,Hc,dpr0,bigOv){const dpr=dpr0||Math.min(win
 /* ================= UI ================= */
 const lastUI={};function setText(el,key,v){if(lastUI[key]!==v){el.textContent=v;lastUI[key]=v;}}
 const els={lim:$('#hudLim'),grade:$('#hudGrade'),cop:$('#cop'),spd:$('#hudSpd'),gear:$('#hudGear'),rpm:$('#hudRpm'),hint:$('#hint'),hs:$('#hintStep'),ht:$('#hintTxt'),gpsA:$('#gpsArrow'),gpsT:$('#gpsTxt'),cond:$('#mCond'),time:$('#mTime'),money:$('#mMoney'),park:$('#park'),warn:$('#warn'),wd:$('#wheelDeg'),clock:$('#hudClock'),wx:$('#hudWx'),fuel:$('#hudFuel')};
-function gpsInfo(){const p=gps.pts;if(!mission||p.length<2)return{txt:'Elige una carga',sub:'—',ang:0};
+let BRECHA_JOB=null;
+function gpsInfo(){if(!mission&&BRECHA_JOB){const inZ=offMask(S.x,S.z)>0,t=inZ?[PEDRERA.x,PEDRERA.z]:TRACK[0],d=Math.hypot(t[0]-S.x,t[1]-S.z);return{txt:inZ?'Sigue la brecha hasta la Pedrera El Norte':'Ve al inicio de la brecha, al norte del Blvd. Humberto Ramos Lozano',sub:(d/1000).toFixed(1)+' km en línea recta',ang:(Math.atan2(t[0]-S.x,-(t[1]-S.z))+S.h)*180/Math.PI};}
+  const p=gps.pts;if(!mission||p.length<2)return{txt:'Elige una carga',sub:'—',ang:0};
   const dz=mission.dest?mission.dest.zone:DEPOTS[mission.to].zone,left=Math.hypot(S.x-dz.x,S.z-dz.z),N=gps.names,m10=x=>Math.round(x/10)*10;
   let acc=Math.hypot(p[1][0]-S.x,p[1][1]-S.z),txt=null,k=1;
   for(;k<p.length-1;k++){const inRing=(N[k]||'').startsWith('Glorieta'),prevRing=(N[k-1]||'').startsWith('Glorieta');
@@ -6168,6 +6193,7 @@ function ui(){
   for(const kk in pedals){const p=pedals[kk],v=S.ped[kk];if(Math.abs(p.last-v)<.002)continue;p.last=v;p.arm.style.transform=`rotateX(${(v*42).toFixed(2)}deg) translateY(${(v*6).toFixed(1)}%)`;p.pad.style.filter=`brightness(${1+v*.35})`;p.val.textContent=Math.round(v*100)+'%';p.fill.style.height=(v*55)+'%';}
   {const lim=(S.curEdge&&S.curEdge.lim)||60,kmh=Math.abs(S.v)*3.6;setText(els.lim,'lim',String(lim));els.lim.classList.toggle('over',kmh>lim+5);
    const gr=Math.round((S.grade||0)*100*(S.v<-.2?-1:1));setText(els.grade,'gr',Math.abs(gr)>=2?(gr>0?'↗ ':'↘ ')+Math.abs(gr)+'%':'');els.cop.hidden=!copNear;}
+  if(frame%10===0){semAhead();const h=$('#hudSem');h.hidden=!SEMA;if(SEMA){h.dataset.s=SEMA.st;h.lastChild.textContent=Math.ceil(SEMA.left);}}
   setText(els.spd,'sp',String(Math.round(Math.abs(S.v)*3.6)));els.rpm.style.width=clamp(S.rpm/2500*100,0,100)+'%';
   btnEngine.classList.toggle('on',S.running);btnEngine.title=S.running?'Apagar':'Arrancar';
   setText(els.money,'m','Nv '+LVL()+' · '+fmtMoney(save.money));const hh=Math.floor(env.tod),mm=Math.floor((env.tod-hh)*60);setText(els.clock,'ck',String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0'));
@@ -6408,7 +6434,7 @@ function loopBody(now){
   saveT-=dt;if(saveT<=0){save.fuel=S.fuel;if(!mission&&Math.abs(S.v)<25&&!S.rolled)save.pos={x:+S.x.toFixed(1),z:+S.z.toFixed(1),h:+S.h.toFixed(3)};if(!S.rolled&&Math.abs(S.v)<25)snapJob();save.here=here;save.tod=+env.tod.toFixed(2);persist();saveT=10;}
   copTick(dt);audioTick(jakeActive);radioTick();ui();
   pip.visible=pipBg.visible=false;RVM.visible=save.pip&&S.view===0&&!revOn;if(pipLbl.hidden!==!pip.visible)pipLbl.hidden=!pip.visible;revMini.visible=revOn&&!bigMap&&S.view!==0;
-  if(revOn&&(frame%4===3||frame%8===1)){const cv=cabin.visible;cabin.visible=false;renderer.setRenderTarget(revRT);renderer.render(scene,revCam);renderer.setRenderTarget(null);cabin.visible=cv;}
+  if(revOn&&(frame%4===3||frame%8===1)){const cv=cabin.visible,tp=S.hitched&&!NT();cabin.visible=tp?cv:false;renderer.setRenderTarget(revRT);renderer.render(scene,tp?topCamUpd():revCam);renderer.setRenderTarget(null);cabin.visible=cv;}
   else if(save.pip&&!revOn&&frame%(HI()?4:8)===3){const cv=cabin.visible;cabin.visible=false;renderer.setRenderTarget(pipRT);renderer.render(scene,rearCam);renderer.setRenderTarget(null);cabin.visible=cv;}
   if(renderer.shadowMap.enabled&&frame%2===0)renderer.shadowMap.needsUpdate=true;chunkTick(dt);renderer.render(scene,camera);
   if((save.pip||revOn)&&S.view!==9&&!$('#jobs').hidden===false){renderer.autoClear=false;renderer.clearDepth();renderer.render(hudScene,hudCam);renderer.autoClear=true;}
@@ -6458,6 +6484,7 @@ VEG.forEach(im=>im.count=HI()?im.userData.full:Math.floor(im.userData.full*.35))
 try{corpOffline();drawCluster();updateGateLabels();if(!restoreJob())openJobs();}catch(e){setTimeout(()=>showErr('inicio',e),1500);}requestAnimationFrame(loop);
 /* ===== v97 · FN Auto: pantalla multimedia del camión (mapa, YouTube, podcasts, radio y estado). Diseño propio del juego. ===== */
 (function(){const A=$('#auto'),view=$('#auView'),media=$('#auMedia'),rail=$('#auRail');const ST=()=>{const a=save.auto||(save.auto={fav:[],mini:false});if(!a.fav)a.fav=[];if(!a.seed1){a.seed1=1;for(const[t,u]of[['Facultad','https://music.youtube.com/playlist?list=PLJ8CMwmDS9_o'],['Mi playlist','https://music.youtube.com/playlist?list=PLKLMlQgLBLl4']])if(!a.fav.some(x=>x.u===u))a.fav.unshift({u,t,a:'mus'});}return a;};
+ const JSQ='&enablejsapi=1'+(location.protocol.indexOf('http')===0?'&origin='+encodeURIComponent(location.origin):'');
  let app='home',cur=null,list=false,tick=0,dash=false,zoomed=false,zk=0,wasZ=false;const isOpen=()=>!A.hidden&&!A.classList.contains('ghost');
  const sv=p=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
  const APPS={home:{n:'Inicio',c:'#ffb53d',i:sv('<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>')},
@@ -6465,19 +6492,60 @@ try{corpOffline();drawCluster();updateGateLabels();if(!restoreJob())openJobs();}
   yt:{n:'YouTube',d:'Videos con tu enlace',c:'#ff6b5e',i:sv('<rect x="2.5" y="5" width="19" height="14" rx="4"/><path d="M10 9.2v5.6l5-2.800z" fill="currentColor"/>')},
   pod:{n:'Podcasts',d:'YouTube o Spotify',c:'#b79bff',i:sv('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.500 11a6.500 6.500 0 0 0 13 0M12 17.500V21M8.500 21h7"/>')},
   radio:{n:'Música',d:'YouTube Music y radio',c:'#7cc4ff',i:sv('<path d="M9 18V5.500l11-2.500v12.500"/><circle cx="6.500" cy="18" r="2.500"/><circle cx="17.500" cy="15.500" r="2.500"/>')},
+  jobs:{n:'Fletes',d:'Cargas y clientes',c:'#5ad1c8',i:sv('<path d="M3.500 8 12 3.500 20.500 8v8L12 20.500 3.500 16z"/><path d="M3.500 8 12 12.500 20.500 8M12 12.500v8"/>')},
   truck:{n:'Camión',d:'Estado y desgaste',c:'#ffb53d',i:sv('<path d="M2.500 16V7h10v9M12.500 10h4.500l4 4v2h-8.500"/><circle cx="7" cy="17.500" r="2"/><circle cx="17" cy="17.500" r="2"/>')}};
  function parse(u){u=(u||'').trim();let m;
-  if(m=u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:[^#]*&)?v=|shorts\/|live\/|embed\/))([\w-]{11})/))return{k:'yt',u,src:'https://www.youtube.com/embed/'+m[1]+'?autoplay=1&playsinline=1&rel=0',th:'https://i.ytimg.com/vi/'+m[1]+'/mqdefault.jpg',t:/music\.youtube\.com/.test(u)?'Canción de YouTube Music':'Video de YouTube'};
-  if(m=u.match(/youtube\.com\/[^#]*[?&]list=([\w-]+)/))return{k:'yt',u,src:'https://www.youtube.com/embed/videoseries?list='+m[1]+'&autoplay=1&playsinline=1',t:/music\.youtube\.com/.test(u)?'Playlist de YouTube Music':'Lista de YouTube'};
+  if(m=u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:[^#]*&)?v=|shorts\/|live\/|embed\/))([\w-]{11})/))return{k:'yt',u,src:'https://www.youtube.com/embed/'+m[1]+'?autoplay=1&playsinline=1&rel=0'+JSQ,th:'https://i.ytimg.com/vi/'+m[1]+'/mqdefault.jpg',t:/music\.youtube\.com/.test(u)?'Canción de YouTube Music':'Video de YouTube'};
+  if(m=u.match(/youtube\.com\/[^#]*[?&]list=([\w-]+)/))return{k:'yt',u,src:'https://www.youtube.com/embed/videoseries?list='+m[1]+'&autoplay=1&playsinline=1'+JSQ,t:/music\.youtube\.com/.test(u)?'Playlist de YouTube Music':'Lista de YouTube'};
   if(m=u.match(/open\.spotify\.com\/(?:intl-[a-z]+\/)?(track|album|playlist|episode|show|artist)\/([A-Za-z0-9]+)/))return{k:'sp',u,src:'https://open.spotify.com/embed/'+m[1]+'/'+m[2],t:{track:'Canción',album:'Álbum',playlist:'Playlist',episode:'Episodio',show:'Podcast',artist:'Artista'}[m[1]]+' de Spotify'};
   return null;}
  function play(it,from){it.app=from;cur=it;list=false;media.innerHTML='<div class="au-mbar"><button class="au-b" data-a="list">◀ Lista</button><span></span><button class="au-b" data-a="stop">Detener</button></div>';
-  media.querySelector('span').textContent=it.t;const f=document.createElement('iframe');f.src=it.src;f.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';f.allowFullscreen=true;f.referrerPolicy='strict-origin-when-cross-origin';f.title=it.t;media.appendChild(f);
+  media.querySelector('span').textContent=it.t;const f=document.createElement('iframe');f.src=it.src;f.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';f.allowFullscreen=true;f.referrerPolicy='strict-origin-when-cross-origin';f.title=it.t;media.appendChild(f);it.state=1;it.now='';paintPl();f.addEventListener('load',()=>{listen();setVol();setTimeout(()=>{listen();setVol();},1500);});
   media.querySelector('[data-a=list]').onclick=()=>{list=true;render();};media.querySelector('[data-a=stop]').onclick=stop;
   if(!ST().fav.some(x=>x.u===it.u)){ST().fav.unshift({u:it.u,t:it.t,a:from});if(ST().fav.length>16)ST().fav.length=16;persist();
    if(it.k==='yt')try{fetch('https://www.youtube.com/oembed?format=json&url='+encodeURIComponent(it.u)).then(r=>r.json()).then(j=>{if(j&&j.title){const x=ST().fav.find(x=>x.u===it.u);if(x){x.t=j.title;persist();}if(cur===it){it.t=j.title;const s=media.querySelector('span');if(s)s.textContent=j.title;}}}).catch(()=>{});}catch(e){}}
   render();}
- function stop(){cur=null;media.innerHTML='';render();}
+ function stop(){cur=null;media.innerHTML='';paintPl();render();}
+ // ---- control del reproductor: YouTube acepta órdenes por mensajes (pausa, siguiente, volumen); Spotify solo pausa ----
+ const ifr=()=>media.querySelector('iframe');
+ function cmd(func,args){const f=ifr();if(!f||!cur)return;try{if(cur.k==='yt')f.contentWindow.postMessage(JSON.stringify({event:'command',func,args:args||[]}),'*');else if(func==='pauseVideo'||func==='playVideo')f.contentWindow.postMessage({command:'toggle'},'*');}catch(e){}}
+ function listen(){const f=ifr();if(f&&cur&&cur.k==='yt')try{f.contentWindow.postMessage(JSON.stringify({event:'listening',id:'fn',channel:'widget'}),'*');}catch(e){}}
+ let duckUntil=0;const volNow=()=>Math.round((ST().vol??40)*(performance.now()<duckUntil?.3:1));
+ function setVol(){cmd('setVolume',[volNow()]);}
+ function duck(ms){duckUntil=performance.now()+ms;setVol();setTimeout(setVol,ms+80);}
+ function paintPl(){$('#auPl').hidden=!cur;$('#whMedia').style.display=cur?'':'none';const p=cur&&cur.state===2;A.querySelector('#auPl [data-m=tog]').textContent=p?'▶':'❚❚';$('#whMedia [data-m=tog] text').textContent=p?'▶':'▮▮';}
+ function mediaBtn(m){if(m==='vup'||m==='vdn'){const o=ST();o.vol=clamp((o.vol??40)+(m==='vup'?10:-10),0,100);persist();setVol();toast('Volumen de FN Auto: '+o.vol+'%',true);return;}
+  if(!cur){toast('No hay nada sonando en FN Auto');return;}if(m==='tog'){const pl=cur.state!==2;cmd(pl?'pauseVideo':'playVideo');cur.state=pl?2:1;}else cmd(m==='next'?'nextVideo':'previousVideo');paintPl();}
+ window.addEventListener('message',e=>{if(!cur||!/youtube/.test(e.origin||''))return;let d=e.data;try{if(typeof d==='string')d=JSON.parse(d);}catch(x){return;}const i=d&&d.info;if(!i)return;
+  if(i.playerState===1||i.playerState===2){cur.state=i.playerState;paintPl();}if(i.videoData&&i.videoData.title)cur.now=i.videoData.title;});
+ $('#auPl').addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(b)mediaBtn(b.dataset.m);});
+ $('#whMedia').addEventListener('pointerdown',e=>{const b=e.target.closest('[data-m]');if(!b)return;e.stopPropagation();e.preventDefault();mediaBtn(b.dataset.m);});
+ // ---- voz (GPS y avisos): baja la música mientras habla ----
+ function say(t){try{if(!('speechSynthesis' in window)||ST().voice===false)return;const u=new SpeechSynthesisUtterance(t);u.lang='es-MX';u.rate=1.03;u.onstart=()=>duck(7000);u.onend=()=>{duckUntil=0;setVol();};speechSynthesis.speak(u);}catch(e){}}
+ let vKey='',vStage=0;
+ function gpsVoice(){if(!mission||!S.running)return;const gi=gpsInfo(),m=gi.txt.match(/^En (\d+) m (.+)$/);
+  if(!m){if(/^(Mete|Retrocede)/.test(gi.txt)){const k=gi.txt.slice(0,10);if(vKey!==k){vKey=k;vStage=2;say(gi.txt.replace(/ · .*$/,''));}}return;}
+  const d=+m[1],key=m[2];if(key!==vKey){vKey=key;vStage=0;}if(vStage===0&&d<=320){vStage=1;if(d>100)say('En '+d+' metros, '+key);}if(vStage<=1&&d<=80){vStage=2;say(key.charAt(0).toUpperCase()+key.slice(1));}}
+ // ---- avisos del camión ----
+ function alerts(){const a=[],mt=MT();if(S.fuel/tankCap()<.15)a.push('Diésel bajo');if((S.bt||0)>.75)a.push('Frenos muy calientes');if((S.et||0)>.75)a.push('Motor muy caliente');if((S.air??1)<.3)a.push('Poco aire de frenos');
+  if(S.flat)a.push('Llanta ponchada');else if((S.minP??1)<.85)a.push('Llanta baja de presión');const w=suspW();if(w>=.7)a.push('Suspensión muy dañada');else if(w>=.35)a.push('Suspensión golpeada');if((mt.oil||0)>OIL_KM)a.push('Cambio de aceite vencido');return a;}
+ let alPrev=[];function alertVoice(){const a=alerts();for(const x of a)if(!alPrev.includes(x)){say('Atención. '+x);break;}alPrev=a;return a;}
+ // ---- encargo de brecha: llevar refacciones a la Pedrera, sin remolque ----
+ function brechaTick(){const B=BRECHA_JOB;if(!B)return;if(mission){BRECHA_JOB=null;return;}if(Math.hypot(S.x-PEDRERA.x,S.z-PEDRERA.z)<PEDRERA.r-6&&Math.abs(S.v)<1.2){const dw=Math.max(0,suspW()-B.w0),pen=Math.min(Math.round(B.pay*.6/50)*50,Math.round(dw*22000/50)*50),tot=B.pay-pen;
+   save.money+=tot;save.xp=(save.xp||0)+350;BRECHA_JOB=null;persist();toast('Encargo entregado en la Pedrera: '+fmtMoney(tot)+(pen?' (descuento de '+fmtMoney(pen)+' por maltratar la suspensión)':' · suspensión intacta'),true);say('Encargo entregado en la Pedrera');if(app==='jobs')render();}}
+ // ---- Fletes: la misma bolsa de cargas del juego, mostrada dentro de la pantalla ----
+ const jl=$('#jobList'),rl=$('#routeList'),bb=$('#btnBack');
+ function jobsBack(){const card=$('#jobs .card'),ref=card.querySelector('.rrow');if(jl.parentNode!==card){card.insertBefore(jl,ref);card.insertBefore(rl,ref);card.insertBefore(bb,ref);}}
+ window.__auJobsBack=jobsBack;
+ const repList=()=>'<h3 class="au-h" style="margin-top:14px;font-size:16px">Tus clientes</h3><div class="au-rows">'+DEPOTS.map(d=>`<div class="au-row"><div><span>${esc(d.name)}</span><b style="color:var(--amber);letter-spacing:.08em">${repStars(d.name)}</b></div></div>`).join('')+'</div>';
+ function jobsApp(){if(mission){jobsBack();view.innerHTML=`<h3 class="au-h">${esc(mission.cargo)} · ${mission.t} t</h3><p class="au-sub">${esc(DEPOTS[mission.from].name)} → ${esc(DEPOTS[mission.to].name)} · carga al ${Math.round(mission.cond)}%. Para cancelar: Menú → Cancelar flete.</p>`+repList();return;}
+  if(BRECHA_JOB){jobsBack();view.innerHTML=`<h3 class="au-h">Encargo de brecha</h3><p class="au-sub">Refacciones a la Pedrera El Norte · ${fmtMoney(BRECHA_JOB.pay)}. Detente dentro del patio de la pedrera para entregar.</p><div class="au-ctl"><button class="au-b" id="auBrX">Cancelar encargo</button></div>`+repList();$('#auBrX').onclick=()=>{BRECHA_JOB=null;render();};return;}
+  if(jl.parentNode&&jl.parentNode.id==='auJobs')return;
+  view.innerHTML='<h3 class="au-h">Bolsa de fletes</h3><p class="au-sub">Toca una carga y luego elige la ruta.</p><div id="auJobs"></div><div class="opts" id="auBr" style="margin-bottom:6px"></div>'+repList();
+  openJobs();$('#jobs').hidden=true;$('#auJobs').append(jl,rl,bb);
+  const b=document.createElement('button');b.className='opt';b.innerHTML='<em class="tag l">BRECHA</em><b>Refacciones a la Pedrera El Norte</b><span>Sin remolque, por la terracería del noroeste. Te descuentan si maltratas la suspensión.</span><span class="pay">$9,500</span>';
+  b.onclick=()=>{BRECHA_JOB={pay:9500,w0:suspW()};toast('Encargo aceptado: sigue la flecha del GPS hasta la brecha',true);if(dash)zoomed=false;go('map');};$('#auBr').appendChild(b);}
+ view.addEventListener('click',()=>setTimeout(()=>{if(app==='jobs'&&mission&&jl.parentNode&&jl.parentNode.id==='auJobs'){jobsBack();if(dash)zoomed=false;go('map');}},90));
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const AK={yt:'yt',pod:'pod',mus:'radio'};
  // caja para pegar un enlace + mosaicos de lo guardado (la usan YouTube, Podcasts y Música)
@@ -6501,15 +6569,15 @@ try{corpOffline();drawCluster();updateGateLabels();if(!restoreJob())openJobs();}
    <div class="au-ctl"><button class="au-b" data-r="rFiles">Agregar canciones del teléfono</button><button class="au-b" data-r="rClear">Borrar mías</button></div><p class="au-sub">Tus canciones se guardan en este dispositivo y suenan sin internet.</p>`;
   const sync=()=>{const n=$('#auRN');if(!n)return;n.textContent=$('#rNow').textContent;$('#auRS').textContent=$('#rSub').textContent;view.querySelector('[data-r=rPower]').textContent=$('#rPower').textContent;};
   view.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{$('#'+b.dataset.r).click();setTimeout(sync,120);});sync();wire('mus','Pega un enlace de YouTube Music o de YouTube');}
- function mapApp(){view.innerHTML='<canvas id="auMap"></canvas><div class="au-turn" id="auTurn"></div>';drawAuMap();}
+ function mapApp(){view.innerHTML='<canvas id="auMap"></canvas><div class="au-turn" id="auTurn"></div><button class="au-b" id="auVoz" style="position:absolute;left:10px;bottom:10px"></button>';const vb=$('#auVoz'),pv=()=>{vb.textContent='Voz del GPS: '+(ST().voice===false?'no':'sí');};vb.onclick=()=>{ST().voice=ST().voice===false;persist();pv();if(ST().voice!==false)say('Voz del GPS activada');};pv();if(A.classList.contains('mini')||A.classList.contains('far'))vb.style.display='none';drawAuMap();}
  function drawAuMap(){const cv=$('#auMap');if(!cv)return;const W=cv.clientWidth,H=cv.clientHeight;if(W<10)return;const d=Math.min(window.devicePixelRatio||1,2);if(cv.width!==Math.round(W*d)){cv.width=Math.round(W*d);cv.height=Math.round(H*d);}
   try{drawMap(cv,cv.getContext('2d'),W,H,d,false);}catch(e){}const gi=gpsInfo(),t=$('#auTurn');if(t&&t.dataset.k!==gi.txt+gi.sub){t.dataset.k=gi.txt+gi.sub;t.textContent=gi.txt;const sm=document.createElement('small');sm.textContent=gi.sub;t.appendChild(sm);}}
- function homeApp(){const gi=gpsInfo();view.innerHTML=`<div class="au-next">${APPS.map.i.replace('<svg','<svg style="width:22px;height:22px;color:var(--route);flex:none"')}<div><span id="auHN"></span><small id="auHS"></small></div></div><div class="au-tiles">`+
-   ['map','yt','pod','radio','truck'].map(k=>`<button class="au-tile" data-app="${k}" style="--c:${APPS[k].c}">${APPS[k].i}<span>${APPS[k].n}<small>${APPS[k].d}</small></span></button>`).join('')+'</div>';
+ function homeApp(){const gi=gpsInfo(),al=alerts();view.innerHTML=(al.length?'<div class="au-al">'+al.map(x=>'<div>⚠ '+x+'</div>').join('')+'</div>':'')+`<div class="au-next">${APPS.map.i.replace('<svg','<svg style="width:22px;height:22px;color:var(--route);flex:none"')}<div><span id="auHN"></span><small id="auHS"></small></div></div><div class="au-tiles">`+
+   ['map','yt','pod','radio','jobs','truck'].map(k=>`<button class="au-tile" data-app="${k}" style="--c:${APPS[k].c}">${APPS[k].i}<span>${APPS[k].n}<small>${APPS[k].d}</small></span></button>`).join('')+'</div>';
   $('#auHN').textContent=mission?gi.txt:'Sin flete: elige una carga en Menú → Ver cargas';$('#auHS').textContent=mission?gi.sub+' · '+mission.cargo:'';view.querySelectorAll('[data-app]').forEach(b=>b.onclick=()=>go(b.dataset.app));}
- function render(){const far=A.classList.contains('far'),mini=(A.classList.contains('mini')&&!dash)||far,showMedia=!!cur&&(mini||(!list&&AK[cur.app]===app));media.classList.toggle('bg',!showMedia);view.style.visibility=showMedia?'hidden':'';
+ function render(){const far=A.classList.contains('far'),mini=(A.classList.contains('mini')&&!dash)||far,showMedia=!!cur&&(mini||(!list&&AK[cur.app]===app));if(app!=='jobs'||mini||showMedia)jobsBack();media.classList.toggle('bg',!showMedia);view.style.visibility=showMedia?'hidden':'';
   rail.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.app===app));
-  if(showMedia)return;if(mini){mapApp();return;}({home:homeApp,map:mapApp,yt:()=>mediaApp('yt'),pod:()=>mediaApp('pod'),radio:radioApp,truck:truckApp})[app]();view.scrollTop=0;}
+  if(showMedia)return;if(mini){mapApp();return;}({home:homeApp,map:mapApp,yt:()=>mediaApp('yt'),pod:()=>mediaApp('pod'),radio:radioApp,jobs:jobsApp,truck:truckApp})[app]();if(app==='jobs')return;view.scrollTop=0;}
  function go(a){app=a;list=false;render();}
  for(const k in APPS){const b=document.createElement('button');b.dataset.app=k;b.title=APPS[k].n;b.setAttribute('aria-label',APPS[k].n);b.style.setProperty('--c',APPS[k].c);b.innerHTML=APPS[k].i;b.onclick=()=>go(k);rail.appendChild(b);}
  function setMini(m){ST().mini=m;A.classList.toggle('mini',m);$('#auMini').textContent=m?'⤢':'▭';if(!m){A.classList.remove('pos');A.style.left=A.style.top='';}render();}
@@ -6521,12 +6589,14 @@ try{corpOffline();drawCluster();updateGateLabels();if(!restoreJob())openJobs();}
   bar.addEventListener('pointermove',e=>{if(!d)return;A.style.left=clamp(e.clientX-d.x,0,innerWidth-A.offsetWidth)+'px';A.style.top=clamp(e.clientY-d.y,0,innerHeight-A.offsetHeight)+'px';});const end=()=>{d=null;};bar.addEventListener('pointerup',end);bar.addEventListener('pointercancel',end);}
  // lo que se teclea o se toca dentro de la pantalla no llega a los controles del camión
  for(const ev of['keydown','keyup','keypress','wheel','touchstart','touchmove','mousedown'])A.addEventListener(ev,e=>e.stopPropagation(),{passive:true});
- setInterval(()=>{if(!isOpen())return;tick++;const hh=Math.floor(env.tod),mm=Math.floor((env.tod-hh)*60);$('#auClock').textContent=String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
-  $('#auNow').textContent=cur?'▶ '+cur.t:(radio.on?'♪ '+$('#rNow').textContent:'');if($('#auMap'))drawAuMap();else if(app==='truck'&&tick%4===0&&view.style.visibility!=='hidden')truckApp();},250);
+ setInterval(()=>{tick++;let al=[];try{gpsVoice();brechaTick();if(tick%4===0){al=alertVoice();if(cur)setVol();}else al=alPrev;}catch(e){}
+  if(!isOpen())return;const hh=Math.floor(env.tod),mm=Math.floor((env.tod-hh)*60);$('#auClock').textContent=String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');A.classList.toggle('night',env.day<.4);
+  const nw=$('#auNow'),showAl=al.length&&(!cur||tick%32<14);nw.classList.toggle('al',!!showAl);nw.textContent=showAl?'⚠ '+al[0]:cur?'▶ '+(cur.now||cur.t):(radio.on?'♪ '+$('#rNow').textContent:'');
+  if($('#auMap'))drawAuMap();else if(app==='truck'&&tick%4===0&&view.style.visibility!=='hidden')truckApp();},250);
  // ===== v99 · FN Auto en la pantalla del tablero: tocarla acerca la cámara; el video o podcast se queda pegado a esa pantalla =====
  const sc=GPSSCR.sc,v3a=new THREE.Vector3(),vW=new THREE.Vector3(),vN=new THREE.Vector3(),vT=new THREE.Vector3(),q0=new THREE.Quaternion(),q1=new THREE.Quaternion(),CW=660,CH=400;
- function quad(){if(!sc||S.view!==0)return null;const P=[];for(const[x,y]of[[-.165,.1],[.165,.1],[.165,-.1],[-.165,-.1]]){v3a.set(x,y,0);sc.localToWorld(v3a);v3a.project(camera);if(v3a.z>1||v3a.z<-1)return null;P.push([(v3a.x+1)/2*innerWidth,(1-v3a.y)/2*innerHeight]);}return P;}
- function place(){const q=quad();if(!q){A.style.visibility='hidden';return;}A.style.visibility='';const[[x0,y0],[x1,y1],[x2,y2],[x3,y3]]=q,dx1=x1-x2,dx2=x3-x2,sx=x0-x1+x2-x3,dy1=y1-y2,dy2=y3-y2,sy=y0-y1+y2-y3,den=dx1*dy2-dx2*dy1;if(Math.abs(den)<1e-6)return;
+ function quad(sub){if(!sc||S.view!==0)return null;const P=[];for(const[x,y]of(sub?[[.004,.046],[.16,.046],[.16,-.066],[.004,-.066]]:[[-.165,.1],[.165,.1],[.165,-.1],[-.165,-.1]])){v3a.set(x,y,0);sc.localToWorld(v3a);v3a.project(camera);if(v3a.z>1||v3a.z<-1)return null;P.push([(v3a.x+1)/2*innerWidth,(1-v3a.y)/2*innerHeight]);}return P;}
+ function place(){const q=quad(A.classList.contains('far'));if(!q){A.style.visibility='hidden';return;}A.style.visibility='';const[[x0,y0],[x1,y1],[x2,y2],[x3,y3]]=q,dx1=x1-x2,dx2=x3-x2,sx=x0-x1+x2-x3,dy1=y1-y2,dy2=y3-y2,sy=y0-y1+y2-y3,den=dx1*dy2-dx2*dy1;if(Math.abs(den)<1e-6)return;
   const g=(sx*dy2-dx2*sy)/den,h=(dx1*sy-sx*dy1)/den,a=(x1-x0+g*x1)/CW,b=(x3-x0+h*x3)/CH,d=(y1-y0+g*y1)/CW,e=(y3-y0+h*y3)/CH;A.style.transform=`matrix3d(${a},${d},0,${g/CW},${b},${e},0,${h/CH},0,0,1,0,${x0},${y0},0,1)`;}
  function enterDash(){dash=true;zoomed=true;A.hidden=false;A.classList.remove('mini','pos','ghost','far');A.classList.add('dash');A.style.left=A.style.top='';render();place();}
  function leaveDash(){dash=false;zoomed=false;A.classList.remove('dash','far');A.style.transform='';A.style.visibility='';if(cur)A.classList.add('ghost');else A.hidden=true;render();}
@@ -6536,6 +6606,12 @@ try{corpOffline();drawCluster();updateGateLabels();if(!restoreJob())openJobs();}
   q0.copy(camera.quaternion);camera.position.lerp(vT,k);camera.lookAt(vW);q1.copy(camera.quaternion);camera.quaternion.copy(q0).slerp(q1,k);camera.fov=70+(33-70)*k;camera.updateProjectionMatrix();};
  (function fr(){requestAnimationFrame(fr);if(!dash)return;if(S.view!==0){leaveDash();return;}const far=!zoomed&&zk<.06;if(far!==A.classList.contains('far')){A.classList.toggle('far',far);render();}
   const hide=far&&!(cur&&cur.app!=='mus');A.classList.toggle('ghost',hide);if(!hide)place();})();   // lejos: solo video o podcast sobre la pantalla; con música o sin nada, se ve el mapa del GPS
+ // lo que FN Auto dibuja sobre el lienzo del GPS del tablero (512×310): semáforo con segundos, aviso y canción
+ window.__auDev=(g,W,H)=>{g.textAlign='left';g.textBaseline='middle';
+  if(SEMA){g.fillStyle='rgba(10,14,18,.9)';g.fillRect(10,88,158,66);g.fillStyle={r:'#ff3b2f',y:'#ffc21a',g:'#2fe07a'}[SEMA.st];g.beginPath();g.arc(44,121,23,0,7);g.fill();g.fillStyle='#f2f4f5';g.font='700 40px "Share Tech Mono",monospace';g.fillText(Math.ceil(SEMA.left)+'s',78,123);}
+  if(alPrev.length){g.fillStyle='rgba(176,38,30,.94)';g.fillRect(0,H-46-36,W,36);g.fillStyle='#fff';g.font='700 25px "Barlow Condensed",sans-serif';g.fillText('⚠ '+alPrev[0],14,H-46-17);}
+  if(cur&&cur.app==='mus'&&!zoomed){const x=264,y=88,w=238,h=H-46-(alPrev.length?36:0)-y-8;g.fillStyle='rgba(10,14,18,.92)';g.fillRect(x,y,w,h);g.fillStyle='#7cc4ff';g.font='700 22px "Barlow Condensed",sans-serif';g.fillText((cur.state===2?'❚❚ ':'♪ ')+'YouTube Music',x+12,y+20);
+   g.fillStyle='#f2f4f5';g.font='600 24px "Barlow Condensed",sans-serif';const words=(cur.now||cur.t).split(' ');let line='',ly=y+52;for(const wd of words){if(g.measureText(line+wd).width>w-24&&line){g.fillText(line,x+12,ly);ly+=27;line='';if(ly>y+h-12)break;}line+=wd+' ';}if(ly<=y+h-12)g.fillText(line,x+12,ly);}};
  $('#c').addEventListener('click',e=>{if(S.view!==0||zoomed)return;const q=quad();if(!q)return;const xs=q.map(p=>p[0]),ys=q.map(p=>p[1]);if(e.clientX>Math.min(...xs)-14&&e.clientX<Math.max(...xs)+14&&e.clientY>Math.min(...ys)-14&&e.clientY<Math.max(...ys)+14)enterDash();});
 })();
 window.__S=S;window.__dbg={restoreJob,MAPV,snapJob,renderer,scene,hash,OBST,inObb,hk,CELL,BB,REAL,DEPOTS,STATIONS,edges,nodes,LIGHTS,lows,highs,trees,lamps,applyModel,setView,env,save,physics,BUMPS,hitAt,bodyPoints,get mission(){return mission},PARK,LOAD,hinge,truckHit,planRoute,drawMap,drawCluster,drawGpsDev,persist,chunkTick,trafficStep,updMass,WEIGHS,get MASS(){return MASS},grossLim,makeJobs,traffic,snapJob,revPath,pathPos,get job(){return save.job},fwdOf,startMission,CARGO,loadTick,TRG,camera,scene,renderer,CHUNKS};
