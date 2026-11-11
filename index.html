@@ -467,7 +467,7 @@ body.cine .quick{display:none}
           <button class="st-opt" id="startTruck">Camión <small>Semi Lowpoly</small></button>
           <button class="st-opt" id="startSet">Ajustes <small>Manejo y sonido</small></button>
         </div>
-        <div class="st-foot"><span>v104 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
+        <div class="st-foot"><span>v105 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
       </div>
       <div class="st-garage" id="startGarage" hidden>
         <h3>TU CAMIÓN</h3><div class="n">Semi Lowpoly</div>
@@ -5110,11 +5110,16 @@ function dress(k,o){const g=EXT[k],P={dark:[],chrome:[],paint:[],amber:[],red:[]
 // (los detalles ya vienen en cada camión)
 // luces delanteras (haz en el piso)
 // haz de los faros: cono suave que se desvanece en todas las orillas (antes se veía el cuadro de la textura)
-function beamTex(){const c=document.createElement('canvas');c.width=128;c.height=256;const g=c.getContext('2d'),im=g.createImageData(128,256),ss=(a,b,x)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);};
-  for(let y=0;y<256;y++){const t=1-y/255,w=.22+.7*t,fz=ss(0,.1,t)*(1-ss(.45,1,t));for(let x=0;x<128;x++){const lat=Math.abs(x-63.5)/64,I=fz*Math.exp(-Math.pow(lat/w,2)*2.6)*(1-ss(.8,1,lat)),i=(y*128+x)*4;im.data[i]=255;im.data[i+1]=236;im.data[i+2]=190;im.data[i+3]=Math.round(255*Math.min(1,I*1.1));}}
+// v105: mancha de luz de dos faros sobre el piso (16 × 50 m): centro brillante cerca, se abre y se apaga suave con la distancia, sin bordes en pico
+function beamTex(){const Wd=192,Hd=512,c=document.createElement('canvas');c.width=Wd;c.height=Hd;const g=c.getContext('2d'),im=g.createImageData(Wd,Hd),ss=(a,b,x)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);};
+  for(let y=0;y<Hd;y++){const d=(1-y/(Hd-1))*50+.4,near=ss(.4,3.5,d),far=1-ss(38,50,d);for(let x=0;x<Wd;x++){const lx=(x/(Wd-1)-.5)*16;let I=0;
+      for(const o of[-.95,.95]){const th=Math.atan2(lx-o,d);I+=Math.exp(-Math.pow(th/.2,2))*1.05/(1+Math.pow(d/15,2))+Math.exp(-Math.pow(th/.62,2))*.3/(1+Math.pow(d/7,2));}
+      I*=near*far*(1-ss(.82,1,Math.abs(lx)/8));const i=(y*Wd+x)*4;im.data[i]=255;im.data[i+1]=238;im.data[i+2]=196;im.data[i+3]=Math.round(255*Math.min(1,I));}}
   g.putImageData(im,0,0);return new THREE.CanvasTexture(c);}
 const beamMat=new THREE.MeshBasicMaterial({map:beamTex(),transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,opacity:0,polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-4});
-const beam=new THREE.Mesh(new THREE.PlaneGeometry(10,30),beamMat);beam.rotation.x=-Math.PI/2;const beamG=new THREE.Group();beamG.add(beam);beamG.position.y=.32;truck.add(beamG);
+const beam=new THREE.Mesh(new THREE.PlaneGeometry(16,50),beamMat);
+// luz real de los faros: de noche ilumina edificios, letreros y otros autos (el piso lo pinta la mancha de arriba)
+const headL=new THREE.SpotLight(0xffe2ad,0,75,.52,.7,1.1);headL.position.set(0,1.7,-6);headL.target.position.set(0,.4,-40);truck.add(headL);truck.add(headL.target);beam.rotation.x=-Math.PI/2;const beamG=new THREE.Group();beamG.add(beam);beamG.position.y=.32;truck.add(beamG);
 
 /* interior basado en cabina real */
 const cabin=new THREE.Group();body.add(cabin);const CRACKSLOT=new THREE.Group();cabin.add(CRACKSLOT);
@@ -5469,7 +5474,7 @@ function loadRealTruck(k){try{if(!THREE.GLTFLoader)return;const C=REALCAL[k],b=a
     try{mergeModel(wrap,PAINTMAT[k].color);}catch(e){console.error(e);}
     realVis();}catch(e){console.error(e);}},e=>console.error(e));}catch(e){console.error(e);}}
 function applyModel(k){applyTheme(k);S.model=k;setTimeout(realVis,0);if(!crack.parent){CRACKSLOT.add(crack);crack.position.set(-.35,3.25,-5.15);crack.rotation.x=-.12;}setTimeout(applyDmgVis,0);for(const m in EXT){EXT[m].visible=m===k;WHEELS[m].g.visible=m===k;}cabin.position.z=MODELS[k].dz;if(MODELS[k].rigid&&S.hitched){S.hitched=false;}
-  beamG.position.z=-MODELS[k].front-17;updateRearCam();S.fuel=Math.min(S.fuel,tankCap());if(!box10())S.range='L';updateGateLabels();updMass();}
+  beamG.position.z=-MODELS[k].front-25.4;headL.position.z=-MODELS[k].front;headL.target.position.z=-MODELS[k].front-34;updateRearCam();S.fuel=Math.min(S.fuel,tankCap());if(!box10())S.range='L';updateGateLabels();updMass();}
 
 /* tráfico */
 const CARMAT=new THREE.MeshLambertMaterial({vertexColors:true});
@@ -5709,7 +5714,7 @@ function envTick(dt){
   const ang=(env.tod-6.4)/13.3*Math.PI,tp=truck.position;sun.target.position.set(tp.x,tp.y,tp.z);sun.position.set(tp.x+Math.cos(ang)*160,tp.y+Math.max(25,Math.sin(ang)*220),tp.z+60);
   const night=1-env.day;env.lightsOn=night>.45||env.rain>.5;
   HIGHMATS.forEach(m=>m.emissiveIntensity=night*.9);lowMat.emissiveIntensity=night*.55;SIGNS.forEach(m=>m.emissiveIntensity=night*.5);
-  lampHeadMat.color.setHex(night>.45?0xffd58a:0x6f7378);beamMat.opacity=clamp((night-.35)*1.3,0,.42);beam.visible=beamMat.opacity>.01;
+  lampHeadMat.color.setHex(night>.45?0xffd58a:0x6f7378);beamMat.opacity=clamp((night-.35)*2,0,.78);beam.visible=beamMat.opacity>.01;headL.intensity=clamp((night-.35)*4,0,1.5);
   GLOW.head.color.setHex(env.lightsOn?0xffffff:0xd9d4c0);
   ROADMATS.forEach(m=>{if(!m.userData.base)m.userData.base=m.color.clone();m.color.copy(m.userData.base).multiplyScalar(1-.28*env.rain);});
   rainMat.opacity=.55*env.rain;rainMesh.visible=env.rain>.03;
