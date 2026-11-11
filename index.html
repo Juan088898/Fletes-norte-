@@ -439,7 +439,7 @@ body.cine .quick{display:none}
           <button class="st-opt" id="startTruck">Camión <small>Semi Lowpoly</small></button>
           <button class="st-opt" id="startSet">Ajustes <small>Manejo y sonido</small></button>
         </div>
-        <div class="st-foot"><span>v97 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
+        <div class="st-foot"><span>v98 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
       </div>
       <div class="st-garage" id="startGarage" hidden>
         <h3>TU CAMIÓN</h3><div class="n">Semi Lowpoly</div>
@@ -6451,18 +6451,18 @@ warmUp();splitStatic();
 VEG.forEach(im=>im.count=HI()?im.userData.full:Math.floor(im.userData.full*.35));
 try{corpOffline();drawCluster();updateGateLabels();if(!restoreJob())openJobs();}catch(e){setTimeout(()=>showErr('inicio',e),1500);}requestAnimationFrame(loop);
 /* ===== v97 · FN Auto: pantalla multimedia del camión (mapa, YouTube, podcasts, radio y estado). Diseño propio del juego. ===== */
-(function(){const A=$('#auto'),view=$('#auView'),media=$('#auMedia'),rail=$('#auRail');const ST=()=>{const a=save.auto||(save.auto={fav:[],mini:false});if(!a.fav)a.fav=[];return a;};
+(function(){const A=$('#auto'),view=$('#auView'),media=$('#auMedia'),rail=$('#auRail');const ST=()=>{const a=save.auto||(save.auto={fav:[],mini:false});if(!a.fav)a.fav=[];if(!a.seed1){a.seed1=1;for(const[t,u]of[['Facultad','https://music.youtube.com/playlist?list=PLJ8CMwmDS9_o'],['Mi playlist','https://music.youtube.com/playlist?list=PLKLMlQgLBLl4']])if(!a.fav.some(x=>x.u===u))a.fav.unshift({u,t,a:'mus'});}return a;};
  let app='home',cur=null,list=false,tick=0;
  const sv=p=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
  const APPS={home:{n:'Inicio',c:'#ffb53d',i:sv('<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>')},
   map:{n:'Mapa',d:'GPS y ruta del flete',c:'#3fd08a',i:sv('<path d="M12 21s-6.5-5.6-6.5-10.5a6.5 6.5 0 0 1 13 0C18.500 15.4 12 21 12 21z"/><circle cx="12" cy="10.5" r="2.3"/>')},
   yt:{n:'YouTube',d:'Videos con tu enlace',c:'#ff6b5e',i:sv('<rect x="2.5" y="5" width="19" height="14" rx="4"/><path d="M10 9.2v5.6l5-2.800z" fill="currentColor"/>')},
-  pod:{n:'Podcasts',d:'Spotify o YouTube',c:'#b79bff',i:sv('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.500 11a6.500 6.500 0 0 0 13 0M12 17.500V21M8.500 21h7"/>')},
-  radio:{n:'Música',d:'Norte FM y tus canciones',c:'#7cc4ff',i:sv('<path d="M9 18V5.500l11-2.500v12.500"/><circle cx="6.500" cy="18" r="2.500"/><circle cx="17.500" cy="15.500" r="2.500"/>')},
+  pod:{n:'Podcasts',d:'YouTube o Spotify',c:'#b79bff',i:sv('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.500 11a6.500 6.500 0 0 0 13 0M12 17.500V21M8.500 21h7"/>')},
+  radio:{n:'Música',d:'YouTube Music y radio',c:'#7cc4ff',i:sv('<path d="M9 18V5.500l11-2.500v12.500"/><circle cx="6.500" cy="18" r="2.500"/><circle cx="17.500" cy="15.500" r="2.500"/>')},
   truck:{n:'Camión',d:'Estado y desgaste',c:'#ffb53d',i:sv('<path d="M2.500 16V7h10v9M12.500 10h4.500l4 4v2h-8.500"/><circle cx="7" cy="17.500" r="2"/><circle cx="17" cy="17.500" r="2"/>')}};
  function parse(u){u=(u||'').trim();let m;
-  if(m=u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:[^#]*&)?v=|shorts\/|live\/|embed\/))([\w-]{11})/))return{k:'yt',u,src:'https://www.youtube.com/embed/'+m[1]+'?autoplay=1&playsinline=1&rel=0',th:'https://i.ytimg.com/vi/'+m[1]+'/mqdefault.jpg',t:'Video de YouTube'};
-  if(m=u.match(/youtube\.com\/[^#]*[?&]list=([\w-]+)/))return{k:'yt',u,src:'https://www.youtube.com/embed/videoseries?list='+m[1]+'&autoplay=1&playsinline=1',t:'Lista de YouTube'};
+  if(m=u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:[^#]*&)?v=|shorts\/|live\/|embed\/))([\w-]{11})/))return{k:'yt',u,src:'https://www.youtube.com/embed/'+m[1]+'?autoplay=1&playsinline=1&rel=0',th:'https://i.ytimg.com/vi/'+m[1]+'/mqdefault.jpg',t:/music\.youtube\.com/.test(u)?'Canción de YouTube Music':'Video de YouTube'};
+  if(m=u.match(/youtube\.com\/[^#]*[?&]list=([\w-]+)/))return{k:'yt',u,src:'https://www.youtube.com/embed/videoseries?list='+m[1]+'&autoplay=1&playsinline=1',t:/music\.youtube\.com/.test(u)?'Playlist de YouTube Music':'Lista de YouTube'};
   if(m=u.match(/open\.spotify\.com\/(?:intl-[a-z]+\/)?(track|album|playlist|episode|show|artist)\/([A-Za-z0-9]+)/))return{k:'sp',u,src:'https://open.spotify.com/embed/'+m[1]+'/'+m[2],t:{track:'Canción',album:'Álbum',playlist:'Playlist',episode:'Episodio',show:'Podcast',artist:'Artista'}[m[1]]+' de Spotify'};
   return null;}
  function play(it,from){it.app=from;cur=it;list=false;media.innerHTML='<div class="au-mbar"><button class="au-b" data-a="list">◀ Lista</button><span></span><button class="au-b" data-a="stop">Detener</button></div>';
@@ -6473,13 +6473,16 @@ try{corpOffline();drawCluster();updateGateLabels();if(!restoreJob())openJobs();}
   render();}
  function stop(){cur=null;media.innerHTML='';render();}
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
- function mediaApp(a){const yt=a==='yt';view.innerHTML=`<h3 class="au-h">${yt?'YouTube':'Podcasts'}</h3><p class="au-sub">${yt?'Pega el enlace de un video o de una lista de YouTube.':'Pega el enlace de un podcast, episodio o playlist de Spotify, o de un video de YouTube.'} Necesita internet.</p>
-   <div class="au-in"><input id="auUrl" type="url" inputmode="url" autocomplete="off" placeholder="${yt?'https://youtu.be/…':'https://open.spotify.com/show/…'}" aria-label="Enlace"><button class="au-b go" id="auGo">Reproducir</button></div><div class="au-favs" id="auFavs"></div>`;
-  const go=()=>{const it=parse($('#auUrl').value);if(!it){toast(yt?'Ese enlace no es de YouTube':'Pega un enlace de Spotify o de YouTube');return;}play(it,a);};$('#auGo').onclick=go;$('#auUrl').addEventListener('keydown',e=>{if(e.key==='Enter')go();});
+ const AK={yt:'yt',pod:'pod',mus:'radio'};
+ // caja para pegar un enlace + mosaicos de lo guardado (la usan YouTube, Podcasts y Música)
+ function wire(a,bad){const go=()=>{const it=parse($('#auUrl').value);if(!it){toast(bad);return;}play(it,a);};$('#auGo').onclick=go;$('#auUrl').addEventListener('keydown',e=>{if(e.key==='Enter')go();});
   const box=$('#auFavs'),fv=ST().fav.filter(x=>(x.a||'yt')===a);if(!fv.length){const p=document.createElement('p');p.className='au-sub';p.style.gridColumn='1/-1';p.textContent='Lo que reproduzcas se guarda aquí para volver a ponerlo con un toque.';box.appendChild(p);}
-  for(const x of fv){const it=parse(x.u);if(!it)continue;it.t=x.t||it.t;const b=document.createElement('button');b.className='au-fav';b.style.setProperty('--c',APPS[a].c);b.innerHTML='<i></i><span></span><em role="button" aria-label="Quitar">✕</em>';
-   const th=b.querySelector('i');if(it.th)th.style.backgroundImage=`url("${it.th}")`;else th.innerHTML=APPS[a].i;b.querySelector('span').textContent=it.t;
+  for(const x of fv){const it=parse(x.u);if(!it)continue;it.t=x.t||it.t;const b=document.createElement('button');b.className='au-fav';b.style.setProperty('--c',APPS[AK[a]].c);b.innerHTML='<i></i><span></span><em role="button" aria-label="Quitar">✕</em>';
+   const th=b.querySelector('i');if(it.th)th.style.backgroundImage=`url("${it.th}")`;else th.innerHTML=APPS[AK[a]].i;b.querySelector('span').textContent=it.t;
    b.onclick=e=>{if(e.target.tagName==='EM'){ST().fav=ST().fav.filter(y=>y!==x);persist();render();}else play(it,a);};box.appendChild(b);}}
+ const inBox=ph=>`<div class="au-in"><input id="auUrl" type="url" inputmode="url" autocomplete="off" placeholder="${ph}" aria-label="Enlace"><button class="au-b go" id="auGo">Reproducir</button></div><div class="au-favs" id="auFavs"></div>`;
+ function mediaApp(a){const yt=a==='yt';view.innerHTML=`<h3 class="au-h">${yt?'YouTube':'Podcasts'}</h3><p class="au-sub">${yt?'Pega el enlace de un video o de una lista de YouTube.':'Pega el enlace de un podcast en YouTube o en Spotify.'} Necesita internet.</p>`+inBox(yt?'https://youtu.be/…':'https://www.youtube.com/playlist?list=…');
+  wire(a,yt?'Ese enlace no es de YouTube':'Pega un enlace de YouTube o de Spotify');}
  function bar(n,v,txt,bad){v=clamp(v,0,1);return `<div class="au-row${bad>1?' b':bad?' w':''}"><div><span>${n}</span><b>${txt}</b></div><u><s style="width:${Math.round(v*100)}%"></s></u></div>`;}
  function truckApp(){const mt=MT(),fu=S.fuel/tankCap(),et=S.et||0,bt=S.bt||0,air=S.air??1,tp=S.minP??1,sw=suspW(),dm=tdmg()/100,pc=x=>Math.round(x*100)+'%';
   view.innerHTML=`<h3 class="au-h">${esc(MD().name)}</h3><p class="au-sub">Nivel ${LVL()} · ${fmtMoney(save.money)} · ${Math.round(mt.odo||0)} km recorridos</p><div class="au-rows">`+
@@ -6488,20 +6491,20 @@ try{corpOffline();drawCluster();updateGateLabels();if(!restoreJob())openJobs();}
    bar('Presión de llantas',tp,pc(tp),tp<.7?2:tp<.9?1:0)+bar('Suspensión',1-sw,pc(1-sw),sw>=.7?2:sw>=.35?1:0)+
    bar('Aceite',1-clamp((mt.oil||0)/OIL_KM,0,1),Math.round(mt.oil||0)+' / '+OIL_KM+' km',(mt.oil||0)>OIL_KM?2:(mt.oil||0)>OIL_KM*.8?1:0)+bar('Llantas (uso)',1-clamp((mt.tire||0)/TIRE_KM,0,1),Math.round(mt.tire||0)+' / '+TIRE_KM+' km',(mt.tire||0)>TIRE_KM?2:(mt.tire||0)>TIRE_KM*.8?1:0)+
    bar('Carrocería',1-dm,pc(1-dm),dm>.6?2:dm>.25?1:0)+bar('Carga',mission?mission.cond/100:0,mission?Math.round(mission.cond)+'% · '+mission.cargo:'Sin carga',mission&&mission.cond<70?2:mission&&mission.cond<90?1:0)+'</div>';}
- function radioApp(){view.innerHTML=`<h3 class="au-h" id="auRN"></h3><p class="au-sub" id="auRS"></p><div class="au-ctl"><button class="au-b go" data-r="rPower"></button><button class="au-b" data-r="rFM">Norte FM</button><button class="au-b" data-r="rMine">Mis canciones</button><button class="au-b" data-r="rPrev" aria-label="Anterior">◀◀</button><button class="au-b" data-r="rNext" aria-label="Siguiente">▶▶</button></div>
+ function radioApp(){view.innerHTML=`<h3 class="au-h">YouTube Music</h3><p class="au-sub">Toca una playlist o pega un enlace de YouTube Music (canción, álbum o playlist). Necesita internet.</p>`+inBox('https://music.youtube.com/playlist?list=…')+`<h3 class="au-h" id="auRN" style="margin-top:16px"></h3><p class="au-sub" id="auRS"></p><div class="au-ctl"><button class="au-b go" data-r="rPower"></button><button class="au-b" data-r="rFM">Norte FM</button><button class="au-b" data-r="rMine">Mis canciones</button><button class="au-b" data-r="rPrev" aria-label="Anterior">◀◀</button><button class="au-b" data-r="rNext" aria-label="Siguiente">▶▶</button></div>
    <div class="au-ctl"><button class="au-b" data-r="rFiles">Agregar canciones del teléfono</button><button class="au-b" data-r="rClear">Borrar mías</button></div><p class="au-sub">Tus canciones se guardan en este dispositivo y suenan sin internet.</p>`;
   const sync=()=>{const n=$('#auRN');if(!n)return;n.textContent=$('#rNow').textContent;$('#auRS').textContent=$('#rSub').textContent;view.querySelector('[data-r=rPower]').textContent=$('#rPower').textContent;};
-  view.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{$('#'+b.dataset.r).click();setTimeout(sync,120);});sync();}
+  view.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{$('#'+b.dataset.r).click();setTimeout(sync,120);});sync();wire('mus','Pega un enlace de YouTube Music o de YouTube');}
  function mapApp(){view.innerHTML='<canvas id="auMap"></canvas><div class="au-turn" id="auTurn"></div>';drawAuMap();}
  function drawAuMap(){const cv=$('#auMap');if(!cv)return;const W=cv.clientWidth,H=cv.clientHeight;if(W<10)return;const d=Math.min(window.devicePixelRatio||1,2);if(cv.width!==Math.round(W*d)){cv.width=Math.round(W*d);cv.height=Math.round(H*d);}
   try{drawMap(cv,cv.getContext('2d'),W,H,d,false);}catch(e){}const gi=gpsInfo(),t=$('#auTurn');if(t&&t.dataset.k!==gi.txt+gi.sub){t.dataset.k=gi.txt+gi.sub;t.textContent=gi.txt;const sm=document.createElement('small');sm.textContent=gi.sub;t.appendChild(sm);}}
  function homeApp(){const gi=gpsInfo();view.innerHTML=`<div class="au-next">${APPS.map.i.replace('<svg','<svg style="width:22px;height:22px;color:var(--route);flex:none"')}<div><span id="auHN"></span><small id="auHS"></small></div></div><div class="au-tiles">`+
    ['map','yt','pod','radio','truck'].map(k=>`<button class="au-tile" data-app="${k}" style="--c:${APPS[k].c}">${APPS[k].i}<span>${APPS[k].n}<small>${APPS[k].d}</small></span></button>`).join('')+'</div>';
   $('#auHN').textContent=mission?gi.txt:'Sin flete: elige una carga en Menú → Ver cargas';$('#auHS').textContent=mission?gi.sub+' · '+mission.cargo:'';view.querySelectorAll('[data-app]').forEach(b=>b.onclick=()=>go(b.dataset.app));}
- function render(){const mini=A.classList.contains('mini'),isMedia=app==='yt'||app==='pod',showMedia=!!cur&&(mini||(isMedia&&!list));media.classList.toggle('bg',!showMedia);view.style.visibility=showMedia?'hidden':'';
+ function render(){const mini=A.classList.contains('mini'),showMedia=!!cur&&(mini||(!list&&AK[cur.app]===app));media.classList.toggle('bg',!showMedia);view.style.visibility=showMedia?'hidden':'';
   rail.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.app===app));
   if(showMedia)return;if(mini){mapApp();return;}({home:homeApp,map:mapApp,yt:()=>mediaApp('yt'),pod:()=>mediaApp('pod'),radio:radioApp,truck:truckApp})[app]();view.scrollTop=0;}
- function go(a){app=a;list=false;if((a==='yt'||a==='pod')&&cur&&(cur.app||'')!==a)list=true;render();}
+ function go(a){app=a;list=false;render();}
  for(const k in APPS){const b=document.createElement('button');b.dataset.app=k;b.title=APPS[k].n;b.setAttribute('aria-label',APPS[k].n);b.style.setProperty('--c',APPS[k].c);b.innerHTML=APPS[k].i;b.onclick=()=>go(k);rail.appendChild(b);}
  function setMini(m){ST().mini=m;A.classList.toggle('mini',m);$('#auMini').textContent=m?'⤢':'▭';if(!m){A.classList.remove('pos');A.style.left=A.style.top='';}render();}
  function show(o){A.hidden=!o;if(o){setMini(!!ST().mini);}}
