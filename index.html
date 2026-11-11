@@ -330,6 +330,7 @@ body.cine .quick{display:none}
         <button class="btn" id="btnSet">Ajustes de manejo</button>
         <button class="btn" id="btnGfx">Gráficos: altos</button>
         <button class="btn" id="btnFS">Pantalla completa</button>
+        <button class="btn" id="btnHigh">Luces altas: auto</button>
         <div class="mh rk"><span>Zona de riesgo</span><span>mantén 1 s</span></div>
         <button class="btn risk" id="btnRescue">Rescatar</button>
         <button class="btn risk" id="btnCancel">Cancelar flete</button>
@@ -467,7 +468,7 @@ body.cine .quick{display:none}
           <button class="st-opt" id="startTruck">Camión <small>Semi Lowpoly</small></button>
           <button class="st-opt" id="startSet">Ajustes <small>Manejo y sonido</small></button>
         </div>
-        <div class="st-foot"><span>v105 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
+        <div class="st-foot"><span>v106 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
       </div>
       <div class="st-garage" id="startGarage" hidden>
         <h3>TU CAMIÓN</h3><div class="n">Semi Lowpoly</div>
@@ -5110,16 +5111,37 @@ function dress(k,o){const g=EXT[k],P={dark:[],chrome:[],paint:[],amber:[],red:[]
 // (los detalles ya vienen en cada camión)
 // luces delanteras (haz en el piso)
 // haz de los faros: cono suave que se desvanece en todas las orillas (antes se veía el cuadro de la textura)
-// v105: mancha de luz de dos faros sobre el piso (16 × 50 m): centro brillante cerca, se abre y se apaga suave con la distancia, sin bordes en pico
-function beamTex(){const Wd=192,Hd=512,c=document.createElement('canvas');c.width=Wd;c.height=Hd;const g=c.getContext('2d'),im=g.createImageData(Wd,Hd),ss=(a,b,x)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);};
-  for(let y=0;y<Hd;y++){const d=(1-y/(Hd-1))*50+.4,near=ss(.4,3.5,d),far=1-ss(38,50,d);for(let x=0;x<Wd;x++){const lx=(x/(Wd-1)-.5)*16;let I=0;
-      for(const o of[-.95,.95]){const th=Math.atan2(lx-o,d);I+=Math.exp(-Math.pow(th/.2,2))*1.05/(1+Math.pow(d/15,2))+Math.exp(-Math.pow(th/.62,2))*.3/(1+Math.pow(d/7,2));}
-      I*=near*far*(1-ss(.82,1,Math.abs(lx)/8));const i=(y*Wd+x)*4;im.data[i]=255;im.data[i+1]=238;im.data[i+2]=196;im.data[i+3]=Math.round(255*Math.min(1,I));}}
+// v106: faros con patrón real. Bajas: centro brillante, corte suave que llega más lejos del lado derecho (para no deslumbrar al que viene). Altas: haz angosto y largo.
+function beamTex(high){const Wd=192,Hd=512,LEN=high?95:50,WID=high?14:16,c=document.createElement('canvas');c.width=Wd;c.height=Hd;const g=c.getContext('2d'),im=g.createImageData(Wd,Hd),ss=(a,b,x)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);};
+  for(let y=0;y<Hd;y++){const d=(1-y/(Hd-1))*LEN+.4,near=ss(.4,3.5,d);for(let x=0;x<Wd;x++){const lx=(x/(Wd-1)-.5)*WID;let I=0;
+      for(const o of[-.92,.92]){const th=Math.atan2(lx-o,d);if(high)I+=Math.exp(-Math.pow(th/.1,2))*1.1/(1+Math.pow(d/42,2))+Math.exp(-Math.pow(th/.3,2))*.22/(1+Math.pow(d/22,2));
+        else I+=Math.exp(-Math.pow(th/.2,2))*1.1/(1+Math.pow(d/14,2))+Math.exp(-Math.pow(th/.62,2))*.3/(1+Math.pow(d/7,2))+Math.exp(-Math.pow((d-9)/5,2)-Math.pow((lx-o)/1.6,2))*.35;}
+      const cut=high?LEN-14:29+11*ss(-.5,2.5,lx);I*=near*(1-ss(cut,cut+(high?14:7),d))*(1-ss(.82,1,Math.abs(lx)/(WID/2)));const i=(y*Wd+x)*4;im.data[i]=255;im.data[i+1]=high?244:238;im.data[i+2]=high?214:196;im.data[i+3]=Math.round(255*Math.min(1,I));}}
   g.putImageData(im,0,0);return new THREE.CanvasTexture(c);}
 const beamMat=new THREE.MeshBasicMaterial({map:beamTex(),transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,opacity:0,polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-4});
 const beam=new THREE.Mesh(new THREE.PlaneGeometry(16,50),beamMat);
 // luz real de los faros: de noche ilumina edificios, letreros y otros autos (el piso lo pinta la mancha de arriba)
-const headL=new THREE.SpotLight(0xffe2ad,0,75,.52,.7,1.1);headL.position.set(0,1.7,-6);headL.target.position.set(0,.4,-40);truck.add(headL);truck.add(headL.target);beam.rotation.x=-Math.PI/2;const beamG=new THREE.Group();beamG.add(beam);beamG.position.y=.32;truck.add(beamG);
+const headL=new THREE.SpotLight(0xffe2ad,0,75,.52,.7,1.1);headL.position.set(0,1.7,-6);headL.target.position.set(0,.4,-40);truck.add(headL);truck.add(headL.target);
+const beamHiMat=beamMat.clone();beamHiMat.map=beamTex(true);const beamHi=new THREE.Mesh(new THREE.PlaneGeometry(14,95),beamHiMat);beamHi.rotation.x=-Math.PI/2;beamHi.visible=false;const beamHiG=new THREE.Group();beamHiG.add(beamHi);beamHiG.position.y=.33;truck.add(beamHiG);
+// reflejo alargado en el piso mojado
+const streakMat=new THREE.MeshBasicMaterial({map:(()=>{const c=document.createElement('canvas');c.width=32;c.height=128;const g=c.getContext('2d'),im=g.createImageData(32,128);for(let y=0;y<128;y++){const t=1-y/127,f=Math.min(1,t*6)*(1-t)*(1-t);for(let x=0;x<32;x++){const l=(x-15.5)/16,i=(y*32+x)*4;im.data[i]=255;im.data[i+1]=240;im.data[i+2]=205;im.data[i+3]=Math.round(255*f*Math.exp(-l*l*5));}}g.putImageData(im,0,0);return new THREE.CanvasTexture(c);})(),transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,opacity:0,polygonOffset:true,polygonOffsetFactor:-5,polygonOffsetUnits:-5});
+const streak=new THREE.Mesh(new THREE.PlaneGeometry(3.2,46),streakMat);streak.rotation.x=-Math.PI/2;streak.visible=false;const streakG=new THREE.Group();streakG.add(streak);streakG.position.y=.34;truck.add(streakG);
+// halos de los faros y calaveras, y conos de luz que se ven con lluvia o neblina
+const glowTex=(()=>{const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d'),r=g.createRadialGradient(32,32,0,32,32,32);r.addColorStop(0,'rgba(255,255,255,1)');r.addColorStop(.18,'rgba(255,255,255,.85)');r.addColorStop(.45,'rgba(255,255,255,.22)');r.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=r;g.fillRect(0,0,64,64);return new THREE.CanvasTexture(c);})();
+const mkHalo=(par,col,x,y,z)=>{const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex,color:col,blending:THREE.AdditiveBlending,depthWrite:false,transparent:true,opacity:0}));sp.position.set(x,y,z||0);sp.visible=false;par.add(sp);return sp;};
+const HALO={h:[mkHalo(truck,0xfff0cc,-.92,1.32),mkHalo(truck,0xfff0cc,.92,1.32)],t:[mkHalo(truck,0xff2a1c,-1,1.15),mkHalo(truck,0xff2a1c,1,1.15)],tt:null};
+const coneMat=new THREE.MeshBasicMaterial({map:(()=>{const c=document.createElement('canvas');c.width=4;c.height=64;const g=c.getContext('2d'),r=g.createLinearGradient(0,64,0,0);r.addColorStop(0,'rgba(255,255,255,.95)');r.addColorStop(.35,'rgba(255,255,255,.3)');r.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=r;g.fillRect(0,0,4,64);return new THREE.CanvasTexture(c);})(),color:0xfff0cc,transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide});
+const CONES=[-.92,.92].map(x=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(2.3,.14,24,14,1,true),coneMat);m.rotation.x=-Math.PI/2-.035;m.position.set(x,1.25,0);m.visible=false;truck.add(m);return m;});
+let hiAuto=false,hiT=0;
+function lightsFx(night,dt){const on=clamp((night-.35)*2.6,0,1),md=save.hiMode||'auto';hiT-=dt;
+  if(hiT<=0){hiT=.5;let a=false;if(md==='auto'&&on>.5&&S.v>13&&urban(S.x,S.z).d<.25){a=true;const[fx,fz]=fwdOf(S.h);for(const t of traffic){const p=t.o.position,dx=p.x-S.x,dz=p.z-S.z,al=dx*fx+dz*fz;if(al>5&&al<130&&Math.abs(dx*fz-dz*fx)<14){a=false;break;}}}hiAuto=a;}   // altas automáticas: en carretera, rápido y sin nadie enfrente
+  const hi=on>0&&(md==='on'||(md==='auto'&&hiAuto));S.hiK=(S.hiK||0)+((hi?1:0)-(S.hiK||0))*lerpK(6,dt);const k=S.hiK;
+  beamMat.opacity=.8*on;beam.visible=on>.01;beamHiMat.opacity=.75*on*k;beamHi.visible=on*k>.01;headL.intensity=on*(1.4+1.2*k);headL.distance=75+60*k;
+  const wet=clamp((S.gw||0)*1.4+env.rain*.5,0,1);streakMat.opacity=.5*on*wet;streak.visible=streakMat.opacity>.01;
+  const haze=clamp(env.rain*.12+(env.fogK||0)*.2,0,.22)*on;coneMat.opacity=haze;CONES.forEach(c=>c.visible=haze>.01);
+  HALO.h.forEach(h=>{h.material.opacity=on*.95;h.scale.setScalar(.75+.55*k);h.visible=on>.01;});
+  if(!HALO.tt)HALO.tt=[mkHalo(trailer,0xff2a1c,-1.1,1.3,12.5),mkHalo(trailer,0xff2a1c,1.1,1.3,12.5)];
+  const br=S.ped.brake>.05?1:0,tl=Math.min(1,on*.55+br*.9),hit=S.hitched&&!NT();HALO.t.forEach(h=>{h.material.opacity=tl;h.scale.setScalar(.42+.3*br);h.visible=!hit&&tl>.01;});HALO.tt.forEach(h=>{h.material.opacity=tl;h.scale.setScalar(.45+.32*br);h.visible=hit&&tl>.01;});}beam.rotation.x=-Math.PI/2;const beamG=new THREE.Group();beamG.add(beam);beamG.position.y=.32;truck.add(beamG);
 
 /* interior basado en cabina real */
 const cabin=new THREE.Group();body.add(cabin);const CRACKSLOT=new THREE.Group();cabin.add(CRACKSLOT);
@@ -5474,7 +5496,7 @@ function loadRealTruck(k){try{if(!THREE.GLTFLoader)return;const C=REALCAL[k],b=a
     try{mergeModel(wrap,PAINTMAT[k].color);}catch(e){console.error(e);}
     realVis();}catch(e){console.error(e);}},e=>console.error(e));}catch(e){console.error(e);}}
 function applyModel(k){applyTheme(k);S.model=k;setTimeout(realVis,0);if(!crack.parent){CRACKSLOT.add(crack);crack.position.set(-.35,3.25,-5.15);crack.rotation.x=-.12;}setTimeout(applyDmgVis,0);for(const m in EXT){EXT[m].visible=m===k;WHEELS[m].g.visible=m===k;}cabin.position.z=MODELS[k].dz;if(MODELS[k].rigid&&S.hitched){S.hitched=false;}
-  beamG.position.z=-MODELS[k].front-25.4;headL.position.z=-MODELS[k].front;headL.target.position.z=-MODELS[k].front-34;updateRearCam();S.fuel=Math.min(S.fuel,tankCap());if(!box10())S.range='L';updateGateLabels();updMass();}
+  beamG.position.z=-MODELS[k].front-25.4;headL.position.z=-MODELS[k].front;headL.target.position.z=-MODELS[k].front-34;{const f=MODELS[k].front;beamHiG.position.z=-f-47.9;streakG.position.z=-f-23.4;HALO.h.forEach(h=>h.position.z=-f-.04);HALO.t.forEach(h=>h.position.z=(MODELS[k].rear||1.6)+.06);CONES.forEach(c=>c.position.z=-f-12);}updateRearCam();S.fuel=Math.min(S.fuel,tankCap());if(!box10())S.range='L';updateGateLabels();updMass();}
 
 /* tráfico */
 const CARMAT=new THREE.MeshLambertMaterial({vertexColors:true});
@@ -5714,7 +5736,7 @@ function envTick(dt){
   const ang=(env.tod-6.4)/13.3*Math.PI,tp=truck.position;sun.target.position.set(tp.x,tp.y,tp.z);sun.position.set(tp.x+Math.cos(ang)*160,tp.y+Math.max(25,Math.sin(ang)*220),tp.z+60);
   const night=1-env.day;env.lightsOn=night>.45||env.rain>.5;
   HIGHMATS.forEach(m=>m.emissiveIntensity=night*.9);lowMat.emissiveIntensity=night*.55;SIGNS.forEach(m=>m.emissiveIntensity=night*.5);
-  lampHeadMat.color.setHex(night>.45?0xffd58a:0x6f7378);beamMat.opacity=clamp((night-.35)*2,0,.78);beam.visible=beamMat.opacity>.01;headL.intensity=clamp((night-.35)*4,0,1.5);
+  lampHeadMat.color.setHex(night>.45?0xffd58a:0x6f7378);lightsFx(night,dt);
   GLOW.head.color.setHex(env.lightsOn?0xffffff:0xd9d4c0);
   ROADMATS.forEach(m=>{if(!m.userData.base)m.userData.base=m.color.clone();m.color.copy(m.userData.base).multiplyScalar(1-.28*env.rain);});
   rainMat.opacity=.55*env.rain;rainMesh.visible=env.rain>.03;
@@ -6135,6 +6157,7 @@ function openShop(){menu.hidden=true;$('#shopMoney').textContent=fmtMoney(save.m
     mk('Franja de la caja',STRIPES,save.trailer.stripe,2000,i=>{save.trailer.stripe=i;refreshTrailer();});
     mk('Logo de la caja',LOGOS,save.trailer.logo,2000,i=>{save.trailer.logo=i;refreshTrailer();},true);}
   $('#shop').hidden=false;}
+{const b=$('#btnHigh'),lab=()=>{b.textContent='Luces altas: '+({auto:'auto',on:'siempre',off:'no'}[save.hiMode||'auto']);};b.addEventListener('click',()=>{save.hiMode={auto:'on',on:'off',off:'auto'}[save.hiMode||'auto'];persist();lab();});lab();}
 $('#btnShop').addEventListener('click',openShop);$('#btnShopClose').addEventListener('click',()=>{$('#shop').hidden=true;if(shopFromJobs&&!mission){shopFromJobs=false;openJobs();}});
 function rescue(manual){S.air=1;S.sl=0;S.lshift=0;if(S.flat)fixTire();S.bt=0;S.et=Math.min(S.et||0,.4);const ne=nearestEdge(S.x,S.z,true),e=ne.e,[fx,fz]=fwdOf(S.h),d=(e.ux*fx+e.uz*fz)>=0?1:-1,ux=e.ux*d,uz=e.uz*d;
   S.h=Math.atan2(-ux,-uz);S.th=S.h;S.x=ne.px-uz*5.2;S.z=ne.pz+ux*5.2;S.v=0;S.steer=0;S.rolled=0;S.tipT=0;S.troll=0;S.tw=0;S.kpv=null;
