@@ -306,6 +306,15 @@ body.cine .quick{display:none}
 .dh-bot{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 20px;font:700 40px/1 var(--display);background:#10161c;white-space:nowrap;overflow:hidden}
 .dh-bot span{min-width:0;overflow:hidden;text-overflow:ellipsis}.dh-bot b{color:var(--amber);flex:none}.dh-bot.al{background:#b0261e;color:#fff}
 #devHud.vid{grid-template-rows:150px 190px 60px}#devHud.vid .dh-street{display:none}#devHud.vid #dhMap{width:297px;height:190px}
+/* v108 · botones más chicos; los de poco uso van en un cajón que se abre con ⋯ o deslizando */
+.quick{align-items:center}.quick .btn.ibtn{width:38px;height:38px;border-radius:11px;font-size:17px}
+.qk-more{display:flex;gap:6px;max-width:0;overflow:hidden;opacity:0;transition:max-width .25s ease,opacity .2s ease}.quick.open .qk-more{max-width:230px;opacity:1}
+#qkTog{font-weight:800;font-size:18px;line-height:1}
+.ctrl.l .btns .btn.ibtn{width:36px;height:36px;font-size:15px}
+/* tutorial */
+#tut{background:rgba(6,8,10,.42);place-items:start center;z-index:26}#tut .card{width:min(500px,58vw);gap:8px;padding:12px 16px}#tut h2{font-size:21px}
+#tutB{font:500 14px/1.35 var(--display);color:var(--ink)}#tutB ol,#tutB ul{margin:0;padding-left:20px;display:grid;gap:5px}#tutB b{color:var(--amber);font-weight:700}#tutB p{margin:0 0 6px;color:var(--ink-dim)}
+#tutRing{position:fixed;z-index:30;border:3px solid var(--amber);border-radius:16px;pointer-events:none;box-shadow:0 0 0 4px rgba(255,181,61,.25);animation:tutP .9s ease-in-out infinite alternate}#tutRing[hidden]{display:none}@keyframes tutP{to{box-shadow:0 0 0 11px rgba(255,181,61,.04)}}
 </style>
 
 <div id="app">
@@ -331,6 +340,7 @@ body.cine .quick{display:none}
         <button class="btn" id="btnGfx">Gráficos: altos</button>
         <button class="btn" id="btnFS">Pantalla completa</button>
         <button class="btn" id="btnHigh">Luces altas: auto</button>
+        <button class="btn" id="btnTut">Tutorial</button>
         <div class="mh rk"><span>Zona de riesgo</span><span>mantén 1 s</span></div>
         <button class="btn risk" id="btnRescue">Rescatar</button>
         <button class="btn risk" id="btnCancel">Cancelar flete</button>
@@ -468,8 +478,9 @@ body.cine .quick{display:none}
           <button class="st-opt" id="startCont">Continuar <small id="startSave">—</small></button>
           <button class="st-opt" id="startTruck">Camión <small>Semi Lowpoly</small></button>
           <button class="st-opt" id="startSet">Ajustes <small>Manejo y sonido</small></button>
+          <button class="st-opt" id="startTut">Tutorial <small>Aprende a manejarlo</small></button>
         </div>
-        <div class="st-foot"><span>v107 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
+        <div class="st-foot"><span>v108 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
       </div>
       <div class="st-garage" id="startGarage" hidden>
         <h3>TU CAMIÓN</h3><div class="n">Semi Lowpoly</div>
@@ -477,6 +488,7 @@ body.cine .quick{display:none}
       </div>
     </div>
   </div>
+  <div class="modal" id="tut" hidden><div class="card"><div class="eyebrow" id="tutN">TUTORIAL</div><h2 id="tutT"></h2><div id="tutB"></div><div class="rrow"><button class="btn ghost" id="tutPrev">Anterior</button><button class="btn ghost" id="tutX">Cerrar</button><button class="btn go" id="tutNext" style="flex:1">Siguiente</button></div></div></div><div id="tutRing" hidden></div>
   <div id="devHud" hidden aria-hidden="true"><div class="dh-top"><svg id="dhArrow" viewBox="-15 -15 30 30"><circle r="14"/><path d="M0 -10 L7 6 L0 2 L-7 6 Z"/></svg><b id="dhDist"></b><div class="dh-sem" id="dhSem" hidden><i></i><b></b></div></div><div class="dh-street" id="dhStreet"></div><canvas id="dhMap" width="660" height="134"></canvas><div class="dh-bot" id="dhBot"><span id="dhL"></span><b id="dhR"></b></div></div>
   <div id="auto" hidden role="dialog" aria-label="Pantalla multimedia del camión">
     <div class="au-bar" id="auBar"><span class="au-brand">FN<b>AUTO</b></span><span id="auNow"></span><span class="au-pl" id="auPl" hidden><button data-m="prev" aria-label="Anterior">⏮</button><button data-m="tog" aria-label="Pausar o reproducir">❚❚</button><button data-m="next" aria-label="Siguiente">⏭</button><button data-m="vdn" aria-label="Bajar volumen">−</button><button data-m="vup" aria-label="Subir volumen">+</button></span><span id="auClock">09:00</span><button id="auMini" aria-label="Cambiar tamaño" title="Tamaño">▭</button><button id="auClose" aria-label="Cerrar pantalla" title="Cerrar">✕</button></div>
@@ -6273,7 +6285,11 @@ function gpsInfo(){if(!mission&&BRECHA_JOB){const bk=BRECHA_JOB.back,inZ=offMask
   if(left<110)txt=mission.phase==='hook'?`Retrocede hasta el remolque · ${(S.hookD??left).toFixed(1)} m`:(mission.phase==='loading'||mission.phase==='unloading')?'Espera, el montacargas está trabajando':`Mete el ${MD().rigid?'camión':'remolque'} de reversa al andén ${dockIdx()+1}`;else if(!txt)txt=`Sigue ${m10(acc)} m por ${N[0]||'el camino'}`;
   return{txt,sub:(gps.len/1000).toFixed(1)+' km al destino',ang};}
 function ui(){
-  if(SET().aclutch){const sh=S.drag||S.path.length>0;if(sh){S.tgt.clutch=1;if(S.ped.clutch<.9)S.ped.clutch=.9;S.acl=1;}else if(S.acl){S.acl=0;if(!(S.ph&&S.ph.clutch))S.tgt.clutch=0;}}
+  // v108 · clutch asistido completo: lo pisa al mover la palanca, lo mantiene pisado si estás en marcha casi parado y sin acelerar (para que no se apague), y lo suelta poco a poco cuando aceleras
+  if(SET().aclutch&&!(S.ph&&S.ph.clutch)){const sh=S.drag||S.path.length>0,slow=S.running&&S.gear!==0&&Math.abs(S.v)<2.4;
+    if(sh){S.tgt.clutch=1;if(S.ped.clutch<.9)S.ped.clutch=.9;S.acl=1;S.aclG=null;}
+    else if(slow){S.acl=1;if(S.ped.gas<.08){S.tgt.clutch=1;S.aclG=null;}else{if(S.aclG==null)S.aclG=S.t;S.tgt.clutch=clamp(.82-(S.t-S.aclG)*(.4+S.ped.gas*.5),0,1);if(S.rpm<560)S.tgt.clutch=Math.max(S.tgt.clutch,.72);}}
+    else if(S.acl){S.acl=0;S.aclG=null;S.tgt.clutch=0;}}
   wheelSvg.style.transform=`rotate(${S.steer.toFixed(1)}deg)`;setText(els.wd,'wd',Math.round(S.steer)+'°');
   const shk=S.running?(.004+.006*S.ped.gas+.03*(S.jud||0)+.02*(S.camKick||0))*Math.sin(S.t*2*Math.PI*Math.max(S.rpm,300)/60*1.5):0;knobEl.style.left=(S.kx+shk+1.5)/3*100+'%';knobEl.style.top=(S.ky+shk*.6+1.5)/3*100+'%';const gw=gate.clientWidth,dx=S.kx/3*gw,dy=S.ky/3*gw;shaftEl.style.width=Math.hypot(dx,dy)+'px';shaftEl.style.transform=`rotate(${Math.atan2(dy,dx)}rad)`;
   if(S.splitWant!=null&&S.splitWant!==!!S.split&&(S.ped.gas<.15||S.ped.clutch>.5)){S.split=S.splitWant;updateGateLabels();noise(.06,1400,'bandpass',.12);}
@@ -6578,6 +6594,32 @@ function warmUp(){const rt=new THREE.WebGLRenderTarget(32,32),sv=[];scene.traver
 warmUp();splitStatic();
 VEG.forEach(im=>im.count=HI()?im.userData.full:Math.floor(im.userData.full*.35));
 try{corpOffline();drawCluster();updateGateLabels();if(!restoreJob())openJobs();}catch(e){setTimeout(()=>showErr('inicio',e),1500);}requestAnimationFrame(loop);
+/* ===== v108 · cajón de botones de poco uso ===== */
+{const q=$('#quick'),more=document.createElement('div'),tog=document.createElement('button');more.className='qk-more';more.id='qkMore';tog.className='btn ibtn';tog.id='qkTog';tog.textContent='⋯';tog.title='Más botones';tog.setAttribute('aria-label','Mostrar u ocultar más botones');tog.setAttribute('aria-expanded','false');
+ for(const id of['qkRadio','qkBag','qkPip','qkRev'])more.appendChild($('#'+id));q.insertBefore($('#qkAuto'),$('#qkMap').nextSibling);q.appendChild(tog);q.appendChild(more);let tm=0;
+ const set=o=>{q.classList.toggle('open',o);tog.textContent=o?'‹':'⋯';tog.setAttribute('aria-expanded',String(o));clearTimeout(tm);if(o)tm=setTimeout(()=>set(false),6000);};
+ tog.addEventListener('click',()=>set(!q.classList.contains('open')));more.addEventListener('click',()=>{clearTimeout(tm);tm=setTimeout(()=>set(false),6000);});
+ let x0=null;q.addEventListener('pointerdown',e=>{x0=e.clientX;});q.addEventListener('pointerup',e=>{if(x0!=null){const d=e.clientX-x0;if(d>28)set(true);else if(d<-28)set(false);}x0=null;});}
+/* ===== v108 · tutorial detallado por páginas; cada página señala el control del que habla ===== */
+{const TUT=[
+ ['Tus controles','<ul><li><b>Volante</b> (abajo a la izquierda): arrástralo en círculo. Tocar el centro suena el claxon.</li><li><b>Pedales</b>: CLUTCH a la izquierda; FRENO y ACELERADOR a la derecha. Desliza el dedo hacia abajo para pisar más.</li><li><b>Palanca</b>: arrastra la bola por las ranuras de la H.</li><li><b>🔑</b> prende y apaga el motor · <b>P</b> es el freno de mano · <b>🎥</b> cambia la cámara · <b>☰</b> abre el menú.</li></ul>','#wheelCtl'],
+ ['Arrancar el motor y salir','<ol><li>Con la palanca en <b>N</b>, toca la llave <b>🔑</b>.</li><li>Quita el freno de mano con <b>P</b>.</li><li>Pisa el <b>CLUTCH</b> hasta el fondo y mete <b>1ª</b>.</li><li>Suelta el clutch <b>despacio</b> mientras aceleras poquito. Si el camión tiembla, vuelve a pisar el clutch.</li></ol><p>Si se apaga: neutral, llave y de nuevo.</p>','#btnEngine,#btnPark'],
+ ['Cambiar de marcha','<ol><li>Acelera hasta que la barra bajo la velocidad pase de verde a ámbar (unas 1,500 a 1,800 vueltas).</li><li>Suelta el acelerador, pisa el <b>CLUTCH</b> a fondo.</li><li>Pasa la palanca por neutral a la siguiente marcha.</li><li>Suelta el clutch y vuelve a acelerar.</li></ol><p>Baja de marcha cuando el motor se sienta sin fuerza. No metas una marcha muy baja yendo rápido: la palanca rechina y no entra.</p>','#shifterCtl'],
+ ['Clutch asistido (opcional)','<p>Si tu celular solo acepta dos dedos a la vez, actívalo en <b>☰ → Ajustes de manejo → Clutch asistido</b>.</p><ul><li>El clutch se pisa solo mientras mueves la palanca.</li><li>Si quedas en marcha casi parado y sin acelerar, lo mantiene pisado para que <b>no se apague</b>.</li><li>Al acelerar lo va soltando poco a poco, también en reversa.</li></ul>','.p-clutch'],
+ ['Frenar sin quemar los frenos','<ul><li>El <b>FRENO</b> de pie para todo. Frena antes de la curva, no en ella.</li><li>En bajadas largas usa el botón <b>MOTOR</b> (freno de motor) y una marcha baja.</li><li>Si abusas del freno se <b>calientan</b> y luego se <b>cristalizan</b>: frenan menos hasta repararlos.</li><li>Para detenerte: frena, y antes de parar pisa el clutch o pon neutral. Luego <b>P</b>.</li></ul>','.pedal[data-k=brake]'],
+ ['Tomar un flete','<ol><li>Abre <b>☰ → Ver cargas</b>, o <b>📱 → Fletes</b>.</li><li>Elige la carga y la ruta. La paga depende de la distancia, el peso y tu reputación con el cliente.</li><li>Ve al patio, <b>engánchate de reversa</b> al remolque y métete al andén para cargar.</li><li>Entrega a tiempo y sin golpes: sube tu reputación (★) y cada estrella paga 4% más.</li></ol>','#btnMenu'],
+ ['Reversa con remolque','<ul><li>En reversa el remolque gira <b>al revés</b> de tu volante: gira poco y corrige pronto.</li><li>La pantalla del tablero muestra el camión <b>desde arriba</b> con líneas guía de por dónde pasará la caja.</li><li>Si se dobla demasiado, avanza un poco para enderezar y vuelve a intentar.</li></ul>','#devHud'],
+ ['GPS, semáforos y multas','<ul><li>La <b>pantalla del tablero</b> muestra la flecha, los metros a la vuelta y tu <b>semáforo con segundos</b>.</li><li>Junto al límite de velocidad hay un <b>punto</b> del color de tu semáforo.</li><li>Pasarte un rojo cuesta <b>$1,500</b>. Respeta el límite si hay patrulla cerca.</li><li>Topes y baches rápido dañan la carga y la suspensión.</li></ul>','.hudcard'],
+ ['FN Auto: la pantalla del camión','<ul><li>Ábrela con <b>📱</b> o <b>tocando la pantalla del tablero</b> (la cámara se acerca).</li><li>Tiene Mapa, YouTube, Podcasts, Música, Fletes y estado del Camión.</li><li>⏮ ⏯ ⏭ y el volumen están siempre en su barra de arriba.</li><li>Los botones de poco uso (radio, bolsas de aire, cámaras) están en el cajón <b>⋯</b>.</li></ul>','#qkAuto,#qkTog'],
+ ['Brecha, suspensión y taller','<ul><li>En el noroeste del mapa están las <b>Brechas del Norte</b>: entra despacio; los golpes desgastan los amortiguadores.</li><li>Con lluvia hay lodo y vados con agua: marchas bajas y acelera suave.</li><li>En <b>☰ → Taller</b> reparas suspensión, clutch, frenos y turbo, cambias aceite y llantas, y compras mejoras.</li><li>Carga diésel en las gasolineras (puntos azules del mapa).</li></ul><p>Puedes volver a este tutorial en ☰ → Tutorial.</p>','#qkMap']];
+ const M=$('#tut'),ring=$('#tutRing');let ti=0,jobsWas=false;
+ function ringOn(sel){ring.hidden=true;if(!sel)return;let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9,n=0;for(const q of sel.split(',')){const el=document.querySelector(q);if(!el||el.hidden)continue;const r=el.getBoundingClientRect();if(r.width<2||r.left<-500)continue;x0=Math.min(x0,r.left);y0=Math.min(y0,r.top);x1=Math.max(x1,r.right);y1=Math.max(y1,r.bottom);n++;}
+  if(!n)return;ring.style.left=(x0-6)+'px';ring.style.top=(y0-6)+'px';ring.style.width=(x1-x0+12)+'px';ring.style.height=(y1-y0+12)+'px';ring.hidden=false;}
+ function show(i){ti=clamp(i,0,TUT.length-1);const t=TUT[ti];$('#tutN').textContent='TUTORIAL · '+(ti+1)+' DE '+TUT.length;$('#tutT').textContent=t[0];$('#tutB').innerHTML=t[1];$('#tutPrev').disabled=ti===0;$('#tutNext').textContent=ti===TUT.length-1?'Listo':'Siguiente';if(!$('#jobs').hidden){jobsWas=true;$('#jobs').hidden=true;}M.hidden=false;ringOn(t[2]);}   // la bolsa de fletes se esconde mientras dura el tutorial
+ function close(){M.hidden=true;ring.hidden=true;if(jobsWas){jobsWas=false;if(!mission)$('#jobs').hidden=false;}if(!save.tutSeen){save.tutSeen=1;persist();}}
+ $('#tutPrev').addEventListener('click',()=>show(ti-1));$('#tutNext').addEventListener('click',()=>{if(ti===TUT.length-1)close();else show(ti+1);});$('#tutX').addEventListener('click',close);
+ $('#btnTut').addEventListener('click',()=>{menu.hidden=true;show(0);});window.__tut=show;
+ $('#startPlay').addEventListener('click',()=>{if(!save.tutSeen&&!(save.xp>0)&&!save.money){save.tutSeen=1;persist();setTimeout(()=>show(0),350);}});}
 /* ===== v97 · FN Auto: pantalla multimedia del camión (mapa, YouTube, podcasts, radio y estado). Diseño propio del juego. ===== */
 (function(){const A=$('#auto'),view=$('#auView'),media=$('#auMedia'),rail=$('#auRail');const ST=()=>{const a=save.auto||(save.auto={fav:[],mini:false});if(!a.fav)a.fav=[];if(!a.seed1){a.seed1=1;for(const[t,u]of[['Facultad','https://music.youtube.com/playlist?list=PLJ8CMwmDS9_o'],['Mi playlist','https://music.youtube.com/playlist?list=PLKLMlQgLBLl4']])if(!a.fav.some(x=>x.u===u))a.fav.unshift({u,t,a:'mus'});}return a;};
  const JSQ='&enablejsapi=1'+(location.protocol.indexOf('http')===0?'&origin='+encodeURIComponent(location.origin):'');
@@ -6754,7 +6796,7 @@ function show(){$('#startSave').textContent=money();$('#startGarage').hidden=tru
 function hide(){st.style.display='none';}
 $('#startPlay').onclick=hide;$('#startCont').onclick=hide;
 $('#startTruck').onclick=()=>{const g=$('#startGarage');g.hidden=!g.hidden;};
-$('#startSet').onclick=()=>{hide();const b=$('#btnSet');if(b)b.click();};
+$('#startSet').onclick=()=>{hide();const b=$('#btnSet');if(b)b.click();};$('#startTut').onclick=()=>{hide();if(window.__tut)window.__tut(0);};
 $('#btnHome').onclick=()=>{const m=$('#menu');if(m)m.hidden=true;show();};
 show();
 })();
