@@ -480,7 +480,7 @@ body.cine .quick{display:none}
           <button class="st-opt" id="startSet">Ajustes <small>Manejo y sonido</small></button>
           <button class="st-opt" id="startTut">Tutorial <small>Aprende a manejarlo</small></button>
         </div>
-        <div class="st-foot"><span>v109 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
+        <div class="st-foot"><span>v110 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
       </div>
       <div class="st-garage" id="startGarage" hidden>
         <h3>TU CAMIÓN</h3><div class="n">Semi Lowpoly</div>
@@ -6182,7 +6182,11 @@ function openShop(){menu.hidden=true;$('#shopMoney').textContent=fmtMoney(save.m
     mk('Logo de la caja',LOGOS,save.trailer.logo,2000,i=>{save.trailer.logo=i;refreshTrailer();},true);
     {const h=document.createElement('p');h.textContent='Skins';body.appendChild(h);const g2=document.createElement('div');g2.className='opts';body.appendChild(g2);const own=(save.skins||[]).includes('deli'),on=u.skin==='deli',price=18000,cant=!own&&save.money<price;
      g2.appendChild(opt(on?'PUESTA':own?'TUYA':'SKIN','Deli Deli · LED rosas',['Pintura rosa, tiras LED rosas en las orillas del camión y de la caja, resplandor en el piso y rótulo Deli Deli en la caja'],on?'Toca para quitarla':own?'Toca para ponerla':fmtMoney(price)+(cant?` · te faltan ${fmtMoney(price-save.money)}`:' · toca para comprar'),cant,()=>{
-       if(!own){save.money-=price;(save.skins||(save.skins=[])).push('deli');}if(on){u.skin=null;u.color=u.color0??null;}else{u.color0=u.color??null;u.skin='deli';u.color=0xff9ec9;}persist();applySkin();applyDmgVis();refreshTrailer();toast(on?'Skin quitada':'Skin Deli Deli puesta',true);openShop();},on));}}
+       if(!own){save.money-=price;(save.skins||(save.skins=[])).push('deli');}if(on){u.skin=null;u.color=u.color0??null;}else{u.color0=u.color??null;u.skin='deli';u.color=0xff9ec9;}persist();applySkin();applyDmgVis();refreshTrailer();toast(on?'Skin quitada':'Skin Deli Deli puesta',true);openShop();},on));
+     // v110 · código de regalo: quien lo escribe recibe la skin gratis
+     const p2=document.createElement('p');p2.textContent=own?'Para regalarla, pásale a tu amiga el código DELIDELI: lo escribe aquí abajo en su juego.':'¿Te regalaron la skin? Escribe tu código:';body.appendChild(p2);
+     const row=document.createElement('div');row.className='rrow';row.innerHTML='<input id="giftIn" type="text" autocomplete="off" autocapitalize="characters" placeholder="Código de regalo" aria-label="Código de regalo" style="flex:1;min-width:0;padding:9px 11px;border-radius:10px;border:1px solid var(--edge);background:#0b0e12;color:var(--ink);font:600 14px/1 var(--display);user-select:text;-webkit-user-select:text"><button class="btn" id="giftGo">Canjear</button>';body.appendChild(row);
+     row.querySelector('#giftIn').addEventListener('keydown',e=>e.stopPropagation());row.querySelector('#giftGo').addEventListener('click',()=>{const c=row.querySelector('#giftIn').value.trim().toUpperCase().replace(/[^A-Z0-9]/g,'');if(c!=='DELIDELI'){toast('Ese código no existe');return;}if((save.skins||[]).includes('deli')){toast('Ya tienes la skin Deli Deli');return;}(save.skins||(save.skins=[])).push('deli');persist();toast('¡Regalo canjeado! Ya tienes la skin Deli Deli',true);openShop();});}}
   $('#shop').hidden=false;}
 {const b=$('#btnHigh'),lab=()=>{b.textContent='Luces altas: '+({auto:'auto',on:'siempre',off:'no'}[save.hiMode||'auto']);};b.addEventListener('click',()=>{save.hiMode={auto:'on',on:'off',off:'auto'}[save.hiMode||'auto'];persist();lab();});lab();}
 $('#btnShop').addEventListener('click',openShop);$('#btnShopClose').addEventListener('click',()=>{$('#shop').hidden=true;if(shopFromJobs&&!mission){shopFromJobs=false;openJobs();}});
