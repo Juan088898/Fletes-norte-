@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v121">
+<meta name="fn-version" content="v122">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -5227,7 +5227,7 @@ const LAMPAPI={paint(){}};
 function mkLampStrip(cl){const LAMPS=[['sl','◀','','#3fd08a'],['tire','🛞','LLT','#ffb53d'],['abs','◎','ABS','#ffb53d'],['brk','❗','FRN','#ffb53d'],['bat','🔋','BAT','#ff3b30'],['oil','🛢','ACE','#ff3b30'],['air','💨','AIR','#ff3b30'],['park','Ⓟ','FRE','#ff3b30'],['glow','〰','BUJ','#ffb53d'],['chk','⚙','CHK','#ffb53d'],['temp','🌡','TMP','#ff3b30'],['dsl','⛽','DSL','#ffb53d'],['clu','🦶','CLU','#ffb53d'],['sus','⇅','SUS','#ffb53d'],['sr','▶','','#3fd08a']];
   LAMPAPI.L={};LAMPAPI.LAMPS=LAMPS;LAMPAPI.paint=L=>{LAMPAPI.L=L;};
   LAMPAPI.paint({});}
-{const cl=new THREE.Mesh(new THREE.PlaneGeometry(1.12,.5),new THREE.MeshBasicMaterial({map:cluTex}));cl.geometry.translate(0,.025,0);cl.position.set(-.634,2.6,-4.845);cl.rotation.x=-.2;cabin.add(cl);const cb=box(cabin,.98,.42,.04,0x0d0e10,-.58,2.6,-4.905);cb.rotation.x=-.2;cb.visible=false;CLUKEEP.push(cl);mkTurboG(cl);mkLampStrip(cl);}
+{const cl=new THREE.Mesh(new THREE.PlaneGeometry(1.12,.5),new THREE.MeshBasicMaterial({map:cluTex,transparent:true}));cl.geometry.translate(0,.025,0);cl.position.set(-.634,2.6,-4.845);cl.rotation.x=-.2;cabin.add(cl);const cb=box(cabin,.98,.42,.04,0x0d0e10,-.58,2.6,-4.905);cb.rotation.x=-.2;cb.visible=false;CLUKEEP.push(cl);mkTurboG(cl);mkLampStrip(cl);}
 cluTex.anisotropy=8;
 function vent(p,x,y,z,ry){const g=new THREE.Group();g.position.set(x,y,z);g.rotation.y=ry||0;p.add(g);
   g.add(new THREE.Mesh(new THREE.TorusGeometry(.068,.02,8,24),M(0x45484e)));const d=new THREE.Mesh(new THREE.CircleGeometry(.062,20),blk);d.position.z=-.005;g.add(d);
@@ -5610,13 +5610,13 @@ function subG(g,cx,cy,r,f,lab,txt,redFrom,redLow){const a0=Math.PI*.8,a1=Math.PI
   for(let k=0;k<=4;k++){const a=a0+(a1-a0)*k/4;g.beginPath();g.moveTo(cx+Math.cos(a)*(r-6),cy+Math.sin(a)*(r-6));g.lineTo(cx+Math.cos(a)*(r-1),cy+Math.sin(a)*(r-1));g.strokeStyle='#cfd4da';g.lineWidth=1.5;g.stroke();}
   const a=a0+(a1-a0)*clamp(f,0,1);g.beginPath();g.moveTo(cx,cy);g.lineTo(cx+Math.cos(a)*(r-4),cy+Math.sin(a)*(r-4));g.strokeStyle='#ff7a2a';g.lineWidth=2.5;g.stroke();g.beginPath();g.arc(cx,cy,3,0,7);g.fillStyle='#cfd4da';g.fill();
   g.textAlign='center';g.textBaseline='middle';g.fillStyle='#9ea2a8';g.font='600 9px "Barlow Condensed",sans-serif';g.fillText(lab,cx,cy+r*.55);if(txt){g.fillStyle='#eaf2ff';g.font='400 9px "Share Tech Mono",monospace';g.fillText(txt,cx,cy-r*.45);}}
-function drawCluster(){const g=cluCtx;g.setTransform(1,0,0,1,0,0);g.fillStyle='#0a0b0d';g.fillRect(0,0,620,278);
-  {const L=LAMPAPI.L||{};g.textAlign='center';g.textBaseline='middle';(LAMPAPI.LAMPS||[]).forEach(([n,ic,t,c],i)=>{const col=i%2,row=i>>1,x=4+col*50,y=34+row*30,on=!!L[n];g.fillStyle=on?c:'#15171b';g.fillRect(x,y,47,27);
-   g.globalAlpha=on?1:.3;g.fillStyle=on?(c==='#ff3b30'?'#fff':'#0b0b0b'):'#9aa0a8';g.font=(t?'15px':'19px')+' sans-serif';g.fillText(ic,t?x+13:x+23.5,y+14);if(t){g.font='700 12px "Barlow Condensed",sans-serif';g.fillText(t,x+34,y+14.5);}g.globalAlpha=1;});}
-  g.translate(108,53);
+function drawCluster(){const g=cluCtx;g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,620,278);g.beginPath();g.moveTo(0,278);g.lineTo(0,74);g.quadraticCurveTo(0,46,30,40);g.quadraticCurveTo(310,-12,590,40);g.quadraticCurveTo(620,46,620,74);g.lineTo(620,278);g.closePath();g.fillStyle='#0a0b0d';g.fill();
+  {const L=LAMPAPI.L||{};g.textAlign='center';g.textBaseline='middle';(LAMPAPI.LAMPS||[]).forEach(([n,ic,t,c],i)=>{const col=i%2,row=i>>1,x=4+col*50,y=68+row*26,on=!!L[n];g.fillStyle=on?c:'#15171b';g.fillRect(x,y,47,23);
+   g.globalAlpha=on?1:.3;g.fillStyle=on?(c==='#ff3b30'?'#fff':'#0b0b0b'):'#9aa0a8';g.font=(t?'15px':'19px')+' sans-serif';g.fillText(ic,t?x+13:x+23.5,y+12);if(t){g.font='700 12px "Barlow Condensed",sans-serif';g.fillText(t,x+34,y+12.5);}g.globalAlpha=1;});}
+  g.translate(108,45);
   gauge(g,104,100,86,S.rpm/1000,3,.5,v=>v%1?'':v,2.3,'x1000 rpm');gauge(g,408,100,86,Math.abs(S.v)*3.6,120,20,v=>v|0,null,'km/h');
-  {const air=S.air??1,et=S.et||0,bt=S.bt||0;subG(g,78,146,22,air,'AIRE',Math.round(air*125)+' psi',.36,true);subG(g,130,146,22,.25+et*.75,'MOTOR',Math.round(70+et*45)+'°',.82);
-   subG(g,382,146,22,bt,'FRENOS',null,.6);subG(g,434,146,22,S.fuel/tankCap(),'DIÉSEL',null,.15,true);}
+  {const air=S.air??1,et=S.et||0,bt=S.bt||0;subG(g,74,207,17,air,'AIRE',Math.round(air*125)+' psi',.36,true);subG(g,134,207,17,.25+et*.75,'MOTOR',Math.round(70+et*45)+'°',.82);
+   subG(g,378,207,17,bt,'FRENOS',null,.6);subG(g,438,207,17,S.fuel/tankCap(),'DIÉSEL',null,.15,true);}
   g.fillStyle='#08121f';g.strokeStyle='#2c3e55';g.lineWidth=2;g.fillRect(198,22,116,150);g.strokeRect(198,22,116,150);
   g.textAlign='center';g.textBaseline='middle';g.fillStyle='#eaf2ff';g.font='400 46px "Share Tech Mono",monospace';g.fillText(gName(S.gear),256,62);
   g.font='400 13px "Share Tech Mono",monospace';g.fillStyle='#7cc4ff';g.fillText(box10()?(S.range==='H'?'RANGO ALTO':'RANGO BAJO'):'D11 · 6V',256,94);
