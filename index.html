@@ -6793,7 +6793,7 @@ function applySkin(){if(!SKIN)return;const on=UP(S.model).skin==='deli';if(on)sk
  (function fr(){requestAnimationFrame(fr);try{devFrame();}catch(e){}if(!dash)return;if(S.view!==0){leaveDash();return;}const far=!zoomed&&zk<.06;if(far!==A.classList.contains('far')){A.classList.toggle('far',far);render();}
   const hide=far&&!(cur&&cur.app!=='mus');A.classList.toggle('ghost',hide);if(!hide)place();})();   // lejos: solo video o podcast sobre la pantalla; con música o sin nada, se ve el mapa del GPS
  // ===== v102 · pantalla del tablero nítida (HTML sobre el aparato) con información grande =====
- sc.parent.scale.setScalar(1.5);
+ sc.parent.scale.setScalar(1.2);
  const DH=$('#devHud'),dhMap=$('#dhMap'),dhCtx=dhMap.getContext('2d'),mo=document.createElement('canvas'),moCtx=mo.getContext('2d');let dhKey='';
  const km=n=>n>=1000?(n/1000).toFixed(1)+' km':n+' m';
  function devPaint(){const gi=gpsInfo(),al=alPrev,vid=!!cur&&cur.app!=='mus';let dist='',street=gi.txt,m;
@@ -6844,6 +6844,8 @@ show();
 .pedal.p-clutch{width:min(11vh,44px);height:min(24vh,96px);padding:14px 4px 4px}
 .pedal .btn.tog{height:22px;padding:0 5px;font-size:10px}
 .pedal.p-clutch .plabel{font-size:8px;letter-spacing:0;padding-top:2px}
+#setPanel{width:min(600px,calc(100vw - 32px));max-height:calc(100vh - 16px);overflow-y:auto;touch-action:pan-y;grid-template-columns:1fr 1fr;gap:6px 14px;padding:10px 12px}
+#setPanel>.rtitle,#setPanel>p,#setPanel>.rrow,#setPanel>label[for=sAcl]{grid-column:1/-1}
 #btnHorn{position:fixed;z-index:12;left:calc(max(16px,env(safe-area-inset-left,0px)) + min(40vh,170px) + min(11vh,44px) + 26px);bottom:max(14px,env(safe-area-inset-bottom,0px));width:min(16vh,60px);height:min(16vh,60px);padding:0;border-radius:50%;font-size:min(8vh,28px);display:grid;place-items:center;border-color:var(--amber);background:rgba(12,14,17,.55)}
 #btnHorn:active{background:var(--amber)}
 </style>
