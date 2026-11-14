@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v127">
+<meta name="fn-version" content="v128">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -5206,7 +5206,7 @@ const dMat=new THREE.MeshLambertMaterial({color:0x2c2e32}),tMat=new THREE.MeshLa
 box(cabin,2.36,.04,1.6,M(0x26282c),0,1.45,-4.4);
 {const fw=new THREE.Mesh(new THREE.BoxGeometry(2.36,.6,1.6),new THREE.MeshLambertMaterial({color:0x3a3e44,side:THREE.BackSide}));fw.position.set(0,1.72,-4.6);cabin.add(fw);}
 box(cabin,2.36,.62,.6,dMat,0,2.06,-5.1);{const top=box(cabin,2.36,.06,.62,tMat,0,2.4,-5.12);top.rotation.x=.12;}
-const clu=document.createElement('canvas');clu.width=620;clu.height=278;const cluCtx=clu.getContext('2d');const cluTex=new THREE.CanvasTexture(clu);
+const clu=document.createElement('canvas');clu.width=1240;clu.height=556;const cluCtx=clu.getContext('2d');const cluTex=new THREE.CanvasTexture(clu);
 const CLUKEEP=[],TBG=[],CLUREF={};
 /* v94 TurboTelemetry en el tablero: los 4 relojes hexagonales negros que eran adorno.
    Fila de arriba: WASTEGATE (%) · BOOST (psi) · TURBO (rpm). Fila de abajo: AIRE al motor (kg/s) · ADMISIÓN (°C) · ESCAPE (psi). Punto celeste en BOOST = wastegate abierta. */
@@ -5610,8 +5610,8 @@ function subG(g,cx,cy,r,f,lab,txt,redFrom,redLow){const a0=Math.PI*.8,a1=Math.PI
   for(let k=0;k<=4;k++){const a=a0+(a1-a0)*k/4;g.beginPath();g.moveTo(cx+Math.cos(a)*(r-6),cy+Math.sin(a)*(r-6));g.lineTo(cx+Math.cos(a)*(r-1),cy+Math.sin(a)*(r-1));g.strokeStyle='#cfd4da';g.lineWidth=1.5;g.stroke();}
   const a=a0+(a1-a0)*clamp(f,0,1);g.beginPath();g.moveTo(cx,cy);g.lineTo(cx+Math.cos(a)*(r-4),cy+Math.sin(a)*(r-4));g.strokeStyle='#ff7a2a';g.lineWidth=2.5;g.stroke();g.beginPath();g.arc(cx,cy,3,0,7);g.fillStyle='#cfd4da';g.fill();
   g.textAlign='center';g.textBaseline='middle';g.fillStyle='#9ea2a8';g.font='600 9px "Barlow Condensed",sans-serif';g.fillText(lab,cx,cy+r*.55);if(txt){g.fillStyle='#eaf2ff';g.font='400 9px "Share Tech Mono",monospace';g.fillText(txt,cx,cy-r*.45);}}
-const cluMap=document.createElement('canvas');cluMap.width=232;cluMap.height=300;const cluMapG=cluMap.getContext('2d');let cluMapN=0;
-function drawCluster(){const g=cluCtx;g.setTransform(1,0,0,1,0,0);g.fillStyle='#16171a';g.fillRect(0,0,620,278);
+const cluMap=document.createElement('canvas');cluMap.width=464;cluMap.height=600;const cluMapG=cluMap.getContext('2d');let cluMapN=0;
+function drawCluster(){const g=cluCtx;g.setTransform(2,0,0,2,0,0);g.fillStyle='#16171a';g.fillRect(0,0,620,278);
   g.beginPath();g.moveTo(0,278);g.lineTo(0,100);g.quadraticCurveTo(0,44,52,36);g.quadraticCurveTo(310,-4,568,36);g.quadraticCurveTo(620,44,620,100);g.lineTo(620,278);g.closePath();g.fillStyle='#0a0b0d';g.fill();g.lineWidth=4;g.strokeStyle='#1c1e22';g.stroke();
   {const L=LAMPAPI.L||{};g.textAlign='center';g.textBaseline='middle';(LAMPAPI.LAMPS||[]).forEach(([n,ic,t,c],i)=>{const x=60+i*33.8,y=38,on=!!L[n];g.fillStyle=on?c:'#15171b';g.fillRect(x,y,31,24);
    g.globalAlpha=on?1:.3;g.fillStyle=on?(c==='#ff3b30'?'#fff':'#0b0b0b'):'#9aa0a8';if(t){g.font='13px sans-serif';g.fillText(ic,x+8.5,y+12.5);g.font='700 10px "Barlow Condensed",sans-serif';g.fillText(t,x+22.5,y+13);}else{g.font='17px sans-serif';g.fillText(ic,x+15.5,y+12.5);}g.globalAlpha=1;});}
@@ -5621,7 +5621,7 @@ function drawCluster(){const g=cluCtx;g.setTransform(1,0,0,1,0,0);g.fillStyle='#
    subG(g,378,207,17,bt,'FRENOS',null,.6);subG(g,438,207,17,S.fuel/tankCap(),'DIÉSEL',null,.15,true);}
   // pantalla central del cluster: mapa del GPS con la indicación arriba y marcha/velocidad abajo
   {const X=198,Y=22,W=116,H=150;g.save();g.beginPath();g.rect(X,Y,W,H);g.clip();
-   try{if((cluMapN++)%2===0)drawMap(cluMap,cluMapG,232,300,1,false);g.drawImage(cluMap,58,87,116,150,X,Y,W,H);}catch(e){g.fillStyle='#08121f';g.fillRect(X,Y,W,H);}
+   try{if((cluMapN++)%2===0)drawMap(cluMap,cluMapG,232,300,2,false);g.drawImage(cluMap,116,174,232,300,X,Y,W,H);}catch(e){g.fillStyle='#08121f';g.fillRect(X,Y,W,H);}
    let gi={txt:'',sub:'',ang:0};try{gi=gpsInfo();}catch(e){}
    g.fillStyle='rgba(8,12,18,.9)';g.fillRect(X,Y,W,42);
    g.save();g.translate(X+15,Y+21);g.rotate((gi.ang||0)*Math.PI/180);g.fillStyle='#3fd08a';g.beginPath();g.moveTo(0,-10);g.lineTo(8,7);g.lineTo(0,3);g.lineTo(-8,7);g.closePath();g.fill();g.restore();
@@ -5635,7 +5635,7 @@ function drawCluster(){const g=cluCtx;g.setTransform(1,0,0,1,0,0);g.fillStyle='#
   const lt=(x,c,on)=>{g.beginPath();g.arc(x,186,6,0,Math.PI*2);g.fillStyle=on?c:'#1c1f23';g.fill();};
   lt(196,'#ff4a3d',!S.running);lt(226,'#ff4a3d',S.pbrake);lt(256,'#ffb53d',S.jake);lt(286,'#3fd08a',S.running);lt(316,'#7cc4ff',env.lightsOn);if((S.cheat||0)>.7){g.fillStyle='#ff4a3d';g.font='700 13px "Barlow Condensed",sans-serif';g.fillText('CLUTCH CALIENTE',256,30);}if(SCR.cur){let m=SCR.cur.length>76?SCR.cur.slice(0,75)+'…':SCR.cur;g.font='700 15px "Barlow Condensed",sans-serif';const ln=[];let l='';for(const w of m.split(' ')){if(g.measureText(l+w).width<100)l+=w+' ';else{ln.push(l.trim());l=w+' ';}}ln.push(l.trim());const hh=Math.min(ln.length,6)*17+12;
   g.fillStyle='rgba(176,38,30,.96)';g.fillRect(198,22,116,hh);g.fillStyle='#fff';g.textAlign='center';g.textBaseline='middle';ln.slice(0,6).forEach((t,i)=>g.fillText(t,256,22+14+i*17));}
-  g.setTransform(1,0,0,1,0,0);cluTex.needsUpdate=true;drawTurboG();}
+  g.setTransform(2,0,0,2,0,0);cluTex.needsUpdate=true;drawTurboG();}
 // pantalla del camión: indicación del GPS arriba, mapa en medio, carga y tiempo abajo
 function drawGpsDev(){const g=gpsCtx,W=512,H=310;drawMap(gpsCv,g,W,H,2,false);g.setTransform(2,0,0,2,0,0);
   const gi=gpsInfo();g.fillStyle='rgba(10,14,18,.9)';g.fillRect(0,0,W,78);
