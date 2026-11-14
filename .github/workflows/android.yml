@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
     paths: [index.html, package.json, capacitor.config.json, .github/workflows/android.yml]
+permissions:
+  contents: write
 jobs:
   apk:
     runs-on: ubuntu-latest
@@ -28,3 +30,10 @@ jobs:
         with:
           name: fletes-del-norte-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Publicar APK en Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk FletesDelNorte.apk
+          gh release delete apk-latest --yes --cleanup-tag || true
+          gh release create apk-latest FletesDelNorte.apk --title "Fletes del Norte (APK)" --notes "APK de prueba compilado automaticamente desde main." --target main
