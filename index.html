@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v128">
+<meta name="fn-version" content="v129">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -4380,7 +4380,7 @@ const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
 canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();try{if(typeof snapJob==='function')snapJob();persist();}catch(er){}setTimeout(()=>location.reload(),1500);});
 if(save.gift10&&!save.gift10off){save.gift10off=1;let any=false;for(const k of save.owned){if(!MODELS[k].box10&&save.up[k]&&save.up[k].box10){save.up[k].box10=false;any=true;}}if(any)setTimeout(()=>toast('Regresé tu camión a la caja de 6 velocidades. La de 10 sigue en el Taller → Mejoras',true),4500);}
 const SAVE_AT0=save.at;if(!save.gift10){save.gift10=1;save.gift10off=1;}if(save.xp==null)save.xp=0;const LVL=()=>Math.floor(Math.sqrt((save.xp||0)/1500))+1,LVL_XP=l=>(l-1)*(l-1)*1500;const FRAGILE=['Vidrio','Electrodomésticos','Medicinas'];if(!save.set)save.set={steer:1,seatY:0,seatZ:0,vol:1};const SET=()=>save.set;if(!save.gfx)save.gfx='high';if(save.pip==null)save.pip=true;if(save.revCam==null)save.revCam=true;const HI=()=>save.gfx==='high';
-renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,HI()?1.5:1));renderer.shadowMap.enabled=HI();renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,HI()?2:1.35));renderer.shadowMap.enabled=HI();renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;
 const scene=new THREE.Scene();scene.background=new THREE.Color(0xc6d6e4);scene.fog=new THREE.Fog(0xc6d6e4,280,2300);
 const camera=new THREE.PerspectiveCamera(74,1,.05,3500);
 const hemi=new THREE.HemisphereLight(0xd8e6ff,0x8a7a55,.8);scene.add(hemi);
@@ -6453,7 +6453,7 @@ function layoutPip(){const r=$('#mini').getBoundingClientRect(),W=innerWidth,Hh=
   {const uv=revMini.geometry.attributes.uv,ra=(r.width/Math.max(1,r.height))/(320/194);for(let i=0;i<uv.count;i++){const u=revUV0[i*2],v=revUV0[i*2+1];if(ra>1){uv.setX(i,u);uv.setY(i,.5+(v-.5)/ra);}else{uv.setX(i,.5+(u-.5)*ra);uv.setY(i,v);}}uv.needsUpdate=true;}}
 function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();layoutPip();}
 const btnGfx=$('#btnGfx'),btnPip=$('#btnPip');
-function applyGfx(){const hi=HI();btnGfx.textContent='Gráficos: '+(hi?'altos':'bajos');renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,hi?1.5:1));
+function applyGfx(){const hi=HI();btnGfx.textContent='Gráficos: '+(hi?'altos':'bajos');renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,hi?2:1.35));
   if(renderer.shadowMap.enabled!==hi){renderer.shadowMap.enabled=hi;scene.traverse(o=>{if(o.material){(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.needsUpdate=true);}});}
   VEG.forEach(im=>im.count=hi?im.userData.full:Math.floor(im.userData.full*.35));resize();}
 btnGfx.addEventListener('click',()=>{save.gfx=HI()?'low':'high';persist();applyGfx();});
