@@ -413,7 +413,7 @@ body.cine .quick{display:none}
         <button class="btn ibtn" id="btnMenu" aria-label="Menú" title="Menú">☰</button>
         <button class="btn ibtn sig" id="btnSigL" aria-label="Direccional izquierda">◀</button>
         <button class="btn ibtn sig" id="btnSigR" aria-label="Direccional derecha">▶</button>
-        <button class="btn" id="btnHorn" hidden>Claxon</button>
+        <button class="btn" id="btnHorn" aria-label="Claxon" title="Claxon">📯</button>
     </div>
     <div class="row">
       <div id="wheelCtl">
@@ -6835,10 +6835,22 @@ show();
 })();
 </script>
 
+<style id="v112css">
+/* v112 · volante, palanca, freno y acelerador conservan su tamaño; claxon aparte; lo demás mínimo */
+.ctrl.l .btns .btn.ibtn{width:28px;height:28px;font-size:12px}
+.btns{gap:4px}
+.quick .btn.ibtn{width:28px;height:28px;border-radius:9px;font-size:13px}
+#qkTog{font-size:14px}
+.pedal.p-clutch{width:min(11vh,44px);height:min(24vh,96px);padding:14px 4px 4px}
+.pedal .btn.tog{height:22px;padding:0 5px;font-size:10px}
+.pedal.p-clutch .plabel{font-size:8px;letter-spacing:0;padding-top:2px}
+#btnHorn{position:fixed;z-index:12;left:calc(max(16px,env(safe-area-inset-left,0px)) + min(40vh,170px) + min(11vh,44px) + 26px);bottom:max(14px,env(safe-area-inset-bottom,0px));width:min(16vh,60px);height:min(16vh,60px);padding:0;border-radius:50%;font-size:min(8vh,28px);display:grid;place-items:center;border-color:var(--amber);background:rgba(12,14,17,.55)}
+#btnHorn:active{background:var(--amber)}
+</style>
 <script>
 /* v112 · multitoque: los botones del HUD responden al soltar el dedo, aunque otro dedo siga en volante/pedal/palanca.
    (Android no dispara "click" si hay otro dedo en pantalla, por eso no respondían) */
-(()=>{const SEL='.ctrl .btns button,.glab,#btnRange,#btnSplit,#btnJake,#btnDiff,#mini',down=new Map();
+(()=>{const SEL='.ctrl .btns button:not(#btnHorn),#quick button,.glab,#btnRange,#btnSplit,#btnJake,#btnDiff,#mini',down=new Map();
 document.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;const b=e.target.closest&&e.target.closest(SEL);if(b)down.set(e.pointerId,{b,x:e.clientX,y:e.clientY,t:performance.now()});},true);
 const end=(e,ok)=>{const d=down.get(e.pointerId);if(!d)return;down.delete(e.pointerId);if(!ok||Math.hypot(e.clientX-d.x,e.clientY-d.y)>24)return;d.b.click();};
 document.addEventListener('pointerup',e=>end(e,true),true);document.addEventListener('pointercancel',e=>end(e,false),true);
