@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v115">
+<meta name="fn-version" content="v116">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -5224,12 +5224,15 @@ function drawTurboG(){if(TBG.length<6)return;const t=S.tb||{nt:0,psi:0,wg:0,tin:
   hexDial(TBG[0],t.psi/30,TB.wgOn/30,t.wg);hexDial(TBG[1],t.nt,.97,0);hexDial(TBG[2],(t.tin-TB.tamb)/70,(75-TB.tamb)/70,0);hexDial(TBG[3],t.pex/35,30/35,0);hexDial(TBG[4],t.wg,.6,0);hexDial(TBG[5],t.flow/.8,.9,0);}
 /* v113 · testigos en el tablero: tira sobre el cluster (hija de él, así sigue su posición y escala en cada cabina) */
 const LAMPAPI={paint(){}};
-function mkLampStrip(cl){const LAMPS=[['sl','◀','#3fd08a'],['tire','LLT','#ffb53d'],['abs','ABS','#ffb53d'],['brk','FRN','#ffb53d'],['bat','BAT','#ff3b30'],['oil','ACE','#ff3b30'],['air','AIR','#ff3b30'],['park','(P)','#ff3b30'],['glow','BUJ','#ffb53d'],['chk','CHK','#ffb53d'],['temp','TMP','#ff3b30'],['dsl','DSL','#ffb53d'],['clu','CLU','#ffb53d'],['sus','SUS','#ffb53d'],['sr','▶','#3fd08a']];
-  const cv=document.createElement('canvas');cv.width=512;cv.height=40;const g=cv.getContext('2d'),tex=new THREE.CanvasTexture(cv);let key='';
-  const st=new THREE.Mesh(new THREE.PlaneGeometry(.92,.072),new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false}));st.position.set(0,.33,.004);cl.add(st);
-  LAMPAPI.paint=L=>{const k=LAMPS.map(a=>L[a[0]]?1:0).join('');if(k===key)return;key=k;g.clearRect(0,0,512,40);g.textAlign='center';g.textBaseline='middle';
-    LAMPS.forEach(([n,t,c],i)=>{const x=4+i*33.8,on=!!L[n];g.beginPath();if(g.roundRect)g.roundRect(x,7,31,26,5);else g.rect(x,7,31,26);g.fillStyle=on?c:'#14161a';g.fill();g.lineWidth=2;g.strokeStyle=on?'#ffffffaa':'#2a2d33';g.stroke();
-      g.fillStyle=on?(c==='#ff3b30'?'#ffffff':'#0b0b0b'):'#4a4e55';g.font='700 14px "Barlow Condensed",sans-serif';g.fillText(t,x+15.5,21);});tex.needsUpdate=true;};
+function mkLampStrip(cl){const LAMPS=[['sl','◀','','#3fd08a'],['tire','🛞','LLT','#ffb53d'],['abs','◎','ABS','#ffb53d'],['brk','❗','FRN','#ffb53d'],['bat','🔋','BAT','#ff3b30'],['oil','🛢','ACE','#ff3b30'],['air','💨','AIR','#ff3b30'],['park','Ⓟ','FRE','#ff3b30'],['glow','〰','BUJ','#ffb53d'],['chk','⚙','CHK','#ffb53d'],['temp','🌡','TMP','#ff3b30'],['dsl','⛽','DSL','#ffb53d'],['clu','🦶','CLU','#ffb53d'],['sus','⇅','SUS','#ffb53d'],['sr','▶','','#3fd08a']];
+  // ceja del cluster: la franja de testigos va dentro de la propia carcasa, arriba de los relojes
+  const hb=box(cl,.98,.17,.04,0x0d0e10,0,.3,-.025);
+  const cv=document.createElement('canvas');cv.width=512;cv.height=80;const g=cv.getContext('2d'),tex=new THREE.CanvasTexture(cv);let key='';
+  const st=new THREE.Mesh(new THREE.PlaneGeometry(.92,.144),new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false}));st.position.set(0,.3,.0);cl.add(st);
+  LAMPAPI.paint=L=>{const k=LAMPS.map(a=>L[a[0]]?1:0).join('');if(k===key)return;key=k;g.clearRect(0,0,512,80);g.textAlign='center';g.textBaseline='middle';
+    LAMPS.forEach(([n,ic,t,c],i)=>{const x=3+i*33.8,on=!!L[n];g.beginPath();if(g.roundRect)g.roundRect(x,5,31,70,6);else g.rect(x,5,31,70);g.fillStyle=on?c:'#14161a';g.fill();g.lineWidth=2;g.strokeStyle=on?'#ffffffaa':'#2a2d33';g.stroke();
+      g.globalAlpha=on?1:.32;g.fillStyle=on?(c==='#ff3b30'?'#fff':'#0b0b0b'):'#9aa0a8';g.font=(t?'24px':'30px')+' sans-serif';g.fillText(ic,x+15.5,t?30:40);
+      if(t){g.font='700 13px "Barlow Condensed",sans-serif';g.fillText(t,x+15.5,60);}g.globalAlpha=1;});tex.needsUpdate=true;};
   LAMPAPI.paint({});}
 {const cl=new THREE.Mesh(new THREE.PlaneGeometry(.92,.36),new THREE.MeshBasicMaterial({map:cluTex}));cl.position.set(-.58,2.6,-4.88);cl.rotation.x=-.2;cabin.add(cl);const cb=box(cabin,.98,.42,.04,0x0d0e10,-.58,2.6,-4.905);cb.rotation.x=-.2;CLUKEEP.push(cl,cb);mkTurboG(cl);mkLampStrip(cl);}
 cluTex.anisotropy=8;
@@ -5626,7 +5629,9 @@ function drawCluster(){const g=cluCtx;g.fillStyle='#0a0b0d';g.fillRect(0,0,512,2
   {const mt=(save.mt&&save.mt[S.model])||{odo:0},sp=Math.abs(S.v),l100=sp>2&&S.running?(S.fuelRate||0)/sp*100000:null;g.fillStyle='#9ea2a8';g.font='400 11px "Share Tech Mono",monospace';g.fillText((l100!=null?Math.min(199,Math.round(l100))+' L/100':'-- L/100')+' · '+Math.round(S.fuel)+' L',256,150);g.fillStyle='#7cc4ff';g.fillText('ODO '+mt.odo.toFixed(1)+' km',256,165);}
   if(S.sig){const on=Math.floor(S.t/.42)%2;g.fillStyle=on?'#3fd08a':'#16301f';g.beginPath();if(S.sig<0){g.moveTo(206,40);g.lineTo(222,30);g.lineTo(222,50);}else{g.moveTo(306,40);g.lineTo(290,30);g.lineTo(290,50);}g.fill();}
   const lt=(x,c,on)=>{g.beginPath();g.arc(x,186,6,0,Math.PI*2);g.fillStyle=on?c:'#1c1f23';g.fill();};
-  lt(196,'#ff4a3d',!S.running);lt(226,'#ff4a3d',S.pbrake);lt(256,'#ffb53d',S.jake);lt(286,'#3fd08a',S.running);lt(316,'#7cc4ff',env.lightsOn);if((S.cheat||0)>.7){g.fillStyle='#ff4a3d';g.font='700 13px "Barlow Condensed",sans-serif';g.fillText('CLUTCH CALIENTE',256,30);}cluTex.needsUpdate=true;drawTurboG();}
+  lt(196,'#ff4a3d',!S.running);lt(226,'#ff4a3d',S.pbrake);lt(256,'#ffb53d',S.jake);lt(286,'#3fd08a',S.running);lt(316,'#7cc4ff',env.lightsOn);if((S.cheat||0)>.7){g.fillStyle='#ff4a3d';g.font='700 13px "Barlow Condensed",sans-serif';g.fillText('CLUTCH CALIENTE',256,30);}if(SCR.cur){let m=SCR.cur.length>76?SCR.cur.slice(0,75)+'…':SCR.cur;g.font='700 15px "Barlow Condensed",sans-serif';const ln=[];let l='';for(const w of m.split(' ')){if(g.measureText(l+w).width<100)l+=w+' ';else{ln.push(l.trim());l=w+' ';}}ln.push(l.trim());const hh=Math.min(ln.length,6)*17+12;
+  g.fillStyle='rgba(176,38,30,.96)';g.fillRect(200,24,112,hh);g.fillStyle='#fff';g.textAlign='center';g.textBaseline='middle';ln.slice(0,6).forEach((t,i)=>g.fillText(t,256,24+14+i*17));}
+  cluTex.needsUpdate=true;drawTurboG();}
 // pantalla del camión: indicación del GPS arriba, mapa en medio, carga y tiempo abajo
 function drawGpsDev(){const g=gpsCtx,W=512,H=310;drawMap(gpsCv,g,W,H,2,false);g.setTransform(2,0,0,2,0,0);
   const gi=gpsInfo();g.fillStyle='rgba(10,14,18,.9)';g.fillRect(0,0,W,78);
