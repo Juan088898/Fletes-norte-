@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v114">
+<meta name="fn-version" content="v115">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -6479,7 +6479,7 @@ function corpOffline(){const D=save.drivers;if(!D||!D.length||!SAVE_AT0)return;c
 // direccionales: tic-tac, se apagan solas al enderezar el volante
 {const L=$('#btnSigL'),Rb=$('#btnSigR');const set=d=>{S.sig=S.sig===d?0:d;S.sigMax=0;L.classList.toggle('on',S.sig===-1);Rb.classList.toggle('on',S.sig===1);if(S.sig)S.sigT=S.t;};
  L.addEventListener('click',()=>set(-1));Rb.addEventListener('click',()=>set(1));window.__sigBtns=[L,Rb];}
-function sigTick(dt){if(!S.sig){return;}S.sigT=S.t;const ph=Math.floor(S.t/.42)%2;if(ph!==S.sigPh){S.sigPh=ph;noise(.025,ph?520:430,'lowpass',.1*(S.view===0?1:.5));const b=window.__sigBtns[S.sig<0?0:1];b.classList.toggle('blink',!!ph);}
+function sigTick(dt){if(!S.sig){return;}S.sigT=S.t;const ph=Math.floor(S.t/.42)%2;if(ph!==S.sigPh){S.sigPh=ph;noise(.045,ph?1900:1500,'bandpass',.32*(S.view===0?1:.6));const b=window.__sigBtns[S.sig<0?0:1];b.classList.toggle('blink',!!ph);}
   const a=S.steer*S.sig;S.sigMax=Math.max(S.sigMax||0,a);if(S.sigMax>140&&Math.abs(S.steer)<25){S.sig=0;window.__sigBtns.forEach(b=>b.classList.remove('on','blink'));}}
 // vuelta sin direccional en un cruce: multa
 const RINGN=new Set();for(const id in RINGS)RINGS[id].idx.forEach(i=>RINGN.add(i));
@@ -6744,7 +6744,7 @@ function applySkin(){if(!SKIN)return;const on=UP(S.model).skin==='deli';if(on)sk
   if(i.playerState===1||i.playerState===2){cur.state=i.playerState;paintPl();}if(i.videoData&&i.videoData.title)cur.now=i.videoData.title;});
  $('#auPl').addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(b)mediaBtn(b.dataset.m);});
  // ---- voz (GPS y avisos): baja la música mientras habla ----
- function say(t){try{if(!('speechSynthesis' in window)||ST().voice===false)return;const u=new SpeechSynthesisUtterance(t);u.lang='es-MX';u.rate=1.03;u.onstart=()=>duck(7000);u.onend=()=>{duckUntil=0;setVol();};speechSynthesis.speak(u);}catch(e){}}
+ function say(t){try{if(ST().voice===false)return;const TT=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.TextToSpeech;if(TT){duck(6000);TT.speak({text:t,lang:'es-MX',rate:1.0,volume:1,category:'ambient'}).catch(()=>{});return;}if(!('speechSynthesis' in window))return;const u=new SpeechSynthesisUtterance(t);u.lang='es-MX';u.rate=1.03;u.onstart=()=>duck(7000);u.onend=()=>{duckUntil=0;setVol();};speechSynthesis.speak(u);}catch(e){}}
  let vKey='',vStage=0;
  function gpsVoice(){if(!mission||!S.running)return;const gi=gpsInfo(),m=gi.txt.match(/^En (\d+) m (.+)$/);
   if(!m){if(/^(Mete|Retrocede)/.test(gi.txt)){const k=gi.txt.slice(0,10);if(vKey!==k){vKey=k;vStage=2;say(gi.txt.replace(/ · .*$/,''));}}return;}
