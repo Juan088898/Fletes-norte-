@@ -25,6 +25,34 @@ jobs:
         run: mkdir -p www && cp index.html www/index.html
       - name: Crear proyecto Android
         run: npx cap add android && npx cap sync android
+      - name: Pantalla completa (modo inmersivo) y pantalla siempre encendida
+        run: |
+          f=$(find android/app/src/main/java -name MainActivity.java)
+          cat > "$f" <<'JAVA'
+          package com.juan.fletesdelnorte;
+
+          import android.os.Build;
+          import android.os.Bundle;
+          import android.view.WindowManager;
+          import androidx.core.view.WindowCompat;
+          import androidx.core.view.WindowInsetsCompat;
+          import androidx.core.view.WindowInsetsControllerCompat;
+          import com.getcapacitor.BridgeActivity;
+
+          public class MainActivity extends BridgeActivity {
+            @Override public void onCreate(Bundle b) { super.onCreate(b); getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); immersive(); }
+            @Override public void onResume() { super.onResume(); immersive(); }
+            @Override public void onWindowFocusChanged(boolean f) { super.onWindowFocusChanged(f); if (f) immersive(); }
+            private void immersive() {
+              WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+              if (Build.VERSION.SDK_INT >= 28) getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+              WindowInsetsControllerCompat c = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+              c.hide(WindowInsetsCompat.Type.systemBars());
+              c.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+            }
+          }
+          JAVA
+          sed -i 's/^          //' "$f"; cat "$f"
       - name: Forzar horizontal
         run: sed -i '0,/<activity/s//<activity android:screenOrientation="sensorLandscape"/' android/app/src/main/AndroidManifest.xml
       - name: Compilar APK
