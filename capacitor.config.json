@@ -1,0 +1,6 @@
+{
+  "appId": "com.juan.fletesdelnorte",
+  "appName": "Fletes del Norte",
+  "webDir": "www",
+  "android": { "allowMixedContent": false }
+}
