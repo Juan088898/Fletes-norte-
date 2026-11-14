@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: [index.html, package.json, capacitor.config.json, .github/workflows/android.yml]
+    paths: [index.html, sw.js, version.json, package.json, capacitor.config.json, .github/workflows/android.yml]
 permissions:
   contents: write
 jobs:
@@ -15,6 +15,10 @@ jobs:
         with: { node-version: 22 }
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 21 }
+      - name: Verificar que version.json coincide con index.html
+        run: |
+          a=$(grep -o 'fn-version" content="[^"]*' index.html | sed 's/.*content="//'); b=$(python3 -c "import json;print(json.load(open('version.json'))['v'])")
+          echo "index=$a version.json=$b"; [ "$a" = "$b" ]
       - name: Instalar Capacitor
         run: npm install
       - name: Copiar el juego a www

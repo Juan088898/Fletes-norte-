@@ -2,5 +2,11 @@
   "appId": "com.juan.fletesdelnorte",
   "appName": "Fletes del Norte",
   "webDir": "www",
-  "android": { "allowMixedContent": false }
+  "android": {
+    "allowMixedContent": false
+  },
+  "server": {
+    "url": "https://juan088898.github.io/Fletes-norte-/",
+    "androidScheme": "https"
+  }
 }

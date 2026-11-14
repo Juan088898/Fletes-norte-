@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="fn-version" content="v112">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -6857,5 +6858,16 @@ document.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;co
 const end=(e,ok)=>{const d=down.get(e.pointerId);if(!d)return;down.delete(e.pointerId);if(!ok||Math.hypot(e.clientX-d.x,e.clientY-d.y)>24)return;d.b.click();};
 document.addEventListener('pointerup',e=>end(e,true),true);document.addEventListener('pointercancel',e=>end(e,false),true);
 document.addEventListener('click',e=>{if(!e.isTrusted||e.detail===0||e.pointerType==='mouse')return;const b=e.target.closest&&e.target.closest(SEL);if(b){e.stopImmediatePropagation();e.preventDefault();}},true);})();
+</script>
+<script>
+/* v112 · actualización automática: si sube una versión nueva avisa y se recarga sola (guarda la carga con el mismo mecanismo de recarga del juego) */
+(()=>{const V=(document.querySelector('meta[name=fn-version]')||{}).content;if(!V||!/^https?:/.test(location.protocol))return;
+try{navigator.serviceWorker&&navigator.serviceWorker.register('sw.js').catch(()=>{});}catch(e){}
+let busy=false;
+const banner=t=>{const d=document.createElement('div');d.style.cssText='position:fixed;left:50%;top:10px;transform:translateX(-50%);z-index:99999;padding:10px 16px;border-radius:12px;background:#ffb53d;color:#1a1206;font:700 15px/1.2 sans-serif;box-shadow:0 4px 20px #0008';d.textContent=t;document.body.appendChild(d);};
+const check=async()=>{if(busy)return;try{const r=await fetch('version.json?'+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();if(!j.v||j.v===V)return;
+ const last=+localStorage.getItem('fnUpd')||0;if(Date.now()-last<180000)return;localStorage.setItem('fnUpd',Date.now());busy=true;banner('Nueva versión '+j.v+' disponible · actualizando…');
+ setTimeout(()=>{const c=document.getElementById('c');try{c&&c.dispatchEvent(new Event('webglcontextlost',{cancelable:true}));}catch(e){}setTimeout(()=>location.reload(),2200);},1500);}catch(e){}};
+setTimeout(check,4000);setInterval(check,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check();});})();
 </script>
 </body></html>
