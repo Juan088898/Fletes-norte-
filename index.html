@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v116">
+<meta name="fn-version" content="v117">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -5205,7 +5205,6 @@ const dMat=new THREE.MeshLambertMaterial({color:0x2c2e32}),tMat=new THREE.MeshLa
 box(cabin,2.36,.04,1.6,M(0x26282c),0,1.45,-4.4);
 {const fw=new THREE.Mesh(new THREE.BoxGeometry(2.36,.6,1.6),new THREE.MeshLambertMaterial({color:0x3a3e44,side:THREE.BackSide}));fw.position.set(0,1.72,-4.6);cabin.add(fw);}
 box(cabin,2.36,.62,.6,dMat,0,2.06,-5.1);{const top=box(cabin,2.36,.06,.62,tMat,0,2.4,-5.12);top.rotation.x=.12;}
-box(cabin,.82,.28,.12,dMat,-.58,2.44,-4.95);
 const clu=document.createElement('canvas');clu.width=512;clu.height=200;const cluCtx=clu.getContext('2d');const cluTex=new THREE.CanvasTexture(clu);
 const CLUKEEP=[],TBG=[];
 /* v94 TurboTelemetry en el tablero: los 4 relojes hexagonales negros que eran adorno.
