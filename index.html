@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v123">
+<meta name="fn-version" content="v124">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -5610,7 +5610,7 @@ function subG(g,cx,cy,r,f,lab,txt,redFrom,redLow){const a0=Math.PI*.8,a1=Math.PI
   for(let k=0;k<=4;k++){const a=a0+(a1-a0)*k/4;g.beginPath();g.moveTo(cx+Math.cos(a)*(r-6),cy+Math.sin(a)*(r-6));g.lineTo(cx+Math.cos(a)*(r-1),cy+Math.sin(a)*(r-1));g.strokeStyle='#cfd4da';g.lineWidth=1.5;g.stroke();}
   const a=a0+(a1-a0)*clamp(f,0,1);g.beginPath();g.moveTo(cx,cy);g.lineTo(cx+Math.cos(a)*(r-4),cy+Math.sin(a)*(r-4));g.strokeStyle='#ff7a2a';g.lineWidth=2.5;g.stroke();g.beginPath();g.arc(cx,cy,3,0,7);g.fillStyle='#cfd4da';g.fill();
   g.textAlign='center';g.textBaseline='middle';g.fillStyle='#9ea2a8';g.font='600 9px "Barlow Condensed",sans-serif';g.fillText(lab,cx,cy+r*.55);if(txt){g.fillStyle='#eaf2ff';g.font='400 9px "Share Tech Mono",monospace';g.fillText(txt,cx,cy-r*.45);}}
-function drawCluster(){const g=cluCtx;g.setTransform(1,0,0,1,0,0);{const k=Math.max(.3,Math.min(1,(env.day??1)));g.fillStyle='rgb('+Math.round(82*k)+','+Math.round(85*k)+','+Math.round(93*k)+')';g.fillRect(0,0,620,278);}
+function drawCluster(){const g=cluCtx;g.setTransform(1,0,0,1,0,0);g.fillStyle='#16171a';g.fillRect(0,0,620,278);
   g.beginPath();g.moveTo(0,278);g.lineTo(0,100);g.quadraticCurveTo(0,44,52,36);g.quadraticCurveTo(310,-4,568,36);g.quadraticCurveTo(620,44,620,100);g.lineTo(620,278);g.closePath();g.fillStyle='#0a0b0d';g.fill();g.lineWidth=4;g.strokeStyle='#1c1e22';g.stroke();
   {const L=LAMPAPI.L||{};g.textAlign='center';g.textBaseline='middle';(LAMPAPI.LAMPS||[]).forEach(([n,ic,t,c],i)=>{const col=i%2,row=i>>1,x=6+col*50,y=100+row*22,on=!!L[n];g.fillStyle=on?c:'#15171b';g.fillRect(x,y,47,20);
    g.globalAlpha=on?1:.3;g.fillStyle=on?(c==='#ff3b30'?'#fff':'#0b0b0b'):'#9aa0a8';g.font=(t?'15px':'19px')+' sans-serif';g.fillText(ic,t?x+13:x+23.5,y+10.5);if(t){g.font='700 12px "Barlow Condensed",sans-serif';g.fillText(t,x+34,y+11);}g.globalAlpha=1;});}
