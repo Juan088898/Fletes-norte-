@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v129">
+<meta name="fn-version" content="v130">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -6544,10 +6544,13 @@ function revPath(){const md=MD(),nt=NT(),delta=-(S.steer/STEER_MAX)*(md.lock||.6
   pathGeo.attributes.position.needsUpdate=true;}
 function revTick(){const want=!!save.revCam&&S.gear===-1&&S.view!==9&&!LOAD.active&&$('#done').hidden&&!(S.rolled>0)&&!!REV.parent;
   if(want!==REV.on){REV.on=want;document.body.classList.toggle('rev',want);GPSSCR.sc.material.map=want?revRT.texture:gpsTex;if(!want)GPSSCR.sc.material.color.setRGB(1,1,1);GPSSCR.lb.visible=want;pipLbl.hidden=!save.pip||want;if(!want)revRing.visible=false;}
+  if(!REV.cp&&CLUREF.cl){const W=.3,H=.248,ra=(W/H)/(320/194),pm=new THREE.Mesh(new THREE.PlaneGeometry(W,H),new THREE.MeshBasicMaterial({map:revRT.texture,transparent:true,depthWrite:false}));const uv=pm.geometry.attributes.uv;for(let i=0;i<uv.count;i++)uv.setX(i,.5+(uv.getX(i)-.5)*ra);uv.needsUpdate=true;pm.position.set(.097,0,.004);pm.renderOrder=3;pm.visible=false;CLUREF.cl.add(pm);
+    const lb=new THREE.Mesh(new THREE.PlaneGeometry(W,W/8),new THREE.MeshBasicMaterial({map:revLblTex,transparent:true,depthWrite:false}));lb.position.set(0,H/2-W/16,.001);lb.renderOrder=4;pm.add(lb);REV.cp=pm;}
+  if(REV.cp)REV.cp.visible=want;
   pathMesh.visible=want;if(!want)return false;
   if(frame%2===0)revPath();
   // cámara con ganancia: de noche o con lluvia aclara la imagen como una cámara real
-  const gain=clamp(1.2/Math.max(.2,hemi.intensity+sun.intensity*.8),1,2.1);GPSSCR.sc.material.color.setRGB(gain,gain,gain*1.04);revMini.material.color.setRGB(gain,gain,gain*1.04);
+  const gain=clamp(1.2/Math.max(.2,hemi.intensity+sun.intensity*.8),1,2.1);GPSSCR.sc.material.color.setRGB(gain,gain,gain*1.04);revMini.material.color.setRGB(gain,gain,gain*1.04);if(REV.cp)REV.cp.material.color.setRGB(gain,gain,gain*1.04);
   for(const m of REVMATS)m.color.copy(m.userData.base).multiplyScalar(1/gain);revRing.material.color.setHex(0x4fc3ff).multiplyScalar(1/gain);
   let info='';const hk=mission&&mission.phase==='hook'&&NT()&&PARK.placed;
   if(hk){if(!revRing.parent)scene.add(revRing);revRing.visible=true;revRing.position.set(PARK.x,surf(PARK.x,PARK.z)+1.25,PARK.z);if(S.hookD!=null)info=`Perno ${S.hookD.toFixed(1)} m`;}
@@ -6622,7 +6625,7 @@ function loopBody(now){
     truck.updateMatrixWorld(true);toCab(aL,vA);placeArm(armL,shL,vA,0);toCab(aR,vB);toCab(aK,vC);vB.lerp(vC,S.handT);vB.y+=Math.sin(Math.PI*S.handT)*.08;placeArm(armR,shR,vB,S.handT,vC);
     toCab(pedals3.clutch.anc,vA);placeLeg(legL,vA);rFoot+=((S.ped.brake>S.ped.gas+.05?1:0)-rFoot)*lerpK(10,dt);toCab(pedals3.gas.anc,vB);toCab(pedals3.brake.anc,vC);vB.lerp(vC,rFoot);vB.y+=Math.sin(Math.PI*rFoot)*.07;placeLeg(legR,vB);
     if(frame%4===2)drawCluster();if(frame%8===6)drawGpsDev();
-    if(revOn?frame%8===5:(HI()?frame%4===1:frame%8===1)){const k=Math.floor(frame/(HI()?4:8))%2,cam=MIRCAM[S.model][k];cabin.visible=false;renderer.setRenderTarget(RT[k]);renderer.render(scene,cam);renderer.setRenderTarget(null);cabin.visible=true;}
+    if(HI()?frame%4===1:frame%8===1){const k=Math.floor(frame/(HI()?4:8))%2,cam=MIRCAM[S.model][k];cabin.visible=false;renderer.setRenderTarget(RT[k]);renderer.render(scene,cam);renderer.setRenderTarget(null);cabin.visible=true;}
   }else if(S.view===1){const[tx,tz]=fwdOf(S.th),[fx,fz]=fwdOf(S.h),rig=NT(),mx=rig?S.x:hx-tx*5.6,mz=rig?S.z:hz-tz*5.6,bk=rig?14:19;
     camTmp.set(mx-tx*bk,hR+(rig?8:12),mz-tz*bk);if(hitAt(camTmp.x,camTmp.z)){camTmp.set(mx-tx*bk*.45,hR+20,mz-tz*bk*.45);}camera.position.lerp(camTmp,lerpK(3,dt));camera.up.set(0,1,0);camera.lookAt(S.x+fx*14,hR+1,S.z+fz*14);
   }else if(S.view===3){const[fx,fz]=fwdOf(S.h),[rx,rz]=rightOf(S.h),lw=MD().lw||5,cx=S.x+fx*lw*.45,cz=S.z+fz*lw*.45,a=S.orbA||0,d=9;camTmp.set(cx+(rx*Math.cos(a)+fx*Math.sin(a))*d,hR+1.1,cz+(rz*Math.cos(a)+fz*Math.sin(a))*d);camTmp.y=Math.max(camTmp.y,surf(camTmp.x,camTmp.z)+.7);camera.position.lerp(camTmp,lerpK(6,dt));camera.up.set(0,1,0);camera.lookAt(cx,hR-1.1,cz);
@@ -6631,7 +6634,7 @@ function loopBody(now){
   saveT-=dt;if(saveT<=0){save.fuel=S.fuel;if(!mission&&Math.abs(S.v)<25&&!S.rolled)save.pos={x:+S.x.toFixed(1),z:+S.z.toFixed(1),h:+S.h.toFixed(3)};if(!S.rolled&&Math.abs(S.v)<25)snapJob();save.here=here;save.tod=+env.tod.toFixed(2);persist();saveT=10;}
   copTick(dt);audioTick(jakeActive);radioTick();ui();
   pip.visible=pipBg.visible=false;RVM.visible=save.pip&&S.view===0&&!revOn;if(pipLbl.hidden!==!pip.visible)pipLbl.hidden=!pip.visible;revMini.visible=revOn&&!bigMap&&S.view!==0;
-  if(revOn&&(frame%4===3||frame%8===1)){const cv=cabin.visible,tp=S.hitched&&!NT();cabin.visible=tp?cv:false;renderer.setRenderTarget(revRT);renderer.render(scene,tp?topCamUpd():revCam);renderer.setRenderTarget(null);cabin.visible=cv;}
+  if(revOn&&frame%4===3){const cv=cabin.visible,tp=S.hitched&&!NT();cabin.visible=tp?cv:false;renderer.setRenderTarget(revRT);renderer.render(scene,tp?topCamUpd():revCam);renderer.setRenderTarget(null);cabin.visible=cv;}
   else if(save.pip&&!revOn&&frame%(HI()?4:8)===3){const cv=cabin.visible;cabin.visible=false;renderer.setRenderTarget(pipRT);renderer.render(scene,rearCam);renderer.setRenderTarget(null);cabin.visible=cv;}
   if(renderer.shadowMap.enabled&&frame%2===0)renderer.shadowMap.needsUpdate=true;chunkTick(dt);renderer.render(scene,camera);
   if((save.pip||revOn)&&S.view!==9&&!$('#jobs').hidden===false){renderer.autoClear=false;renderer.clearDepth();renderer.render(hudScene,hudCam);renderer.autoClear=true;}
