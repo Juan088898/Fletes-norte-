@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -5724,7 +5724,7 @@ const btnFS=$('#btnFS');const fsLabel=()=>{btnFS.textContent=fsActive()?'Salir d
 btnFS.addEventListener('click',()=>{menu.hidden=true;if(fsActive()){userExitFS=true;exitFS();}else{userExitFS=false;goFS();}});
 document.addEventListener('fullscreenchange',fsLabel);document.addEventListener('webkitfullscreenchange',fsLabel);
 const onOrient=()=>{if(isLand()&&!userExitFS)goFS();};addEventListener('orientationchange',()=>setTimeout(onOrient,250));try{screen.orientation&&screen.orientation.addEventListener('change',onOrient);}catch(e){}
-document.addEventListener('pointerdown',e=>{if(e.target===btnFS)return;if(isLand()&&!fsActive()&&!userExitFS)goFS();},true);
+document.addEventListener('pointerdown',e=>{if(e.target===btnFS||window.Capacitor)return;if(isLand()&&!fsActive()&&!userExitFS)goFS();},true);
 const mini=$('#mini');let bigMap=false;const toggleMap=()=>{bigMap=!bigMap;mini.classList.toggle('big',bigMap);};
 mini.addEventListener('click',toggleMap);mini.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')toggleMap();});
 const keys={};
@@ -6835,4 +6835,13 @@ show();
 })();
 </script>
 
+<script>
+/* v112 · multitoque: los botones del HUD responden al soltar el dedo, aunque otro dedo siga en volante/pedal/palanca.
+   (Android no dispara "click" si hay otro dedo en pantalla, por eso no respondían) */
+(()=>{const SEL='.ctrl .btns button,.glab,#btnRange,#btnSplit,#btnJake,#btnDiff,#mini',down=new Map();
+document.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;const b=e.target.closest&&e.target.closest(SEL);if(b)down.set(e.pointerId,{b,x:e.clientX,y:e.clientY,t:performance.now()});},true);
+const end=(e,ok)=>{const d=down.get(e.pointerId);if(!d)return;down.delete(e.pointerId);if(!ok||Math.hypot(e.clientX-d.x,e.clientY-d.y)>24)return;d.b.click();};
+document.addEventListener('pointerup',e=>end(e,true),true);document.addEventListener('pointercancel',e=>end(e,false),true);
+document.addEventListener('click',e=>{if(!e.isTrusted||e.detail===0||e.pointerType==='mouse')return;const b=e.target.closest&&e.target.closest(SEL);if(b){e.stopImmediatePropagation();e.preventDefault();}},true);})();
+</script>
 </body></html>
