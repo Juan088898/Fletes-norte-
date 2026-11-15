@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v131">
+<meta name="fn-version" content="v132">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -4857,7 +4857,7 @@ const VADOS=[];{const wm=new THREE.MeshLambertMaterial({color:0x5d7078,transpare
  box(scene,4.5,2.8,3.2,0xf4efe2,f.x-34,y+1.4,f.z+24).castShadow=true;box(scene,5,.25,3.7,0x8c2a22,f.x-34,y+2.9,f.z+24);ob(-34,24,2.3,1.7);
  for(const dx of[-7,7])box(scene,.4,6.4,.4,0x8e9399,f.x+dx,y+3.2,f.z+f.r-3);signAt('PEDRERA EL NORTE',f.x,f.z+f.r-2.75,0,y+5.2,16,'#3a3d42','#ffb53d');signAt('PEDRERA EL NORTE',f.x,f.z+f.r-3.25,Math.PI,y+5.2,16,'#3a3d42','#ffb53d');
  {const f=MIRADOR,d2=new THREE.Mesh(new THREE.CircleGeometry(f.r+4,28),M(0x9a958a));d2.rotation.x=-Math.PI/2;d2.position.set(f.x,f.y+.03,f.z);scene.add(d2);for(const dx of[-4,4])box(scene,.3,3.4,.3,0x8e9399,f.x+dx,f.y+1.7,f.z-f.r+2);signAt('MIRADOR · ATAJO DE LAS LOMAS',f.x,f.z-f.r+2.2,0,f.y+3,9,'#6b4a2f','#ffffff');box(scene,3,.45,.6,0x6b4a2f,f.x,f.y+.25,f.z+6);}
- for(const dx of[-5,5])box(scene,.35,4.6,.35,0x8e9399,-2590+dx,2.3,-3196);signAt('BRECHA · PEDRERA EL NORTE',-2590,-3195.8,0,3.6,11,'#6b4a2f','#ffffff');signAt('TERRACERÍA · BAJE LA VELOCIDAD',-2590,-3195.8,0,1.6,9,'#f1c22b','#1e1f22');}
+ for(const dx of[-5,5])box(scene,.35,4.6,.35,0x8e9399,-2590+dx,2.3,-3196);signAt('CAMINO DE TIERRA · PEDRERA',-2590,-3195.8,0,3.6,11,'#6b4a2f','#ffffff');signAt('TERRACERÍA · BAJE LA VELOCIDAD',-2590,-3195.8,0,1.6,9,'#f1c22b','#1e1f22');}
 function mergeGeos(list){const geos=list.map(g=>g.index?g.toNonIndexed():g);let n=0;geos.forEach(g=>n+=g.attributes.position.count);const P=new Float32Array(n*3),Nn=new Float32Array(n*3);let o=0;
   geos.forEach(g=>{P.set(g.attributes.position.array,o*3);Nn.set(g.attributes.normal.array,o*3);o+=g.attributes.position.count;});const r=new THREE.BufferGeometry();r.setAttribute('position',new THREE.BufferAttribute(P,3));r.setAttribute('normal',new THREE.BufferAttribute(Nn,3));return r;}
 const VEG=[];
@@ -6344,7 +6344,7 @@ function drawMap(cv=mini,ctx=mctx,Wc,Hc,dpr0,bigOv){const dpr=dpr0||Math.min(win
   g.fillStyle='#3fa0ff';for(const st of STATIONS){const s=big?4/sc:14;g.beginPath();g.arc(st.area.cx,st.area.cz,s,0,7);g.fill();}
   if(gps.pts.length>1){g.strokeStyle='#3fd08a';g.lineWidth=big?4/sc:12;g.beginPath();g.moveTo(S.x,S.z);for(const p of gps.pts.slice(1))g.lineTo(p[0],p[1]);g.stroke();}
   if(big){g.textAlign='center';g.fillStyle='rgba(255,255,255,.5)';g.font=`600 ${12/sc}px "Barlow Condensed",sans-serif`;for(const[t,kx,ky]of TOWNS)g.fillText(t.toUpperCase(),kx*KM,-ky*KM+16/sc);
-    g.fillStyle='#f1c64a';g.fillText('PREPA 1 · UANL',PREPA.O.x,PREPA.O.z-80-6/sc);g.fillStyle='#d9b98a';g.fillText('BRECHAS DEL NORTE · PEDRERA',(OFF.x0+OFF.x1)/2,OFF.z0+60+12/sc);g.fillStyle='#f1c64a';g.fillStyle='#fff';g.font=`700 ${10.5/sc}px "Barlow Condensed",sans-serif`;for(const d of DEPOTS)g.fillText(d.name,d.zone.x,d.zone.z-9/sc);
+    g.fillStyle='#f1c64a';g.fillText('PREPA 1 · UANL',PREPA.O.x,PREPA.O.z-80-6/sc);g.fillStyle='#d9b98a';g.fillText('CAMINO DE TIERRA · PEDRERA',(OFF.x0+OFF.x1)/2,OFF.z0+60+12/sc);g.fillStyle='#f1c64a';g.fillStyle='#fff';g.font=`700 ${10.5/sc}px "Barlow Condensed",sans-serif`;for(const d of DEPOTS)g.fillText(d.name,d.zone.x,d.zone.z-9/sc);
     g.fillStyle='#7cc4ff';g.font=`600 ${10/sc}px "Barlow Condensed",sans-serif`;g.textAlign='left';g.fillText('● Gasolinera',BB.x0+40,BB.z1-40);
     g.save();g.translate(S.x,S.z);g.rotate(-S.h);g.scale(1/sc,1/sc);g.fillStyle='#ffb53d';g.beginPath();g.moveTo(0,-10);g.lineTo(7,8);g.lineTo(0,4);g.lineTo(-7,8);g.closePath();g.fill();g.restore();}
   g.restore();
@@ -6356,7 +6356,25 @@ function drawMap(cv=mini,ctx=mctx,Wc,Hc,dpr0,bigOv){const dpr=dpr0||Math.min(win
 const lastUI={};function setText(el,key,v){if(lastUI[key]!==v){el.textContent=v;lastUI[key]=v;}}
 const els={lim:$('#hudLim'),grade:$('#hudGrade'),cop:$('#cop'),spd:$('#hudSpd'),gear:$('#hudGear'),rpm:$('#hudRpm'),hint:$('#hint'),hs:$('#hintStep'),ht:$('#hintTxt'),gpsA:$('#gpsArrow'),gpsT:$('#gpsTxt'),cond:$('#mCond'),time:$('#mTime'),money:$('#mMoney'),park:$('#park'),warn:$('#warn'),wd:$('#wheelDeg'),clock:$('#hudClock'),wx:$('#hudWx'),fuel:$('#hudFuel')};
 let BRECHA_JOB=save.brecha||null;
-function gpsInfo(){if(!mission&&BRECHA_JOB){const bk=BRECHA_JOB.back,inZ=offMask(S.x,S.z)>0,t=bk?TRACK[0]:inZ?[PEDRERA.x,PEDRERA.z]:TRACK[0],d=Math.hypot(t[0]-S.x,t[1]-S.z);return{txt:bk?'Lleva las muestras de piedra a la salida de la brecha':inZ?'Sigue la brecha hasta la Pedrera El Norte':'Ve al inicio de la brecha, al norte del Blvd. Humberto Ramos Lozano',sub:(d/1000).toFixed(1)+' km en línea recta',ang:(Math.atan2(t[0]-S.x,-(t[1]-S.z))+S.h)*180/Math.PI};}
+// indicaciones de vuelta a partir de una ruta (la usan los fletes y el encargo de brecha)
+function navTxt(p,N){const m10=x=>Math.round(x/10)*10;let acc=p.length>1?Math.hypot(p[1][0]-S.x,p[1][1]-S.z):0,txt=null,k=1;
+  for(;k<p.length-1;k++){const inRing=(N[k]||'').startsWith('Glorieta'),prevRing=(N[k-1]||'').startsWith('Glorieta');
+    if(inRing&&!prevRing){let j=k;while(j<N.length&&N[j].startsWith('Glorieta'))j++;txt=`En ${m10(acc)} m entra a la glorieta y sal a ${N[j]||'tu destino'}`;break;}
+    if(!inRing&&!prevRing){const a=[p[k][0]-p[k-1][0],p[k][1]-p[k-1][1]],b=[p[k+1][0]-p[k][0],p[k+1][1]-p[k][1]],cr=a[0]*b[1]-a[1]*b[0],la=Math.hypot(...a),lb=Math.hypot(...b);
+      if(Math.abs(cr/(la*lb))>.38&&k<p.length-2){txt=`En ${m10(acc)} m gira a la ${cr>0?'derecha':'izquierda'} en ${N[k]||''}`;break;}}
+    acc+=Math.hypot(p[k+1][0]-p[k][0],p[k+1][1]-p[k][1]);}
+  let tgt=p[p.length-1],need=25,cx=S.x,cz=S.z;for(let q=1;q<p.length;q++){const sx=p[q][0]-cx,sz=p[q][1]-cz,l=Math.hypot(sx,sz);if(l>=need){tgt=[cx+sx/l*need,cz+sz/l*need];break;}need-=l;cx=p[q][0];cz=p[q][1];}
+  return{txt,acc:m10(acc),ang:(Math.atan2(tgt[0]-S.x,-(tgt[1]-S.z))+S.h)*180/Math.PI};}
+let BRD=null,BRT=-99;
+function gpsInfo(){if(!mission&&!BRECHA_JOB&&gps.br)gps={pts:[],names:[],len:0};
+ if(!mission&&BRECHA_JOB){const bk=BRECHA_JOB.back,inZ=offMask(S.x,S.z)>0;
+  // camino a la entrada del camino de tierra: ruta por calles con vueltas y voz
+  if(!bk&&!inZ){if(!BRD){const ne=nearestEdge(-2595,-3200);BRD={e:ne.e,t:ne.t,E:{x:ne.px,z:ne.pz},zone:{x:-2597,z:-3232},name:'camino de tierra'};}
+   if(S.t-BRT>2.5||!gps.br){gps=planRoute(S.x,S.z,S.h,BRD,'dist');gps.br=true;BRT=S.t;}
+   const nv=navTxt(gps.pts,gps.names),left=Math.hypot(S.x-BRD.zone.x,S.z-BRD.zone.z);
+   return{txt:left<70?'Entra al camino de tierra':(nv.txt||`Sigue ${nv.acc} m por ${gps.names[0]||'el camino'}`),sub:(gps.len/1000).toFixed(1)+' km al camino de tierra',ang:nv.ang};}
+  if(gps.br)gps={pts:[],names:[],len:0};
+  const t=bk?TRACK[0]:inZ?[PEDRERA.x,PEDRERA.z]:TRACK[0],d=Math.hypot(t[0]-S.x,t[1]-S.z);return{txt:bk?'Lleva las muestras a la salida del camino de tierra':inZ?'Sigue el camino de tierra hasta la Pedrera El Norte':'Ve al camino de tierra, al norte del Blvd. Humberto Ramos Lozano',sub:(d/1000).toFixed(1)+' km en línea recta',ang:(Math.atan2(t[0]-S.x,-(t[1]-S.z))+S.h)*180/Math.PI};}
   const p=gps.pts;if(!mission||p.length<2)return{txt:'Elige una carga',sub:'—',ang:0};
   const dz=mission.dest?mission.dest.zone:DEPOTS[mission.to].zone,left=Math.hypot(S.x-dz.x,S.z-dz.z),N=gps.names,m10=x=>Math.round(x/10)*10;
   let acc=Math.hypot(p[1][0]-S.x,p[1][1]-S.z),txt=null,k=1;
@@ -6759,7 +6777,7 @@ function applySkin(){if(!SKIN)return;const on=UP(S.model).skin==='deli';if(on)sk
  let TTS=null;function ttsP(){if(TTS)return TTS;const C=window.Capacitor;if(!C||!(C.isNativePlatform?C.isNativePlatform():C.platform!=='web'))return null;try{TTS=(C.Plugins&&C.Plugins.TextToSpeech)||(C.registerPlugin&&C.registerPlugin('TextToSpeech'))||null;}catch(e){}return TTS;}
  function say(t){try{if(ST().voice===false)return;const TT=ttsP();if(TT){duck(6000);const sp=l=>TT.speak({text:t,lang:l,rate:1.0,volume:1});sp('es-MX').catch(()=>sp('es-ES')).catch(()=>sp('es')).catch(e=>{if(!window.__ttsErr){window.__ttsErr=1;toast('Voz no disponible: '+((e&&e.message)||e));}});return;}if(!('speechSynthesis' in window))return;const u=new SpeechSynthesisUtterance(t);u.lang='es-MX';u.rate=1.03;u.onstart=()=>duck(7000);u.onend=()=>{duckUntil=0;setVol();};speechSynthesis.speak(u);}catch(e){}}
  let vKey='',vStage=0;
- function gpsVoice(){if(!mission||!S.running)return;const gi=gpsInfo(),m=gi.txt.match(/^En (\d+) m (.+)$/);
+ function gpsVoice(){if((!mission&&!BRECHA_JOB)||!S.running)return;const gi=gpsInfo(),m=gi.txt.match(/^En (\d+) m (.+)$/);
   if(!m){if(/^(Mete|Retrocede)/.test(gi.txt)){const k=gi.txt.slice(0,10);if(vKey!==k){vKey=k;vStage=2;say(gi.txt.replace(/ · .*$/,''));}}return;}
   const d=+m[1],key=m[2];if(key!==vKey){vKey=key;vStage=0;}if(vStage===0&&d<=320){vStage=1;if(d>100)say('En '+d+' metros, '+key);}if(vStage<=1&&d<=80){vStage=2;say(key.charAt(0).toUpperCase()+key.slice(1));}}
  // ---- avisos del camión ----
@@ -6785,7 +6803,7 @@ function applySkin(){if(!SKIN)return;const on=UP(S.model).skin==='deli';if(on)sk
   view.innerHTML='<h3 class="au-h">Bolsa de fletes</h3><p class="au-sub">Toca una carga y luego elige la ruta.</p><div id="auJobs"></div><div class="opts" id="auBr" style="margin-bottom:6px"></div>'+repList();
   openJobs();$('#jobs').hidden=true;$('#auJobs').append(jl,rl,bb);
   const b=document.createElement('button');b.className='opt';b.innerHTML='<em class="tag l">BRECHA</em><b>Refacciones a la Pedrera El Norte</b><span>Sin remolque, por la terracería del noroeste. Te descuentan si maltratas la suspensión.</span><span class="pay">$9,500</span>';
-  b.onclick=()=>{BRECHA_JOB={pay:9500,w0:suspW()};toast('Encargo aceptado: sigue la flecha del GPS hasta la brecha',true);if(dash)zoomed=false;go('map');};$('#auBr').appendChild(b);}
+  b.onclick=()=>{BRECHA_JOB={pay:9500,w0:suspW()};toast('Encargo aceptado: el GPS te lleva al camino de tierra',true);if(dash)zoomed=false;go('map');};$('#auBr').appendChild(b);}
  view.addEventListener('click',()=>setTimeout(()=>{if(app==='jobs'&&mission&&jl.parentNode&&jl.parentNode.id==='auJobs'){jobsBack();if(dash)zoomed=false;go('map');}},90));
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const AK={yt:'yt',pod:'pod',mus:'radio'};
