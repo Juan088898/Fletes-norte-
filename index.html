@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v132">
+<meta name="fn-version" content="v133">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -5293,7 +5293,7 @@ function interiorTick(dt){const T=INT.tell;if(!T)return;scrTick(dt);const mt=MT(
   // testigos: sin contacto ni motor, todo apagado; con contacto hacen su prueba de foco
   const pw=S.running||S.ign>0||S.ignOffT>0||S.fireK>0,bulb=S.ign>0||S.fireK>.2;
   on('air',pw&&((S.air??1)<.45||bulb||L2('air')));on('oil',pw&&(!!S.oilBad||bulb||(mt.oil||0)>OIL_KM||L2('oil')));on('temp',pw&&((S.et||0)>.78||L2('temp')));on('brk',pw&&((S.bt||0)>.6||S.pbrake||bulb||(mt.brk||0)>=.35||L2('brk')));on('tire',pw&&(!!S.flat||!!S.tireBad||(S.minP??1)<.85||L2('tire')));on('sl',pw&&S.sig<0&&bl);on('sr',pw&&S.sig>0&&bl);
-  on('bat',pw&&(!S.running||bulb));on('park',pw&&!!S.pbrake);on('glow',S.ign===1&&S.ignT<S.glowDur);on('chk',pw&&(bulb||(mt.tur||0)>=.35||L2('chk')));on('abs',pw&&(bulb||L2('abs')||!!S.abs));on('dsl',pw&&(bulb||S.fuel/tankCap()<.15||L2('dsl')));on('clu',pw&&((mt.clu||0)>=.35||L2('clu')));on('sus',pw&&(suspW()>=.35||L2('sus')));LAMPAPI.paint(Lm);
+  on('bat',(pw&&(!S.running||bulb))||(BAT()<.25&&(pw||bl)));on('park',pw&&!!S.pbrake);on('glow',S.ign===1&&S.ignT<S.glowDur);on('chk',pw&&(bulb||(mt.tur||0)>=.35||L2('chk')));on('abs',pw&&(bulb||L2('abs')||!!S.abs));on('dsl',pw&&(bulb||S.fuel/tankCap()<.15||L2('dsl')));on('clu',pw&&((mt.clu||0)>=.35||L2('clu')));on('sus',pw&&(suspW()>=.35||L2('sus')));LAMPAPI.paint(Lm);
   INT.kY.position.z=-4.83+(S.pbrake?0:.035);INT.stalk.rotation.z=(S.sig||0)*.18;
   // péndulo del rosario y del micrófono
   const ax=-(S.rawA||0)*.06,ay=(S.v*(S.yaw||0))*.06;for(const [o,k] of [[INT.ros,1],[INT.mic,.7]]){o.userData.vx=(o.userData.vx||0)+((ax*k-(o.rotation.x||0))*14-(o.userData.vx||0)*1.6+(Math.random()-.5)*(S.camKick||0)*20)*dt;o.userData.vz=(o.userData.vz||0)+((ay*k-(o.rotation.z||0))*14-(o.userData.vz||0)*1.6)*dt;
@@ -5705,6 +5705,8 @@ document.querySelectorAll('.pedal').forEach(el=>{const k=el.dataset.k,well=el.qu
 const btnEngine=$('#btnEngine');
 /* v113 · encendido realista: mantén la llave. Contacto (testigos) → precalentamiento → marcha → el motor pega con tirón */
 S.ign=0;S.keyHeld=false;S.ignT=0;S.glowDur=1.6;S.crankT=0;S.crankDur=1.2;S.ignOffT=0;S.fireK=0;S.lastRun=-99;S.keyDown=0;
+// al abrir el juego: el aire se fue vaciando y el motor se enfrió según el tiempo real que pasó
+{const el=save.offT?Math.max(0,(Date.now()-save.offT)/1000):0;if(save.air!=null)S.air=Math.max(0,save.air-el*.0006);S.lastRun=-Math.max(99,el);}
 let stOsc=null;
 function starterSnd(on){if(!AC)return;try{
   if(on&&!stOsc){const t=AC.currentTime,o=AC.createOscillator(),w=AC.createOscillator(),lf=AC.createOscillator(),lg=AC.createGain(),g=AC.createGain(),f=AC.createBiquadFilter();
@@ -5713,9 +5715,10 @@ function starterSnd(on){if(!AC)return;try{
   else if(!on&&stOsc){const t=AC.currentTime,s=stOsc;stOsc=null;try{s.lg.disconnect();}catch(e){}s.g.gain.cancelScheduledValues(t);s.g.gain.setTargetAtTime(0,t,.04);setTimeout(()=>{try{s.o.stop();s.w.stop();s.lf.stop();}catch(e){}},300);}
 }catch(e){}}
 const relayClick=()=>noise(.035,2600,'bandpass',.28);
-const crankBlock=()=>S.fuel<=0?'Sin diésel. Usa Menú → Rescatar para la grúa':(S.gear!==0&&S.ped.clutch<.6?'Pisa el clutch o pon neutral para arrancar':'');
+const BAT=()=>save.bat??1,coldK=()=>clamp((S.t-S.lastRun-120)/900,0,1)*(env.day<.4?1:.6);
+const crankBlock=()=>S.fuel<=0?'Sin diésel. Usa Menú → Rescatar para la grúa':BAT()<.08?'Batería descargada: la marcha solo hace clic. Menú → Rescatar para pasar corriente':(S.gear!==0&&S.ped.clutch<.6?'Pisa el clutch o pon neutral para arrancar':'');
 function keyDown(){if(S.keyHeld)return;S.keyHeld=true;S.keyDown=S.t;S.ignWarn=false;if(S.running)return;
-  if(S.ign===0){S.ign=1;S.ignT=0;S.glowDur=(S.t-S.lastRun<90)?.5:1.6;}else S.ignT=Math.max(S.ignT,S.glowDur-.25);
+  if(S.ign===0){S.ign=1;S.ignT=0;S.glowDur=(S.t-S.lastRun<90)?.5:1.6+coldK()*2.2;}else S.ignT=Math.max(S.ignT,S.glowDur-.25);
   S.ignOffT=0;relayClick();}
 function keyUp(){if(!S.keyHeld)return;S.keyHeld=false;
   if(S.running){if(S.t-S.keyDown<.6){S.running=false;S.lastRun=S.t;S.ign=0;toast('Motor apagado');}return;}
@@ -5723,16 +5726,22 @@ function keyUp(){if(!S.keyHeld)return;S.keyHeld=false;
   if(S.ign===1)S.ignOffT=5;}
 function ignTick(dt){
   if(S.fireK>0){S.fireK-=dt;S.jud=Math.max(S.jud||0,.85*Math.max(0,S.fireK)/.9);}
-  if(S.running){if(S.ign){S.ign=0;starterSnd(false);}S.lastRun=S.t;return;}
+  // batería: la carga el alternador; con el motor apagado la gastan luces, radio, contacto y sobre todo la marcha
+  {let b=BAT();if(S.running)b+=dt*.004;else{if(env.lightsOn)b-=dt*.0007;if(typeof radio!=='undefined'&&radio.on)b-=dt*.0004;if(S.ign===1)b-=dt*.0003;if(S.ign===2)b-=dt*.012;}save.bat=clamp(b,0,1);
+   if(!S.running&&b<.25&&!S.batWarn){S.batWarn=1;toast('Batería baja: apaga el radio o enciende el motor');}if(b>.35)S.batWarn=0;}
+  // aire: con el motor apagado los tanques se van vaciando poco a poco
+  if(!S.running&&S.air!=null)S.air=Math.max(0,S.air-dt*.0006);save.air=S.air;save.offT=Date.now();
+  if(S.running){if(S.ign){S.ign=0;starterSnd(false);}S.lastRun=S.t;if(S.coldIdle>0){S.coldIdle-=dt;S.jud=Math.max(S.jud||0,.12*Math.min(1,S.coldIdle/8)*(.6+.4*Math.sin(S.t*7.3)));}return;}
   if(S.ign===1){
     if(S.keyHeld){S.ignT+=dt;if(S.ignT>=S.glowDur){const why=crankBlock();
-      if(!why){S.ign=2;S.crankT=0;S.crankDur=S.glowDur<1?.9:1.1+Math.random()*.7;starterSnd(true);}
+      if(!why){S.ign=2;S.crankT=0;const ck=coldK(),bw=Math.max(0,.35-BAT())*4;S.crankDur=(S.glowDur<1?.9:1.1+Math.random()*.7)*(1+ck*1.6+bw);S.coldMiss=ck>.55&&!S.coldTry&&Math.random()<.45;S.coldTry=true;starterSnd(true);}
       else if(!S.ignWarn){S.ignWarn=true;toast(why);}}}
     else{S.ignOffT-=dt;if(S.ignOffT<=0)S.ign=0;}
   }else if(S.ign===2){
     S.crankT+=dt;const p=clamp(S.crankT/S.crankDur,0,1),irr=Math.sin(S.crankT*34)*35+Math.sin(S.crankT*11)*25;
-    S.rpm=Math.min(260,95+95*p+irr);
-    if(S.crankT>=S.crankDur){S.ign=0;starterSnd(false);S.running=true;S.rpm=560;S.fireK=.9;S.nodV=(S.nodV||0)+1.4;S.camKick=Math.max(S.camKick||0,.5);noise(.3,260,'lowpass',.5);buzz(60);}
+    S.rpm=Math.min(260,95+95*p+irr)*(BAT()<.35?.6+BAT():1);
+    if(S.crankT>=S.crankDur&&S.coldMiss){S.coldMiss=false;S.ign=1;S.ignT=S.glowDur-.15;starterSnd(false);noise(.25,180,'lowpass',.35);toast('Motor frío: no pegó a la primera. Sigue con la llave');}
+    else if(S.crankT>=S.crankDur){S.coldIdle=coldK()*25;S.coldTry=false;S.ign=0;starterSnd(false);S.running=true;S.rpm=560;S.fireK=.9;S.nodV=(S.nodV||0)+1.4;S.camKick=Math.max(S.camKick||0,.5);noise(.3,260,'lowpass',.5);buzz(60);}
   }}
 btnEngine.addEventListener('pointerdown',e=>{try{btnEngine.setPointerCapture(e.pointerId);}catch(_){}audioInit();keyDown();});
 ['pointerup','pointercancel'].forEach(ev=>btnEngine.addEventListener(ev,keyUp));
@@ -5741,7 +5750,7 @@ btnEngine.addEventListener('click',e=>{if(e.detail!==0)return;   // teclado (E):
 const btnHorn=$('#btnHorn');btnHorn.addEventListener('pointerdown',()=>{audioInit();hornOn(true);});['pointerup','pointercancel','pointerleave'].forEach(ev=>btnHorn.addEventListener(ev,()=>hornOn(false)));
 const btnPark=$('#btnPark'),btnJake=$('#btnJake'),btnDiff=$('#btnDiff');
 btnDiff.addEventListener('pointerdown',e=>e.stopPropagation());btnDiff.addEventListener('click',()=>{S.dlock=!S.dlock;btnDiff.classList.toggle('on',S.dlock);toast(S.dlock?'Diferencial bloqueado: más tracción en lodo y tierra (se quita solo arriba de 30 km/h)':'Diferencial libre',S.dlock);});
-btnPark.addEventListener('click',()=>{S.pbrake=!S.pbrake;btnPark.classList.toggle('on',S.pbrake);airHiss(S.pbrake?.9:.5,S.pbrake?.16:.1);});
+btnPark.addEventListener('click',()=>{if(S.pbrake&&(S.air??1)<.52){toast('No hay aire para soltar el freno de estacionamiento ('+Math.round((S.air??0)*125)+' de 65 psi). Deja el motor encendido');buzz(80);airHiss(.3,.05);return;}S.pbrake=!S.pbrake;btnPark.classList.toggle('on',S.pbrake);airHiss(S.pbrake?.9:.5,S.pbrake?.16:.1);});
 btnJake.addEventListener('pointerdown',e=>e.stopPropagation());btnJake.addEventListener('click',()=>{S.jake=!S.jake;btnJake.classList.toggle('on',S.jake);toast(S.jake?'Freno de motor activado: suelta el acelerador para frenar con el motor':'Freno de motor apagado',S.jake);});
 $('#btnSave').addEventListener('click',()=>{menu.hidden=true;$('#saveCode').value=saveCode();$('#saveBox').hidden=false;});
 $('#btnSaveClose').addEventListener('click',()=>{$('#saveBox').hidden=true;});
@@ -6259,7 +6268,7 @@ function openShop(){menu.hidden=true;$('#shopMoney').textContent=fmtMoney(save.m
   $('#shop').hidden=false;}
 {const b=$('#btnHigh'),lab=()=>{b.textContent='Luces altas: '+({auto:'auto',on:'siempre',off:'no'}[save.hiMode||'auto']);};b.addEventListener('click',()=>{save.hiMode={auto:'on',on:'off',off:'auto'}[save.hiMode||'auto'];persist();lab();});lab();}
 $('#btnShop').addEventListener('click',openShop);$('#btnShopClose').addEventListener('click',()=>{$('#shop').hidden=true;if(shopFromJobs&&!mission){shopFromJobs=false;openJobs();}});
-function rescue(manual){S.air=1;S.sl=0;S.lshift=0;if(S.flat)fixTire();S.bt=0;S.et=Math.min(S.et||0,.4);const ne=nearestEdge(S.x,S.z,true),e=ne.e,[fx,fz]=fwdOf(S.h),d=(e.ux*fx+e.uz*fz)>=0?1:-1,ux=e.ux*d,uz=e.uz*d;
+function rescue(manual){S.air=1;if(BAT()<.3){save.bat=.6;toast('Te pasaron corriente: la batería quedó al 60%',true);}S.sl=0;S.lshift=0;if(S.flat)fixTire();S.bt=0;S.et=Math.min(S.et||0,.4);const ne=nearestEdge(S.x,S.z,true),e=ne.e,[fx,fz]=fwdOf(S.h),d=(e.ux*fx+e.uz*fz)>=0?1:-1,ux=e.ux*d,uz=e.uz*d;
   S.h=Math.atan2(-ux,-uz);S.th=S.h;S.x=ne.px-uz*5.2;S.z=ne.pz+ux*5.2;S.v=0;S.steer=0;S.rolled=0;S.tipT=0;S.troll=0;S.tw=0;S.kpv=null;
   if(S.fuel<=1){S.fuel=60;save.money-=3000;persist();toast('La grúa te dejó 60 L de diésel: $3,000',true);}else if(manual)toast('Camión de vuelta en el camino',true);}
 const fuelBtn=$('#fuelBtn');let atStation=null;
