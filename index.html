@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v134">
+<meta name="fn-version" content="v135">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -6673,7 +6673,7 @@ function loopBody(now){
     if(window.__auCam)window.__auCam(dt);
     truck.updateMatrixWorld(true);toCab(aL,vA);placeArm(armL,shL,vA,0);toCab(aR,vB);toCab(aK,vC);vB.lerp(vC,S.handT);vB.y+=Math.sin(Math.PI*S.handT)*.08;placeArm(armR,shR,vB,S.handT,vC);
     toCab(pedals3.clutch.anc,vA);placeLeg(legL,vA);rFoot+=((S.ped.brake>S.ped.gas+.05?1:0)-rFoot)*lerpK(10,dt);toCab(pedals3.gas.anc,vB);toCab(pedals3.brake.anc,vC);vB.lerp(vC,rFoot);vB.y+=Math.sin(Math.PI*rFoot)*.07;placeLeg(legR,vB);
-    if(frame%4===2)drawCluster();if(frame%8===6)drawGpsDev();
+    if(frame%4===2)drawCluster();// la pantalla del soporte ya no se ve: no se dibuja (ahorra rendimiento)
     if(HI()?frame%4===1:frame%8===1){const k=Math.floor(frame/(HI()?4:8))%2,cam=MIRCAM[S.model][k];cabin.visible=false;renderer.setRenderTarget(RT[k]);renderer.render(scene,cam);renderer.setRenderTarget(null);cabin.visible=true;}
   }else if(S.view===1){const[tx,tz]=fwdOf(S.th),[fx,fz]=fwdOf(S.h),rig=NT(),mx=rig?S.x:hx-tx*5.6,mz=rig?S.z:hz-tz*5.6,bk=rig?14:19;
     camTmp.set(mx-tx*bk,hR+(rig?8:12),mz-tz*bk);if(hitAt(camTmp.x,camTmp.z)){camTmp.set(mx-tx*bk*.45,hR+20,mz-tz*bk*.45);}camera.position.lerp(camTmp,lerpK(3,dt));camera.up.set(0,1,0);camera.lookAt(S.x+fx*14,hR+1,S.z+fz*14);
