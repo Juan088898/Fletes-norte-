@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v133">
+<meta name="fn-version" content="v134">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -409,7 +409,7 @@ body.cine .quick{display:none}
 
   <div class="ctrl l">
     <div class="btns">
-        <button class="btn start ibtn" id="btnEngine" aria-label="Llave: arrancar o apagar" title="Arrancar / apagar">🔑</button>
+        <button class="btn start ibtn" id="btnEngine" aria-label="Llave: arrancar o apagar" title="Arrancar / apagar"><span style="display:inline-block;transition:transform .12s">🔑</span></button>
         <button class="btn tog red ibtn" id="btnPark" aria-label="Freno de mano" title="Freno de mano">P</button>
         <button class="btn ibtn" id="btnView" aria-label="Cambiar cámara" title="Cámara">🎥</button>
         <button class="btn ibtn" id="btnMenu" aria-label="Menú" title="Menú">☰</button>
@@ -5223,11 +5223,25 @@ function hexDial(o,f,red,lamp){const g=o.g;g.clearRect(0,0,96,96);g.beginPath();
 function drawTurboG(){if(TBG.length<6)return;const t=S.tb||{nt:0,psi:0,wg:0,tin:TB.tamb,pex:0};
   hexDial(TBG[0],t.psi/30,TB.wgOn/30,t.wg);hexDial(TBG[1],t.nt,.97,0);hexDial(TBG[2],(t.tin-TB.tamb)/70,(75-TB.tamb)/70,0);hexDial(TBG[3],t.pex/35,30/35,0);hexDial(TBG[4],t.wg,.6,0);hexDial(TBG[5],t.flow/.8,.9,0);}
 /* v113 · testigos en el tablero: tira sobre el cluster (hija de él, así sigue su posición y escala en cada cabina) */
-const LAMPAPI={paint(){}};
+const LAMPAPI={paint(){}},KEY3={};
+function mkKey(cl){const g=new THREE.Group();g.position.set(.34,-.3,.06);cl.add(g);
+  const chrome=new THREE.MeshLambertMaterial({color:0xc9ccd1}),dark=M(0x1a1b1e);
+  const bz=new THREE.Mesh(new THREE.TorusGeometry(.04,.009,8,24),chrome);g.add(bz);const face=new THREE.Mesh(new THREE.CircleGeometry(.036,24),dark);face.position.z=-.002;g.add(face);
+  const rot=new THREE.Group();rot.position.z=.006;g.add(rot);const cyl=new THREE.Mesh(new THREE.CylinderGeometry(.022,.022,.012,18),chrome);cyl.rotation.x=Math.PI/2;rot.add(cyl);
+  const head=new THREE.Mesh(new THREE.BoxGeometry(.07,.05,.012),M(0x101114));head.position.set(0,.0,.03);rot.add(head);
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(.016,.003,6,14),chrome);ring.position.set(.044,0,.03);rot.add(ring);
+  const sw=new THREE.Group();sw.position.set(.044,-.012,.03);rot.add(sw);const fob=new THREE.Mesh(new THREE.BoxGeometry(.035,.06,.012),M(0xb3261e));fob.position.y=-.045;sw.add(fob);
+  const marks=['OFF','ON','START'];marks.forEach((t,k)=>{const cv=document.createElement('canvas');cv.width=64;cv.height=24;const c=cv.getContext('2d');c.fillStyle='#e8e8e8';c.font='700 18px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(t,32,12);
+    const m=new THREE.Mesh(new THREE.PlaneGeometry(.05,.019),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cv),transparent:true}));const a=Math.PI/2-k*.85;m.position.set(Math.cos(a)*.066,Math.sin(a)*.066,0);g.add(m);});
+  Object.assign(KEY3,{rot,sw,a:0,sv:0,sa:0});}
+function keyTick(dt){if(!KEY3.rot)return;const tg=S.ign===2?-1.7:(S.running||S.ign===1||S.ignOffT>0)?-.85:0;const pa=KEY3.a;KEY3.a+=(tg-KEY3.a)*Math.min(1,dt*14);KEY3.rot.rotation.z=KEY3.a;
+  // el llavero cuelga y se balancea con el giro de la llave y los golpes del camión
+  KEY3.sv+=(-(KEY3.sa+KEY3.a)*28-KEY3.sv*2.2)*dt+(KEY3.a-pa)*-6+(S.jud||0)*Math.sin(S.t*31)*dt*6;KEY3.sa+=KEY3.sv*dt;KEY3.sw.rotation.z=KEY3.sa;
+  const el=btnEngine.firstElementChild;if(el){const deg=Math.round(-KEY3.a*180/Math.PI);if(el._d!==deg){el._d=deg;el.style.transform='rotate('+deg+'deg)';}}}
 function mkLampStrip(cl){const LAMPS=[['sl','◀','','#3fd08a'],['tire','🛞','LLT','#ffb53d'],['abs','◎','ABS','#ffb53d'],['brk','❗','FRN','#ffb53d'],['bat','🔋','BAT','#ff3b30'],['oil','🛢','ACE','#ff3b30'],['air','💨','AIR','#ff3b30'],['park','Ⓟ','FRE','#ff3b30'],['glow','〰','BUJ','#ffb53d'],['chk','⚙','CHK','#ffb53d'],['temp','🌡','TMP','#ff3b30'],['dsl','⛽','DSL','#ffb53d'],['clu','🦶','CLU','#ffb53d'],['sus','⇅','SUS','#ffb53d'],['sr','▶','','#3fd08a']];
   LAMPAPI.L={};LAMPAPI.LAMPS=LAMPS;LAMPAPI.paint=L=>{LAMPAPI.L=L;};
   LAMPAPI.paint({});}
-{const cl=new THREE.Mesh(new THREE.PlaneGeometry(1.12,.5),new THREE.MeshBasicMaterial({map:cluTex,transparent:true}));cl.geometry.translate(0,.025,0);cl.position.set(-.634,2.6,-4.845);cl.rotation.x=-.2;cabin.add(cl);CLUREF.cl=cl;const cb=box(cabin,.98,.42,.04,0x0d0e10,-.58,2.6,-4.905);cb.rotation.x=-.2;cb.visible=false;CLUKEEP.push(cl);mkTurboG(cl);mkLampStrip(cl);}
+{const cl=new THREE.Mesh(new THREE.PlaneGeometry(1.12,.5),new THREE.MeshBasicMaterial({map:cluTex,transparent:true}));cl.geometry.translate(0,.025,0);cl.position.set(-.634,2.6,-4.845);cl.rotation.x=-.2;cabin.add(cl);CLUREF.cl=cl;const cb=box(cabin,.98,.42,.04,0x0d0e10,-.58,2.6,-4.905);cb.rotation.x=-.2;cb.visible=false;CLUKEEP.push(cl);mkTurboG(cl);mkLampStrip(cl);mkKey(cl);}
 cluTex.anisotropy=8;
 function vent(p,x,y,z,ry){const g=new THREE.Group();g.position.set(x,y,z);g.rotation.y=ry||0;p.add(g);
   g.add(new THREE.Mesh(new THREE.TorusGeometry(.068,.02,8,24),M(0x45484e)));const d=new THREE.Mesh(new THREE.CircleGeometry(.062,20),blk);d.position.z=-.005;g.add(d);
@@ -5709,11 +5723,19 @@ S.ign=0;S.keyHeld=false;S.ignT=0;S.glowDur=1.6;S.crankT=0;S.crankDur=1.2;S.ignOf
 {const el=save.offT?Math.max(0,(Date.now()-save.offT)/1000):0;if(save.air!=null)S.air=Math.max(0,save.air-el*.0006);S.lastRun=-Math.max(99,el);}
 let stOsc=null;
 function starterSnd(on){if(!AC)return;try{
-  if(on&&!stOsc){const t=AC.currentTime,o=AC.createOscillator(),w=AC.createOscillator(),lf=AC.createOscillator(),lg=AC.createGain(),g=AC.createGain(),f=AC.createBiquadFilter();
-    o.type='sawtooth';o.frequency.value=64;w.type='triangle';w.frequency.value=410;lf.frequency.value=5.2;lg.gain.value=.05;f.type='lowpass';f.frequency.value=900;
-    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.085*SET().vol,t+.12);lf.connect(lg);lg.connect(g.gain);o.connect(f);w.connect(f);f.connect(g);g.connect(AC.destination);o.start();w.start();lf.start();stOsc={o,w,lf,lg,g};}
-  else if(!on&&stOsc){const t=AC.currentTime,s=stOsc;stOsc=null;try{s.lg.disconnect();}catch(e){}s.g.gain.cancelScheduledValues(t);s.g.gain.setTargetAtTime(0,t,.04);setTimeout(()=>{try{s.o.stop();s.w.stop();s.lf.stop();}catch(e){}},300);}
+  // marcha de diésel: clac del solenoide, chillido del piñón y golpes de compresión que siguen las rpm de arranque
+  if(on&&!stOsc){const t=AC.currentTime,v=SET().vol,out=AC.createGain();out.gain.setValueAtTime(0,t);out.gain.linearRampToValueAtTime(.16*v,t+.05);out.connect(AC.destination);
+    noise(.06,900,'lowpass',.5);noise(.02,3200,'bandpass',.3);
+    const n=AC.createBufferSource();n.buffer=NB;n.loop=true;const nf=AC.createBiquadFilter();nf.type='lowpass';nf.frequency.value=260;nf.Q.value=2;
+    const body=AC.createOscillator();body.type='sawtooth';body.frequency.value=48;const bf=AC.createBiquadFilter();bf.type='lowpass';bf.frequency.value=220;
+    const am=AC.createGain();am.gain.value=.45;const lfo=AC.createOscillator();lfo.type='sawtooth';lfo.frequency.value=6;const ld=AC.createGain();ld.gain.value=.45;lfo.connect(ld);ld.connect(am.gain);
+    n.connect(nf);nf.connect(am);body.connect(bf);bf.connect(am);am.connect(out);
+    const wh=AC.createOscillator();wh.type='triangle';wh.frequency.value=1150;const wg=AC.createGain();wg.gain.value=.05;const wl=AC.createGain();wl.gain.value=12;lfo.connect(wl);wl.connect(wh.frequency);wh.connect(wg);wg.connect(out);
+    n.start();body.start();lfo.start();wh.start();stOsc={n,body,lfo,wh,out};}
+  else if(!on&&stOsc){const t=AC.currentTime,q=stOsc;stOsc=null;q.out.gain.cancelScheduledValues(t);q.out.gain.setTargetAtTime(0,t,.035);noise(.05,700,'lowpass',.3);setTimeout(()=>{try{q.n.stop();q.body.stop();q.lfo.stop();q.wh.stop();q.out.disconnect();}catch(e){}},350);}
 }catch(e){}}
+// los golpes van al ritmo de los cilindros: 6 cilindros = 3 compresiones por vuelta
+function starterRate(rpm){if(!stOsc)return;const f=Math.max(3,rpm/60*3),t=AC.currentTime;stOsc.lfo.frequency.setTargetAtTime(f,t,.05);stOsc.body.frequency.setTargetAtTime(40+f*1.6,t,.05);stOsc.wh.frequency.setTargetAtTime(900+rpm*1.6,t,.08);}
 const relayClick=()=>noise(.035,2600,'bandpass',.28);
 const BAT=()=>save.bat??1,coldK=()=>clamp((S.t-S.lastRun-120)/900,0,1)*(env.day<.4?1:.6);
 const crankBlock=()=>S.fuel<=0?'Sin diésel. Usa Menú → Rescatar para la grúa':BAT()<.08?'Batería descargada: la marcha solo hace clic. Menú → Rescatar para pasar corriente':(S.gear!==0&&S.ped.clutch<.6?'Pisa el clutch o pon neutral para arrancar':'');
@@ -5739,9 +5761,9 @@ function ignTick(dt){
     else{S.ignOffT-=dt;if(S.ignOffT<=0)S.ign=0;}
   }else if(S.ign===2){
     S.crankT+=dt;const p=clamp(S.crankT/S.crankDur,0,1),irr=Math.sin(S.crankT*34)*35+Math.sin(S.crankT*11)*25;
-    S.rpm=Math.min(260,95+95*p+irr)*(BAT()<.35?.6+BAT():1);
+    S.rpm=Math.min(260,95+95*p+irr)*(BAT()<.35?.6+BAT():1);starterRate(S.rpm);
     if(S.crankT>=S.crankDur&&S.coldMiss){S.coldMiss=false;S.ign=1;S.ignT=S.glowDur-.15;starterSnd(false);noise(.25,180,'lowpass',.35);toast('Motor frío: no pegó a la primera. Sigue con la llave');}
-    else if(S.crankT>=S.crankDur){S.coldIdle=coldK()*25;S.coldTry=false;S.ign=0;starterSnd(false);S.running=true;S.rpm=560;S.fireK=.9;S.nodV=(S.nodV||0)+1.4;S.camKick=Math.max(S.camKick||0,.5);noise(.3,260,'lowpass',.5);buzz(60);}
+    else if(S.crankT>=S.crankDur){S.coldIdle=coldK()*25;S.coldTry=false;S.ign=0;starterSnd(false);S.running=true;S.rpm=560;S.fireK=.9;noise(.12,140,'lowpass',.45);setTimeout(()=>noise(.1,170,'lowpass',.35),110);setTimeout(()=>noise(.09,200,'lowpass',.25),230);S.nodV=(S.nodV||0)+1.4;S.camKick=Math.max(S.camKick||0,.5);noise(.3,260,'lowpass',.5);buzz(60);}
   }}
 btnEngine.addEventListener('pointerdown',e=>{try{btnEngine.setPointerCapture(e.pointerId);}catch(_){}audioInit();keyDown();});
 ['pointerup','pointercancel'].forEach(ev=>btnEngine.addEventListener(ev,keyUp));
@@ -6638,7 +6660,7 @@ function loopBody(now){
   // limpiadores: con lluvia barren; al dejar de llover terminan su vuelta y se quedan abajo (antes con pocos cuadros por segundo se brincaban el alto y nunca paraban)
   {const inc=dt*(.7+env.rain*.6);if(env.rain>.2||(S.wipeT||0)>S.t)wipe+=inc;else if(wipe!==Math.floor(wipe)){const nx=Math.ceil(wipe);wipe=Math.min(nx,wipe+inc);}}
   const wa=-1.52+Math.abs(Math.sin(wipe*Math.PI))*1.4;const wv=env.rain>.2||wipe!==Math.floor(wipe);(WIPERS[S.model]||[]).forEach(w=>{w.rotation.z=wa;w.visible=wv;});rainGlass(dt,wa,wv);
-  ignTick(dt);fxTick(dt);if(S.view===0)interiorTick(dt);tireTick(dt);sigTick(dt);if(frame%3===0)turnTick();if(frame%6===0)tempUI();
+  ignTick(dt);keyTick(dt);fxTick(dt);if(S.view===0)interiorTick(dt);tireTick(dt);sigTick(dt);if(frame%3===0)turnTick();if(frame%6===0)tempUI();
   atStation=STATIONS.find(s=>inObb(s.area,S.x,S.z))||null;fuelBtn.hidden=!(atStation&&Math.abs(S.v)<.3&&S.fuel<tankCap()-1);
   if(!fuelBtn.hidden)fuelBtn.textContent=`Cargar diésel · ${Math.round(tankCap()-S.fuel)} L · ${fmtMoney((tankCap()-S.fuel)*(atStation?atStation.price:FUEL_PRICE))}`;
   try{if(LOAD.active)loadTick(dt);else{missionTick(dt);weighTick(dt);}tollTick();}catch(e){showErr('flete',e);if(LOAD.active){LOAD.active=false;}}animTrailerParts(dt);fatigueTick(dt);corpTick(dt);
