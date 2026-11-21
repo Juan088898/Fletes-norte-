@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v141">
+<meta name="fn-version" content="v142">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -6496,7 +6496,7 @@ function openShop(){menu.hidden=true;$('#shopMoney').textContent=fmtMoney(save.m
      // v110 · código de regalo: quien lo escribe recibe la skin gratis
      const p2=document.createElement('p');p2.textContent=own?'Para regalarla, pásale a tu amiga el código DELIDELI: lo escribe aquí abajo en su juego.':'¿Te regalaron la skin? Escribe tu código:';body.appendChild(p2);
      const row=document.createElement('div');row.className='rrow';row.innerHTML='<input id="giftIn" type="text" autocomplete="off" autocapitalize="characters" placeholder="Código de regalo" aria-label="Código de regalo" style="flex:1;min-width:0;padding:9px 11px;border-radius:10px;border:1px solid var(--edge);background:#0b0e12;color:var(--ink);font:600 14px/1 var(--display);user-select:text;-webkit-user-select:text"><button class="btn" id="giftGo">Canjear</button>';body.appendChild(row);
-     row.querySelector('#giftIn').addEventListener('keydown',e=>e.stopPropagation());row.querySelector('#giftGo').addEventListener('click',()=>{const c=row.querySelector('#giftIn').value.trim().toUpperCase().replace(/[^A-Z0-9]/g,'');if(c!=='DELIDELI'){toast('Ese código no existe');return;}if((save.skins||[]).includes('deli')){toast('Ya tienes la skin Deli Deli');return;}(save.skins||(save.skins=[])).push('deli');persist();toast('¡Regalo canjeado! Ya tienes la skin Deli Deli',true);openShop();});}}
+     row.querySelector('#giftIn').addEventListener('keydown',e=>e.stopPropagation());row.querySelector('#giftGo').addEventListener('click',()=>{const c=row.querySelector('#giftIn').value.trim().toUpperCase().replace(/[^A-Z0-9]/g,'');if(c==='JUAN20K'){if(save.gJuan20k){toast('Ese código ya lo canjeaste');return;}save.gJuan20k=1;save.money+=20000;if(!save.tdmg)save.tdmg={};save.tdmg[S.model]=0;const mt=MT();for(const k of['oil','tire','susp','clu','brk','tur'])mt[k]=0;S.oilW=0;S.tireW=0;try{if(S.flat)fixTire();}catch(e){}try{applyDmgVis();}catch(e){}persist();toast('¡Listo! Camión reparado y $20,000 en la cuenta',true);openShop();return;}if(c!=='DELIDELI'){toast('Ese código no existe');return;}if((save.skins||[]).includes('deli')){toast('Ya tienes la skin Deli Deli');return;}(save.skins||(save.skins=[])).push('deli');persist();toast('¡Regalo canjeado! Ya tienes la skin Deli Deli',true);openShop();});}}
   $('#shop').hidden=false;}
 {const b=$('#btnHigh'),lab=()=>{b.textContent='Luces altas: '+({auto:'auto',on:'siempre',off:'no'}[save.hiMode||'auto']);};b.addEventListener('click',()=>{save.hiMode={auto:'on',on:'off',off:'auto'}[save.hiMode||'auto'];persist();lab();});lab();}
 $('#btnShop').addEventListener('click',openShop);$('#btnShopClose').addEventListener('click',()=>{$('#shop').hidden=true;if(shopFromJobs&&!mission){shopFromJobs=false;openJobs();}});
