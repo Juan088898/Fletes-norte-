@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v150">
+<meta name="fn-version" content="v152">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -521,7 +521,7 @@ body.cine .quick{display:none}
   <div class="chip" id="park" hidden>Estacionando…</div>
   <button class="btn" id="fuelBtn" hidden>Cargar diésel</button>
   <button class="btn" id="btnSkip" hidden>Saltar ▶▶</button>
-  <button class="btn" id="btnTire" hidden>Llanta 3V · P$3,800</button>
+  <button class="btn" id="btnTire" hidden>Poner la refacción</button>
   <button class="btn" id="btnRest" hidden>Dormir 8 h</button>
   <div id="sleepFx"></div>
   <div class="quick" id="quick" role="toolbar" aria-label="Accesos rápidos">
@@ -4666,6 +4666,8 @@ const PEDRERA=(()=>{const i=Math.round(TRACK.length*.58),p=TRACK[i],q=TRACK[i+1]
   for(const sd of[1,-1]){const x=p[0]-(q[1]-p[1])/l*sd*78,z=p[1]+(q[0]-p[0])/l*sd*78,v=Math.abs(natural(x,z)-H(p[0],p[1]));if(!best||v<best.v)best={x,z,v};}
   const y=H(p[0],p[1]);flattenDisk(best.x,best.z,58,y,40);return{x:best.x,z:best.z,r:50,y,road:{x:p[0],z:p[1]}};})();
 FLATS.push(PEDRERA);
+// v151 · fase 3 etapa 4: obras en la ciudad (reciben piedra) y la Pedrera como patio de carga. Van al final para no mover patios ni gasolineras
+const OBRAS=['Obra Torre Centro','Obra Puente Huinalá','Obra Fracc. Las Lomas'];for(const o of [[OBRAS[0],600,-150,0],[OBRAS[1],900,1300,0],[OBRAS[2],-700,-400,0],['Pedrera El Norte',PEDRERA.x,PEDRERA.z,0]]){DEP.push(o);const st=findSite(o[1],o[2],0,78,124);DEP_SITES.push(st);const ss=st.s,yy=H(ss.P.x,ss.P.z),cc=ss.L(0,58);flattenOBB(cc.x,cc.z,st.e.ux,st.e.uz,88,74,yy,36);}
 const MIRADOR=(()=>{const pl=MAPA.places.find(p=>p[3]==='m'),ne=nearestEdge(pl[1],pl[2]),e=ne.e;let best=null;
   for(const sd of[1,-1]){const nx=-e.uz*sd,nz=e.ux*sd,x=ne.px+nx*(e.w/2+16),z=ne.pz+nz*(e.w/2+16),v=natural(x+nx*40,z+nz*40);if(!best||v<best.v)best={x,z,v,nx,nz};}
   const y=H(ne.px,ne.pz);flattenDisk(best.x,best.z,16,y,18);return{x:best.x,z:best.z,r:15,y,nx:best.nx,nz:best.nz,name:pl[0]};})();
@@ -4798,7 +4800,8 @@ function findSite(a,b,t,ah,bmax){const p0=posOnOrig(a,b,t),C=[];C.push([p0.e,p0.
   const s=sitePlace(p0.e,p0.t,bmax),c=s.L(0,bmax/2);SITES.push({x:c.x,z:c.z,r:Math.hypot(ah,bmax/2)+10});console.warn('sitio sin lugar libre',a,b);return{e:p0.e,t:p0.t,s,bad:1};}
 const DEPOTS=DEP.map(([name,a,b,t],di)=>{const {e,t:tt,s}=DEP_SITES[di],yP=e.ay+(e.by-e.ay)*tt,d={name,e,t:tt,E:s.P,ux:e.ux,uz:e.uz,nx:s.nx,nz:s.nz,L:s.L,y:yP};
   const rotN=Math.atan2(d.nx,d.nz),rotU=Math.atan2(e.ux,e.uz)+Math.PI/2;
-  const zc=s.L(0,50);d.zone={x:zc.x,z:zc.z};const yr=flatRect(s.L(0,40.5),140,83,rotN,0x8f8d86,yP+.02);yr.children[0].receiveShadow=true;if(yP>1){const fc=s.L(0,62);FLATS.push({x:fc.x,z:fc.z,r:92,y:yP});}
+  const zc=s.L(0,50);d.zone={x:zc.x,z:zc.z};const yr=flatRect(s.L(0,40.5),140,83,rotN,/^Obra /.test(name)?0xa08c6e:/^Pedrera/.test(name)?0x9b8466:0x8f8d86,yP+.02);yr.children[0].receiveShadow=true;if(yP>1){const fc=s.L(0,62);FLATS.push({x:fc.x,z:fc.z,r:92,y:yP});}
+  const OBRA=/^Obra |^Pedrera/.test(name);d.late=OBRA;const _o0=scene.children.length;
   // nave industrial de paneles con franja de color
   const glassy=/San Pedro/.test(name),col=['#e4e0d6','#d9d6cf','#ece8de','#d4d0c6'][di%4],str=['#1f6d47','#1f3b73','#b3261e','#d4a62a','#5b2a86'][di%5];
   const pt=panelTex(glassy?'#6f8fae':col,glassy?'#4a6a8a':'#b8b3a8',glassy?null:str);const t1=pt.clone();t1.needsUpdate=true;t1.repeat.set(5,1);const t2=pt.clone();t2.needsUpdate=true;t2.repeat.set(1.5,1);
@@ -4817,6 +4820,13 @@ const DEPOTS=DEP.map(([name,a,b,t],di)=>{const {e,t:tt,s}=DEP_SITES[di],yP=e.ay+
   d.dockPt=q=>s.L(-30+q*25,81.3);d.semP=q=>s.L(-30+q*25+3.5,81.3);
   // letrero grande sobre la fachada
   {const lc=s.L(0,81.6);signAt(name.toUpperCase(),lc.x-d.nx*.2,lc.z-d.nz*.2,Math.atan2(-d.nx,-d.nz),yP+10.2,34,str,'#ffffff');}
+  if(OBRA){const _o1=scene.children.length;for(let i=_o0;i<_o1;i++){const o=scene.children[i];if(o)o.visible=false;}d.obra=true;const ped=/Pedrera/.test(name);
+   const bc=s.L(0,121.5),bw=box(scene,140,2.6,.4,ped?0x8a7660:0xb9b4aa,bc.x,yP+1.3,bc.z);bw.rotation.y=rotN;d.obb={cx:bc.x,cz:bc.z,ux:e.ux,uz:e.uz,hw:70,hd:1};
+   {const lc=s.L(0,121);signAt(name.toUpperCase(),lc.x-d.nx*.3,lc.z-d.nz*.3,Math.atan2(-d.nx,-d.nz),yP+4.2,30,ped?'#6b4a2f':'#d4a62a','#111214');}
+   for(let k=0;k<(ped?6:3);k++){const p=s.L(-55+k*(ped?22:30),106+(k%2)*6),cn=new THREE.Mesh(new THREE.ConeGeometry(ped?8:6,ped?6:4,9),M(ped?0x9c948a:0x8f8679));cn.position.set(p.x,yP+(ped?3:2),p.z);cn.castShadow=true;scene.add(cn);}
+   if(!ped){const gp=s.L(52,108);box(scene,1.8,40,1.8,0xe8b021,gp.x,yP+20,gp.z);const jb=box(scene,44,1.3,1.3,0xe8b021,gp.x,yP+40.5,gp.z);jb.rotation.y=rotU+.6;const cw=box(scene,4,2.2,2.2,0x6f7378,gp.x-Math.cos(rotU+.6)*-9,yP+39.5,gp.z+Math.sin(rotU+.6)*-9);cw.rotation.y=rotU+.6;
+    const sk=s.L(-20,112);for(let f=0;f<3;f++){const fl=box(scene,24,.3,10,0x9aa0a6,sk.x,yP+3.2+f*3.2,sk.z);fl.rotation.y=rotN;}for(const a of[-11,11])for(const b of[-4,4]){const cp=s.L(-20+a,112+b);box(scene,.5,9.6,.5,0x9aa0a6,cp.x,yP+4.8,cp.z);}}
+   const KL=[];for(let k=0;k<9;k++){const p=s.L(-40+k*10,68);KL.push({k:'r/construction-cone',x:p.x,y:yP,z:p.z,ry:rotN});}for(const a of[-62,62]){const p=s.L(a,60);KL.push({k:'r/construction-barrier',x:p.x,y:yP,z:p.z,ry:rotU});}setTimeout(()=>{try{kPlace(KL,false);}catch(e){}},0);}
   // caseta de vigilancia con pluma y cerca
   {const cs=s.L(-64,10);box(scene,3,2.8,3,0xe8e4da,cs.x,yP+1.4,cs.z).rotation.y=rotN;box(scene,3.4,.3,3.4,0x6f7378,cs.x,yP+2.95,cs.z).rotation.y=rotN;
    const pl=s.L(-56,4),pm=box(scene,9,.18,.18,0xb3261e,pl.x,yP+1.1,pl.z);pm.rotation.y=rotU;
@@ -6344,10 +6354,11 @@ if(!save.rep)save.rep={};
 const repOf=n=>clamp((save.rep||(save.rep={}))[n]||0,0,5),repN=n=>Math.floor(repOf(n)+1e-6),repStars=n=>'★'.repeat(repN(n))+'☆'.repeat(5-repN(n)),repMul=n=>1+.04*repN(n);
 function repAdd(n,d){const v=repOf(n);save.rep[n]=clamp(v+d,0,5);}
 // v147 · de dónde a dónde va cada carga especial (las demás van entre patios de la ciudad)
-const CRULE={Grava:{f:'Cantera La Silla'},'Piedra triturada':{f:'Cantera La Silla'},Ganado:{f:'Ejido Santa Rosa',t:'Rastro Municipal'},Leche:{f:'Ejido Santa Rosa',t:'Parque Industrial Este'},'Pacas de alfalfa':{t:'Ejido Santa Rosa'},'Alimento para ganado':{t:'Ejido Santa Rosa'},Fertilizante:{t:'Ejido Santa Rosa'}};
+const CRULE={Grava:{f:['Cantera La Silla','Pedrera El Norte'],t:OBRAS},'Piedra triturada':{f:['Cantera La Silla','Pedrera El Norte'],t:OBRAS},Ganado:{f:'Ejido Santa Rosa',t:'Rastro Municipal'},Leche:{f:'Ejido Santa Rosa',t:'Parque Industrial Este'},'Pacas de alfalfa':{t:'Ejido Santa Rosa'},'Alimento para ganado':{t:'Ejido Santa Rosa'},Fertilizante:{t:'Ejido Santa Rosa'}};
+const SP_FROM=new Set(['Cantera La Silla','Ejido Santa Rosa','Rastro Municipal','Pedrera El Norte',...OBRAS]),SP_TO=new Set(['Ejido Santa Rosa','Rastro Municipal','Pedrera El Norte',...OBRAS]);
 function makeJobs(){const md=MD(),lv=LVL(),cargos=CARGO.filter(c=>(md.rigid?(c[2]==='caja'&&c[1]<=md.maxT):true)&&!(lv<3&&(c[2]==='tanque'||c[1]>=20))&&!(lv<2&&FRAGILE.includes(c[0]))),out=[];let tries=0;
   while(out.length<4&&tries<60){tries++;let P=Math.floor(Math.random()*DEPOTS.length);let D=Math.floor(Math.random()*DEPOTS.length);if(P===D||out.some(o=>o.from===P&&o.to===D))continue;
-    const c=cargos[Math.floor(Math.random()*cargos.length)],RU=CRULE[c[0]];if(RU){const fi=RU.f?DEPOTS.findIndex(d=>d.name===RU.f):-1,ti=RU.t?DEPOTS.findIndex(d=>d.name===RU.t):-1;if((RU.f&&fi<0)||(RU.t&&ti<0))continue;if(fi>=0)P=fi;if(ti>=0)D=ti;if(!RU.t&&['Ejido Santa Rosa','Rastro Municipal'].includes(DEPOTS[D].name))continue;if(!RU.f&&['Cantera La Silla','Ejido Santa Rosa','Rastro Municipal'].includes(DEPOTS[P].name))continue;if(P===D||out.some(o=>o.from===P&&o.to===D))continue;}else if(['Cantera La Silla','Ejido Santa Rosa','Rastro Municipal'].includes(DEPOTS[P].name)||['Ejido Santa Rosa','Rastro Municipal'].includes(DEPOTS[D].name))continue;
+    const c=cargos[Math.floor(Math.random()*cargos.length)],RU=CRULE[c[0]];if(RU){const one=v=>Array.isArray(v)?v[Math.floor(Math.random()*v.length)]:v,fn=one(RU.f),tn=one(RU.t),fi=fn?DEPOTS.findIndex(d=>d.name===fn):-1,ti=tn?DEPOTS.findIndex(d=>d.name===tn):-1;if((RU.f&&fi<0)||(RU.t&&ti<0))continue;if(fi>=0)P=fi;if(ti>=0)D=ti;if(!RU.t&&SP_TO.has(DEPOTS[D].name))continue;if(!RU.f&&SP_FROM.has(DEPOTS[P].name))continue;if(P===D||out.some(o=>o.from===P&&o.to===D))continue;}else if(SP_FROM.has(DEPOTS[P].name)||SP_TO.has(DEPOTS[D].name))continue;
     const dp=DEPOTS[P],r=planRoute(dp.E.x,dp.E.z,Math.atan2(-dp.e.ux,-dp.e.uz),DEPOTS[D],'dist'),toP=planRoute(S.x,S.z,S.h,DEPOTS[P],'dist');
     const j={from:P,to:D,cargo:c[0],t:c[1],tt:c[2],col:c[3],len:r.len,toP:toP.len};if(FRAGILE.includes(c[0]))j.fragile=true;if(lv>=2&&Math.random()<.22)j.urgent=true;if(Math.random()<.22&&c[2]!=='tanque'&&!j.fragile){j.over=true;j.t=Math.round(grossLim()-emptyT(c[2])+rr(2,4));}out.push(j);}
   return out.sort((a,b)=>a.len-b.len);}
@@ -6476,7 +6487,7 @@ function loaderGet(){if(LOADER)return LOADER;const g=new THREE.Group();g.visible
   return g;}
 const _vw=new THREE.Vector3(),_vq=new THREE.Quaternion(),_vq2=new THREE.Quaternion();
 function loaderPlace(lx,lz,yaw){const r=LOAD.root,g=loaderGet();r.updateMatrixWorld(true);_vw.set(lx,0,lz).applyMatrix4(r.matrixWorld);_vw.y=H(_vw.x,_vw.z);g.position.copy(_vw);r.getWorldQuaternion(_vq);_vq2.setFromAxisAngle(Yax,yaw);g.quaternion.copy(_vq).multiply(_vq2);}
-function volteoLoad(L,dt){if(L.t<.1){L.d0=L.d1=L.d2=L.dn=0;}const V=TRG.volteo,g=loaderGet(),sh=g.userData.shovel,sm=x=>{x=clamp(x,0,1);return x*x*(3-2*x);};
+const OBRA_GP=[];function volteoLoad(L,dt){if(L.t<.1){L.d0=L.d1=L.d2=L.dn=0;L.gp=null;}const V=TRG.volteo,g=loaderGet(),sh=g.userData.shovel,sm=x=>{x=clamp(x,0,1);return x*x*(3-2*x);};
   if(!L.unload){const N=3,T=5.6,i=Math.min(N-1,Math.floor(L.t/T)),t=L.t-i*T,zs=[3.2,6.4,9.6][i];g.visible=true;let x,lift=0,tip=0;
     if(t<1.6){x=9+5*sm(t/1.6);lift=0;}else if(t<3.2){const f=sm((t-1.6)/1.6);x=14-8.4*f;lift=f;}else if(t<4.2){x=5.6;lift=1;tip=sm((t-3.2)/.6);if(!L['d'+i]){L['d'+i]=1;noise(.9,380,'lowpass',.4);setTimeout(()=>noise(.6,250,'lowpass',.3),250);}}else{const f=sm((t-4.2)/1.4);x=5.6+3.4*f;lift=1-f;tip=1-f;}
     loaderPlace(x,zs,-Math.PI/2);if(sh)sh.rotation.x=-1.05*lift+.9*tip;(g.userData.wh||[]).forEach(w=>w.rotation.x+=dt*(t<3.2||t>4.2?2.5:0));
@@ -6484,7 +6495,8 @@ function volteoLoad(L,dt){if(L.t<.1){L.d0=L.d1=L.d2=L.dn=0;}const V=TRG.volteo,g
     if(L.t>=N*T){g.visible=false;mission.frac=1;updMass();endLoad();}return;}
   // descarga: se abre la compuerta, sube la caja y la piedra se va al piso
   const t=L.t;S.tipT=t<1?0:t<5?sm((t-1)/4):t<6.5?1:1-sm((t-6.5)/3);V.userData.gate.rotation.x=-1.1*sm(t/1)*(t<8.5?1:1-sm((t-8.5)/1));
-  if(t>2.2&&!L.dn){L.dn=1;noise(2.4,300,'lowpass',.45);}
+  if(t>2.2&&!L.dn){L.dn=1;noise(2.4,300,'lowpass',.45);if(curDep().obra){const r=LOAD.root;r.updateMatrixWorld(true);_vw.set(0,0,15.5).applyMatrix4(r.matrixWorld);const g=new THREE.Mesh(new THREE.ConeGeometry(2.8,2,9),new THREE.MeshLambertMaterial({color:mission.col||0x8f8679}));g.position.set(_vw.x,H(_vw.x,_vw.z),_vw.z);g.scale.y=.05;scene.add(g);OBRA_GP.push(g);if(OBRA_GP.length>8)scene.remove(OBRA_GP.shift());L.gp=g;}}
+  if(L.gp){const ff=clamp((t-2.2)/3.8,0,1);L.gp.scale.y=.05+.95*ff*ff*(3-2*ff);L.gp.position.y=H(L.gp.position.x,L.gp.position.z)+L.gp.scale.y;if(t>=9.5)L.gp=null;}
   const f=sm((t-2.2)/3.8);mission.frac=1-f;updMass();
   els.park.textContent=t<1?'Abriendo la compuerta…':t<6.5?'Levantando la caja · '+Math.round(f*100)+'% descargado':'Bajando la caja…';
   if(t>=9.6){S.tipT=0;mission.frac=0;endLoad();}}
@@ -6540,7 +6552,8 @@ function openShop(){menu.hidden=true;$('#shopMoney').textContent=fmtMoney(save.m
   const body=$('#shopBody');body.innerHTML='';const grid=document.createElement('div');grid.className='opts';body.appendChild(grid);
   if(shopTab==='trucks'){{if(!save.mt)save.mt={};const mt=save.mt[S.model]||(save.mt[S.model]={odo:0,oil:0,tire:0});
     grid.appendChild(opt(mt.oil>OIL_KM?'URGENTE':'ACEITE','Cambio de aceite',[`${Math.round(mt.oil)} de ${OIL_KM} km desde el último`,mt.oil>OIL_KM?'El motor pierde fuerza y se calienta':'Mantén el motor sano'],fmtMoney(6800)+(save.money<6800?' · no te alcanza':''),save.money<6800||mt.oil<5,()=>{save.money-=6800;mt.oil=0;S.oilW=0;persist();toast('Aceite cambiado',true);openShop();}));
-    grid.appendChild(opt(mt.tire>TIRE_KM?'URGENTE':'LLANTAS 3V','Llantas 3V · Vueno, Vonito, Varato',[`Juego de 10 llantas renovadas · ${Math.round(mt.tire)} de ${TIRE_KM} km de uso`,mt.tire>TIRE_KM?'Se ponchan seguido y agarran menos':'Buen agarre'],fmtMoney(35000)+(save.money<35000?' · no te alcanza':''),save.money<35000||mt.tire<5,()=>{save.money-=35000;mt.tire=0;S.tireW=0;persist();toast('Llantas 3V puestas: vuenas, vonitas y varatas',true);openShop();}));}
+    grid.appendChild(opt(mt.tire>TIRE_KM?'URGENTE':'LLANTAS 3V','Llantas 3V · Vueno, Vonito, Varato',[`Juego de 10 llantas renovadas · ${Math.round(mt.tire)} de ${TIRE_KM} km de uso`,mt.tire>TIRE_KM?'Se ponchan seguido y agarran menos':'Buen agarre'],fmtMoney(35000)+(save.money<35000?' · no te alcanza':''),save.money<35000||mt.tire<5,()=>{save.money-=35000;mt.tire=0;S.tireW=0;persist();toast('Llantas 3V puestas: vuenas, vonitas y varatas',true);openShop();}));
+    if(!save.spare)grid.appendChild(opt('REFACCIÓN','Llanta de refacción 3V',['No traes refacción','Si se poncha una, tendrás que pedir auxilio por el celular'],fmtMoney(3800)+(save.money<3800?' · no te alcanza':''),save.money<3800,()=>{save.money-=3800;save.spare=1;persist();toast('Refacción 3V lista',true);openShop();}));}
     {const mt=MT(),w=mt.susp||0,cost=Math.round((9000+w*30000)/50)*50;grid.appendChild(opt(w>=.7?'URGENTE':'SUSPENSIÓN','Amortiguadores y muelles',[`${Math.round(w*100)}% de desgaste por golpes`,w>=.35?'El camión rebota y se mece más de lo normal':'Absorbe bien los golpes'],fmtMoney(cost)+(save.money<cost?' · no te alcanza':''),save.money<cost||w<.03,()=>{save.money-=cost;mt.susp=0;persist();toast('Suspensión como nueva',true);openShop();}));}
     for(const[k,tag,name,l0,l1,base,per]of[['clu','CLUTCH','Clutch (disco y plato)','Acopla completo','Patina: el motor sube de vueltas pero no jala igual',18000,24000],['brk','FRENOS','Balatas y tambores','Frenan parejo','Cristalizados: frena hasta 40% menos',12000,16000],['tur','TURBO','Turbocompresor','Sopla completo','Dañado: el motor pierde fuerza',28000,30000]]){const mt=MT(),w=mt[k]||0;if(w<.03)continue;const cost=Math.round((base+w*per)/50)*50;
       grid.appendChild(opt(w>=.7?'URGENTE':tag,name,[`${Math.round(w*100)}% de desgaste`,w>=.35?l1:l0],fmtMoney(cost)+(save.money<cost?' · no te alcanza':''),save.money<cost,()=>{save.money-=cost;mt[k]=0;persist();toast(name+' como nuevo',true);openShop();}));}
@@ -6592,6 +6605,36 @@ function hazTick(dt,sp){hazNear=null;const[fx,fz]=fwdOf(S.h);let best=1e9;for(co
 const btnTire=$('#btnTire');
 function flatTire(){if(S.flat)return;const side=Math.random()<.5?-1:1;S.flat={side,t:S.t};noise(.5,700,'lowpass',.7);buzz(150);S.camKick=Math.max(S.camKick||0,.8);
   toast('¡Se ponchó una llanta! El camión se jala: para y cámbiala (o Menú → Rescatar)',true);}
+/* v151 · llanta de refacción: traes una incluida; el chofer se baja y la cambia (~50 s, con gato y llave de cruz).
+   Se repone en la gasolinera o en el Taller con llantas 3V. Sin refacción, pides auxilio por el celular. */
+if(save.spare==null)save.spare=1;
+const SPARE_PRICE=3800,AUX_PRICE=5300,SPARE_T=50;let SPX=null;
+function mkMech(){const g=new THREE.Group(),skin=M(0xc68a5c),shirt=M(0x2f5d8a),jean=M(0x34405a),blk=M(0x1b1b1d);
+  const hip=new THREE.Group();g.add(hip);box(hip,.38,.5,.22,shirt,0,.55,0);const hd=new THREE.Mesh(new THREE.SphereGeometry(.13,10,8),skin);hd.position.set(0,.95,0);hip.add(hd);box(hip,.3,.08,.3,0xd4541c,0,1.07,0);
+  for(const s of[-1,1]){const lg=box(g,.15,.5,.15,jean,s*.12,.25,.12);lg.rotation.x=-1.3;box(g,.14,.1,.26,blk,s*.12,.05,.38);}
+  const arm=new THREE.Group();arm.position.set(.22,.75,0);hip.add(arm);box(arm,.11,.45,.11,shirt,0,-.2,.1).rotation.x=-1;const wr=new THREE.Group();wr.position.set(0,-.35,.42);arm.add(wr);box(wr,.04,.04,.7,0x8e949b,0,0,0);box(wr,.7,.04,.04,0x8e949b,0,0,0);g.userData.wr=wr;
+  const arm2=box(hip,.11,.45,.11,shirt,-.22,.55,.15);arm2.rotation.x=-1;
+  const jack=new THREE.Group();box(jack,.35,.12,.25,0xb3261e,0,.06,0);const jp=box(jack,.08,.5,.08,0x8e949b,0,.3,0);g.userData.jp=jp;g.add(jack);jack.position.set(0,0,.9);
+  const sp=new THREE.Mesh(new THREE.CylinderGeometry(.52,.52,.3,16),blk);sp.rotation.z=Math.PI/2;sp.position.set(-.8,.52,.3);g.add(sp);g.userData.sp=sp;
+  g.traverse(o=>{if(o.isMesh)o.castShadow=true;});g.visible=false;scene.add(g);return g;}
+let MECH=null;const _sw=new THREE.Vector3(),_sc=new THREE.Vector3();
+function flatWheelPos(out){let best=null,bd=-1e9;const[rx,rz]=rightOf(S.h);for(const w of (WHEELS[S.model]?WHEELS[S.model].front:[])){w.piv.getWorldPosition(_sw);const d=((_sw.x-S.x)*rx+(_sw.z-S.z)*rz)*(S.flat?S.flat.side:1);if(d>bd){bd=d;best=_sw.clone();}}
+  if(!best){const[fx,fz]=fwdOf(S.h);best=new THREE.Vector3(S.x+fx*5+rx*(S.flat?S.flat.side:1)*1.2,0,S.z+fz*5+rz*(S.flat?S.flat.side:1)*1.2);}return out.copy(best);}
+function startSpare(){if(SPX)return;if(!MECH)MECH=mkMech();S.pbrake=true;SPX={t:0,v0:S.view};flatWheelPos(_sw);const[rx,rz]=rightOf(S.h),sd=(((_sw.x-S.x)*rx+(_sw.z-S.z)*rz)>=0?1:-1);SPX.sd=sd;
+  MECH.position.set(_sw.x+rx*sd*1.25,H(_sw.x,_sw.z),_sw.z+rz*sd*1.25);MECH.rotation.y=Math.atan2(-rx*sd,-rz*sd);MECH.visible=true;
+  S.prevView=S.view;setView(9);btnTire.hidden=true;els.park.hidden=false;noise(.8,700,'lowpass',.3);}
+function spareTick(dt){if(!SPX)return;SPX.t+=dt;const t=SPX.t,f=clamp(t/SPARE_T,0,1);S.v=0;
+  const stage=t<8?'Sacando la refacción y el gato…':t<18?'Levantando el camión con el gato…':t<30?'Aflojando birlos con la llave de cruz…':t<40?'Poniendo la refacción…':'Apretando birlos y bajando el gato…';
+  els.park.textContent=`${stage} ${Math.round(f*100)}%`;MECH.userData.wr.rotation.z=(t>18&&t<30)||t>40?t*4:0;MECH.userData.jp.scale.y=t<18?1+clamp((t-8)/10,0,1)*.8:t<40?1.8:1.8-clamp((t-40)/8,0,1)*.8;MECH.userData.sp.visible=t<34;
+  MECH.children[0].position.y=.04*Math.sin(t*3);if(t>18&&t<30&&Math.random()<dt*1.5)noise(.12,2400,'highpass',.08);
+  // cámara de lado viendo al chofer y la llanta
+  flatWheelPos(_sw);const[rx,rz]=rightOf(S.h),[fx,fz]=fwdOf(S.h);_sc.set(_sw.x+rx*SPX.sd*5.5+fx*2.5,_sw.y+2.4,_sw.z+rz*SPX.sd*5.5+fz*2.5);camera.position.lerp(_sc,lerpK(3,dt));camera.up.set(0,1,0);camera.lookAt(_sw.x+rx*SPX.sd*.6,_sw.y+.3,_sw.z+rz*SPX.sd*.6);
+  if(t>=SPARE_T){SPX=null;MECH.visible=false;fixTire();save.spare=0;persist();els.park.hidden=true;$('#btnSkip').hidden=true;if(S.view===9)setView(S.prevView||0);toast('Refacción puesta. Repón la llanta en una gasolinera o en el Taller (3V · P$3,800)',true);}}
+$('#btnSkip').addEventListener('click',()=>{if(SPX)SPX.t=SPARE_T;});
+// reponer la refacción en la gasolinera
+const btnSpare=document.createElement('button');btnSpare.className='btn';btnSpare.id='btnSpare';btnSpare.hidden=true;btnSpare.textContent='Refacción 3V · P$3,800';btnSpare.style.cssText='position:fixed;left:60%;top:calc(30% + 92px);transform:translateX(-50%);height:38px;padding:0 14px;z-index:11;color:#1a1206;background:var(--amber);border-color:var(--amber)';document.body.appendChild(btnSpare);
+btnSpare.addEventListener('click',()=>{if(save.money<SPARE_PRICE){toast('Te faltan '+fmtMoney(SPARE_PRICE-save.money));return;}save.money-=SPARE_PRICE;save.spare=1;persist();btnSpare.hidden=true;toast('Llanta de refacción 3V comprada',true);});
+function spareUI(){const show=!SPX&&!save.spare&&!!atStation&&Math.abs(S.v)<.3;if(btnSpare.hidden===show)btnSpare.hidden=!show;if(SPX)$('#btnSkip').hidden=false;}
 function fixTire(){S.flat=null;inflateAll();for(const k in WHEELS)WHEELS[k].front.forEach(w=>w.piv.scale.y=1);}
 function inflateAll(){for(const k in WHEELS)[...WHEELS[k].front,...WHEELS[k].rear].forEach(w=>{w.p=1;w.leak=0;w.lowW=0;if(w.sq)w.sq.value=0;});S.pRes=0;S.pPull=0;}
 const tireName=(W,w)=>(W.front.includes(w)?'delantera':'trasera')+(w.piv.position.x<0?' izquierda':' derecha');
@@ -6609,9 +6652,8 @@ function tireLoadSq(W,w){const md=MD(),mT=Math.max(0,MASS-(md.rigid?7500:8000)),
   if(!W){per=(MASS-tr)/6/2;}else if(W.front.includes(w))per=Nf/2;else{const nr=W.rear.filter(q=>q.piv.visible).length||2;per=Nd/nr/2;}
   return clamp(per*f/TIRE_REF*TIRE_DEF,.006,.12);}
 
-btnTire.addEventListener('click',()=>{if(Math.abs(S.v)>.3){toast('Detén el camión primero');return;}if(!S.flat){if(save.money<450){toast('Te faltan '+fmtMoney(450-save.money));return;}save.money-=450;persist();inflateAll();noise(.8,1200,'highpass',.12);toast('Llantas infladas y parchadas',true);return;}if(save.money<3800){toast('No te alcanza: Menú → Rescatar');return;}
-  save.money-=3800;persist();btnTire.hidden=true;toast('Cambiando la llanta…',true);noise(.6,500,'lowpass',.3);setTimeout(()=>{fixTire();toast('Llanta 3V puesta. ¡A seguir!',true);},2500);});
-function tireTick(dt){pressureTick(dt);const low=!S.flat&&(S.minP??1)<.9&&atStation;btnTire.hidden=!((S.flat||low)&&Math.abs(S.v)<.3);if(!btnTire.hidden){const tx=S.flat?'Llanta 3V · P$3,800':'Inflar y parchar · P$450';if(btnTire.textContent!==tx)btnTire.textContent=tx;}
+btnTire.addEventListener('click',()=>{if(Math.abs(S.v)>.3){toast('Detén el camión primero');return;}if(!S.flat){if(save.money<450){toast('Te faltan '+fmtMoney(450-save.money));return;}save.money-=450;persist();inflateAll();noise(.8,1200,'highpass',.12);toast('Llantas infladas y parchadas',true);return;}if(save.spare>0){startSpare();return;}if(window.__celAux)window.__celAux();else toast('Sin refacción: Menú → Rescatar');});   // v151: refacción incluida; sin ella, auxilio por el celular
+function tireTick(dt){pressureTick(dt);const low=!S.flat&&(S.minP??1)<.9&&atStation;btnTire.hidden=!((S.flat||low)&&Math.abs(S.v)<.3)||!!SPX;if(!btnTire.hidden){const tx=S.flat?(save.spare>0?'Poner la refacción':'Pedir auxilio · celular'):'Inflar y parchar · P$450';if(btnTire.textContent!==tx)btnTire.textContent=tx;}
   if(!S.flat){const sp=Math.abs(S.v);hazTick(dt,sp);return;}
   const W=WHEELS[S.model].front[S.flat.side<0?0:1];if(W&&!W.sq)W.piv.scale.y=.84;
   // golpeteo de la llanta ponchada
@@ -6625,7 +6667,7 @@ function restoreFromSave(){if(save.here!=null&&DEPOTS[save.here])here=save.here;
   if(false&&save.pos&&isFinite(save.pos.x)&&!hitAt(save.pos.x,save.pos.z)){S.x=save.pos.x;S.z=save.pos.z;S.h=save.pos.h;S.th=S.h;}}
 restoreFromSave();
 /* flete guardado a medias */
-const MAPV=(()=>{const j=JSON.stringify([APO.dep,APO.start,APO.nodes.length,APO.ways.length,DEPOTS.map(d=>[Math.round(d.park.x),Math.round(d.park.z)])]);let h=0;for(let i=0;i<j.length;i++)h=(h*31+j.charCodeAt(i))>>>0;return h.toString(36);})();
+const MAPV=(()=>{const j=JSON.stringify([APO.dep,APO.start,APO.nodes.length,APO.ways.length,DEPOTS.filter(d=>!d.late).map(d=>[Math.round(d.park.x),Math.round(d.park.z)])]);let h=0;for(let i=0;i<j.length;i++)h=(h*31+j.charCodeAt(i))>>>0;return h.toString(36);})();
 function snapJob(){if(!mission||mission.phase==='lost'){save.job=null;return;}const m={...mission};delete m.dest;if(m.pen&&m.pen instanceof Set)m.pen=[...m.pen];
   m.phase=m.phase==='loading'?'dock':m.phase==='unloading'?'deliver':m.phase;m.frac=m.phase==='deliver'?1:0;m.el=m.t0!=null?+(S.t-m.t0).toFixed(1):null;delete m.t0;
   save.job={m,mapv:MAPV,model:S.model,hitched:S.hitched,park:{x:PARK.x,z:PARK.z,h:PARK.h},pos:{x:+S.x.toFixed(2),z:+S.z.toFixed(2),h:+S.h.toFixed(4),th:+S.th.toFixed(4)}};}
@@ -6956,7 +6998,7 @@ function loopBody(now){
   // limpiadores: con lluvia barren; al dejar de llover terminan su vuelta y se quedan abajo (antes con pocos cuadros por segundo se brincaban el alto y nunca paraban)
   {const inc=dt*(.7+env.rain*.6);if(env.rain>.2||(S.wipeT||0)>S.t)wipe+=inc;else if(wipe!==Math.floor(wipe)){const nx=Math.ceil(wipe);wipe=Math.min(nx,wipe+inc);}}
   const wa=-1.52+Math.abs(Math.sin(wipe*Math.PI))*1.4;const wv=env.rain>.2||wipe!==Math.floor(wipe);(WIPERS[S.model]||[]).forEach(w=>{w.rotation.z=wa;w.visible=wv;});rainGlass(dt,wa,wv);
-  ignTick(dt);keyTick(dt);fxTick(dt);if(S.view===0)interiorTick(dt);tireTick(dt);sigTick(dt);if(frame%3===0)turnTick();if(frame%6===0)tempUI();
+  ignTick(dt);keyTick(dt);fxTick(dt);if(S.view===0)interiorTick(dt);tireTick(dt);try{spareTick(dt);spareUI();}catch(e){}sigTick(dt);if(frame%3===0)turnTick();if(frame%6===0)tempUI();
   atStation=STATIONS.find(s=>inObb(s.area,S.x,S.z))||null;fuelBtn.hidden=!(atStation&&Math.abs(S.v)<.3&&S.fuel<tankCap()-1);
   if(!fuelBtn.hidden)fuelBtn.textContent=`Cargar diésel · ${Math.round(tankCap()-S.fuel)} L · ${fmtMoney((tankCap()-S.fuel)*(atStation?atStation.price:FUEL_PRICE))}`;
   try{if(LOAD.active)loadTick(dt);else{missionTick(dt);weighTick(dt);}tollTick();}catch(e){showErr('flete',e);if(LOAD.active){LOAD.active=false;}}animTrailerParts(dt);fatigueTick(dt);corpTick(dt);
@@ -7376,7 +7418,14 @@ function applySkin(){if(!SKIN)return;const on=UP(S.model).skin==='deli';if(on)sk
  function clientMsg(ev){const m=mission,d=DEPOTS[m.to],who=d.name,mc=m.cel;if(mc.q){mc.mood-=.4;mc.q=null;}   // si no contestaste el anterior, cuenta en contra
   const [t,r]=pick(SCRIPT[ev]),text=t.replace('{c}',m.cargo.toLowerCase());mc.who=who;mc.q={r,at:performance.now()};addMsg(who,text);const c=CS();c.un[who]=(c.un[who]||0)+1;
   notify('wasapen',who,text,()=>{chatWith=who;openCel('wasapen','chat');});if(open&&app==='wasapen'&&sub==='chat'&&chatWith===who){c.un[who]=0;render();}}
- function reply(who,i){const c=CS(),m=mission;
+ window.__celAux=()=>{const c=CS(),who='Auxilio Vial 3V';if(c.w&&c.w.kind==='aux'){chatWith=who;openCel('wasapen','chat');return;}
+  addMsg(who,'¿Se le ponchó, compa? Le llevamos una llanta 3V y se la cambiamos ahí mismo: P$5,300 (llanta P$3,800 + servicio P$1,500). Llegamos en unos 30 segundos.');c.w={who,kind:'aux',q:{r:[['Sí, mándenla · P$5,300',1],['No, gracias',0]],at:performance.now()}};persist();chatWith=who;if(open)go('wasapen','chat');else openCel('wasapen','chat');};
+ function auxReply(i){const c=CS(),who='Auxilio Vial 3V';addMsg(who,c.w.q.r[i][0],true);c.w=null;snd('send',.4);render();
+  if(i!==0||!S.flat){setTimeout(()=>{addMsg(who,'Va, cualquier cosa aquí andamos 👍');if(open&&chatWith===who)render();},1200);return;}
+  if(save.money<AUX_PRICE){setTimeout(()=>{addMsg(who,'Uy compa, no le alcanza. Pruebe con Menú → Rescatar');if(open&&chatWith===who)render();},1200);return;}
+  setTimeout(()=>{addMsg(who,'Va en camino la unidad 🚐');if(open&&chatWith===who)render();},1200);
+  setTimeout(()=>{if(!S.flat)return;save.money-=AUX_PRICE;fixTire();persist();toast('Auxilio Vial 3V: llanta cambiada · '+fmtMoney(AUX_PRICE),true);addMsg(who,'Listo, quedó su llanta. ¡Buen viaje!');CS().un[who]=(CS().un[who]||0)+1;notify('wasapen',who,'Listo, quedó su llanta',()=>{chatWith=who;openCel('wasapen','chat');});},30000);}
+ function reply(who,i){const c=CS(),m=mission;if(c.w&&c.w.kind==='aux'&&c.w.who===who){auxReply(i);return;}
   if(c.w&&c.w.who===who&&!(m&&m.cel&&m.cel.who===who)){addMsg(who,c.w.q.r[i][0],true);c.w=null;snd('send',.4);persist();render();setTimeout(()=>{addMsg(who,'¡Así se habla! Suerte en el camino 🚛');if(open&&chatWith===who)render();},1600);return;}
   if(!m||!m.cel||!m.cel.q)return;const mc=m.cel,q=mc.q,[t,v]=q.r[i],secs=(performance.now()-q.at)/1000;
   // contestar rápido suma (más con mejor celular); contestar parado no enoja al cliente aunque tardes

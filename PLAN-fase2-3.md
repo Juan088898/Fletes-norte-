@@ -67,7 +67,11 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - Pago = P$6,800 + P$42 por km real (1 km del mapa ≈ 4 km reales) + P$90/t arriba de 10 t. +20% ganado y leche, +35% frágil, +25% brecha (terracería), +50% urgente; bono a tiempo 15% (20% si llega ≥95%).
 - v150: llantas de "3V · Vueno, Vonito, Varato" (juego renovado P$35,000; una en el camino P$3,800) y bono de P$1,500 en los primeros 10 fletes. App de banco brebreuvaA (v149).
 - Taller, mejoras, multas, llantas, grúa, celulares y choferes ajustados a precios reales. Reposición única de P$80,000 por el flete perdido en v147.
-- Etapa 4 pendiente: obras en la ciudad, Pedrera como patio, llanta de refacción con animación y auxilio por celular.
+### Hecho en v151–v152 · Fase 3, etapa 4
+- 3 obras en la ciudad (Obra Torre Centro, Obra Puente Huinalá, Obra Fracc. Las Lomas): sin nave, con barda, grúa torre, estructura, montones, conos y vallas de Kenney Roads. Reciben Grava y Piedra triturada; la piedra cae al piso detrás de la góndola.
+- Pedrera El Norte ya es patio (sobre la Brecha del Ejido, +25% terracería). La piedra sale de la Cantera o la Pedrera.
+- Los patios nuevos no cambian la versión del mapa: no se cancelan fletes guardados.
+- Llanta de refacción incluida: el chofer se baja y la cambia (~50 s, se puede saltar). Se repone en gasolinera o Taller (3V · P$3,800). Sin refacción: Auxilio Vial 3V por Wasapen (P$5,300, llega en ~30 s).
 
 ## Pendientes de la fase 1 (v139–v140)
 - Esquinas redondeadas en las banquetas (por ahora solo se cortan antes del cruce).
