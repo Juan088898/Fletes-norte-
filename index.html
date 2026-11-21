@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v137">
+<meta name="fn-version" content="v138">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Share+Tech+Mono&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Share+Tech+Mono&family=Fredoka:wght@500;600;700&display=swap">
 <style>
 /* Layout: mundo 3D a pantalla completa (horizontal). Arriba: botones, misión+GPS, velocidad/diésel. Abajo izq: mapa, volante, clutch. Abajo der: palanca sobre freno y acelerador. */
 :root{
@@ -185,6 +185,52 @@ body.cab .hudcard{min-width:0;padding:4px 6px;gap:0}body.cab .hudcard .spd,body.
 #wheelSvg{opacity:.88}
 #shifterCtl{width:min(29vh,120px)}
 .pedal{background:rgba(12,14,17,.45)}
+/* === v138 · interfaz estilo Kenney: mismos controles, formas redondas, colores planos y bordes gruesos === */
+:root{--bg:#1b2438;--glass:rgba(34,46,72,.84);--mold:#34466e;--mold-hi:#46609a;--edge:rgba(255,255,255,.24);--ink:#fffaf0;--ink-dim:#c4cfe6;
+  --amber:#ffa53d;--amber-glow:rgba(255,165,61,.45);--route:#5fd18b;--clutch:#6fb0ff;--brake:#ff6b5b;--gas:#ffa53d;
+  --display:"Fredoka","Barlow Condensed","Arial Rounded MT Bold",sans-serif;--mono:"Fredoka",ui-rounded,sans-serif;--kshadow:0 4px 0 rgba(10,16,30,.55)}
+body{font-variant-numeric:tabular-nums}
+.chip{border:2px solid var(--edge);border-radius:16px;box-shadow:var(--kshadow)}
+.btn{height:34px;border-radius:12px;background:linear-gradient(180deg,#5070ad,#3a5288);border:2px solid rgba(255,255,255,.28);box-shadow:0 3px 0 #1d2a47;font:600 13px/1 var(--display);letter-spacing:.04em}
+.btn:active{transform:translateY(3px);box-shadow:0 0 0 #1d2a47;filter:none}
+.btn.ibtn{width:42px;height:42px;font-size:18px}
+.btn.tog.on,.btn.start{color:#3a2306;background:linear-gradient(180deg,#ffbe5c,#ff9a2e);border-color:#ffe0a8;box-shadow:0 3px 0 #a85a12}
+.btn.start.on{color:var(--ink);background:linear-gradient(180deg,#5070ad,#3a5288);border-color:rgba(255,255,255,.28);box-shadow:0 3px 0 #1d2a47}
+.btn.tog.red.on{background:linear-gradient(180deg,#ff8170,#e8483a);border-color:#ffc2b8;box-shadow:0 3px 0 #8e2219}
+.btn.go,.tabs .btn.on{color:#0d2a1a;background:linear-gradient(180deg,#7fe3a6,#4cc27a);border-color:#c9f5d9;box-shadow:0 3px 0 #23784a}
+.lim{border-width:5px;box-shadow:0 3px 0 rgba(10,16,30,.5);font-family:var(--display);font-weight:700}
+.hudcard .spd{color:#fff}.hudcard .spd b{color:var(--amber)}
+.rpmbar{height:8px!important;border-radius:6px;background:#1d2a47;border:2px solid rgba(255,255,255,.18)}
+.fuel{height:8px;border-radius:5px;background:#1d2a47}
+.mapcard{border-radius:16px;border:3px solid #fff4d6}
+.mapcard .gps{background:linear-gradient(180deg,rgba(34,46,72,.95) 70%,rgba(34,46,72,0))}.mapcard .mrow{background:rgba(34,46,72,.88)}
+#mini{background:#8cc66a}#mini.big{border:4px solid #fff4d6;border-radius:22px}
+.pad-box{background:var(--glass);border:2px solid var(--edge);border-radius:18px;box-shadow:var(--kshadow);backdrop-filter:none;-webkit-backdrop-filter:none}
+.pedal{background:var(--glass)}
+.cap,.plabel{font-family:var(--display);font-weight:700;letter-spacing:.08em}
+.rod{background:linear-gradient(90deg,#6c7fa8,#c9d3ea,#6c7fa8)}
+.padd{border-radius:12px;border:3px solid rgba(255,255,255,.55);box-shadow:0 5px 0 rgba(10,16,30,.6)}
+.p-clutch .padd{background:repeating-linear-gradient(0deg,#6fb0ff 0 6px,#4d8fe0 6px 10px)}
+.p-brake .padd{background:repeating-linear-gradient(0deg,#ff6b5b 0 6px,#e04a3c 6px 10px)}
+.p-gas .padd{background:repeating-linear-gradient(0deg,#ffb04d 0 6px,#f08f22 6px 10px)}
+.pfill{width:5px;border-radius:3px}
+#wheelCtl{background:radial-gradient(circle,rgba(34,46,72,.15),rgba(34,46,72,.55));border:2px solid var(--edge)}
+#wheelSvg{opacity:1;filter:none}
+#wheelDeg{background:#26324d;border:2px solid var(--edge);border-radius:8px;font-family:var(--display)}
+.slot-o{stroke:#1d2a47;stroke-width:.3}.slot-i{stroke:#fff4d6;stroke-width:.1}
+.glab{font-family:var(--display);font-weight:600;color:#c4cfe6}.glab.on{color:var(--amber)}
+.boot{background:repeating-radial-gradient(circle,#26324d 0 4px,#1d2a47 4px 7px);opacity:.85}
+.shaft{background:linear-gradient(180deg,#e6ebf5,#8fa3c7)}
+.knob{background:radial-gradient(circle at 34% 30%,#ffd08a 0,#ff9a2e 55%,#c96a12 100%)!important;border:3px solid #fff4d6!important;color:#3a2306!important;font-family:var(--display)!important;font-weight:700;box-shadow:0 5px 0 rgba(10,16,30,.6)!important}
+#toast{border-radius:14px;border-width:2px;background:rgba(120,34,28,.92);box-shadow:var(--kshadow);font-family:var(--display);font-weight:600}
+#toast.good{background:rgba(28,110,66,.94);border-color:#c9f5d9}
+.modal{background:rgba(16,22,36,.6)}
+.card{background:#26324d;border:3px solid rgba(255,255,255,.16);border-radius:22px;box-shadow:0 8px 0 rgba(10,16,30,.6)}
+.card h2{font-weight:700}
+.opt{background:#34466e;border:2px solid rgba(255,255,255,.18);border-radius:16px;box-shadow:0 4px 0 #1d2a47}
+.opt:hover,.opt.sel{border-color:var(--route);background:#3b5285}
+.opt .tag{border-radius:8px;background:#1d5a3a;color:#bff2d4}.opt .tag.m{background:#6a4415;color:#ffd9a3}.opt .tag.l{background:#6e2620;color:#ffc2b8}
+.opt .pay{color:#8af0b2}
 /* === pantalla de inicio === */
 #start{position:fixed;inset:0;z-index:60;background:linear-gradient(#0b1224,#1c2c46 58%,#3a4258 62%,#10150f 62%);overflow:hidden;--u:min(1vh,.5vw);font-family:var(--display);color:var(--ink)}
 #start .st-stars{position:absolute;inset:0 0 50% 0;background:radial-gradient(1px 1px at 12% 20%,#fff8,transparent),radial-gradient(1px 1px at 38% 35%,#fff7,transparent),radial-gradient(1.5px 1.5px at 66% 14%,#fffa,transparent),radial-gradient(1px 1px at 82% 40%,#fff7,transparent),radial-gradient(1px 1px at 92% 18%,#fff8,transparent)}
@@ -425,12 +471,12 @@ body.cine .quick{display:none}
             <linearGradient id="spG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#30353b"/><stop offset="1" stop-color="#1a1d21"/></linearGradient>
           </defs>
           <g transform="translate(-100,-100)">
-            <circle cx="100" cy="100" r="86" fill="none" stroke="#232a32" stroke-width="22"/>
-            <circle cx="100" cy="100" r="86" fill="none" stroke="#c7ccd1" stroke-width="16"/>
-            <path d="M24 70A86 86 0 0 0 20 118" stroke="#3a4148" stroke-width="17" fill="none" stroke-linecap="round"/>
-            <path d="M176 70A86 86 0 0 1 180 118" stroke="#3a4148" stroke-width="17" fill="none" stroke-linecap="round"/>
-            <g stroke="#9aa1a8" stroke-width="10" stroke-linecap="round"><path d="M100 100L22 118"/><path d="M100 100L178 118"/><path d="M100 100V184"/></g>
-            <circle cx="100" cy="100" r="26" fill="#1b2128" stroke="#434c56" stroke-width="3"/><text x="100" y="105" text-anchor="middle" font-family="Share Tech Mono, monospace" font-size="15" fill="#8c98a5">FN</text>
+            <circle cx="100" cy="100" r="86" fill="none" stroke="#1d2a47" stroke-width="24"/>
+            <circle cx="100" cy="100" r="86" fill="none" stroke="#fff4d6" stroke-width="16"/>
+            <path d="M24 70A86 86 0 0 0 20 118" stroke="#46609a" stroke-width="18" fill="none" stroke-linecap="round"/>
+            <path d="M176 70A86 86 0 0 1 180 118" stroke="#46609a" stroke-width="18" fill="none" stroke-linecap="round"/>
+            <g stroke="#c4cfe6" stroke-width="12" stroke-linecap="round"><path d="M100 100L22 118"/><path d="M100 100L178 118"/><path d="M100 100V184"/></g>
+            <circle cx="100" cy="100" r="27" fill="#26324d" stroke="#ffa53d" stroke-width="5"/><text x="100" y="105" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="700" font-size="16" fill="#fff4d6">FN</text>
             <rect x="94" y="8" width="12" height="16" rx="2" style="fill:var(--amber)"/>
           </g>
         </svg>
@@ -4812,9 +4858,51 @@ const URB=[];
 function urban(x,z){const B=MAPA.box,dx=Math.max(B[0]-x,0,x-B[2]),dz=Math.max(B[1]-z,0,z-B[3]),dd=Math.hypot(dx,dz);let d=dd<=0?.3:.3*(1-smoothstep(0,250,dd)),tall=0;
   const qc=1-Math.hypot(x-250,z+150)/900;if(qc>0){d=Math.max(d,.3+.3*qc);tall=.25*qc;}
   const pv=MAPA.places.find(p=>p[3]==='v'),qp=1-Math.hypot(x-pv[1],z-pv[2])/380;if(qp>0)d=Math.max(d,.38*qp);return{d,tall};}
+/* ===== v137 · Kenney (CC0, kenney.nl): City Kit Commercial 2.1, Industrial 2.0 y Roads. Modelos compactos embebidos, una malla instanciada por modelo ===== */
+const KS=14;   // metros por unidad de Kenney
+const KMAT={};
+function kTex(k){const t=new THREE.TextureLoader().load(KENNEY.t[k]);t.flipY=false;t.anisotropy=4;return t;}
+function kMat(p){return KMAT[p]||(KMAT[p]=new THREE.MeshLambertMaterial({map:kTex(p),emissive:0xffffff,emissiveMap:kTex(p+'e'),emissiveIntensity:0}));}
+const KGEO={};
+function kGeo(key){if(KGEO[key])return KGEO[key];const a=KENNEY.m[key],n=a[0],ni=a[1],mn=a.slice(2,5),mx=a.slice(5,8),bin=Uint8Array.from(atob(a[8]),c=>c.charCodeAt(0));
+  const q=new Uint16Array(bin.slice(0,6*n).buffer),u=new Uint16Array(bin.slice(6*n,10*n).buffer),ix=new Uint16Array(bin.slice(10*n,10*n+2*ni).buffer),nr=new Int8Array(bin.slice(10*n+2*ni,13*n+2*ni).buffer);
+  const P=new Float32Array(n*3),U=new Float32Array(n*2),N=new Float32Array(n*3),cx=(mn[0]+mx[0])/2,cz=(mn[2]+mx[2])/2;
+  for(let i=0;i<n;i++){for(let k=0;k<3;k++){P[i*3+k]=(mn[k]+q[i*3+k]/65535*(mx[k]-mn[k])-(k===0?cx:k===1?mn[1]:cz))*KS;N[i*3+k]=nr[i*3+k]/127;}U[i*2]=u[i*2]/65535;U[i*2+1]=u[i*2+1]/65535;}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(P,3));g.setAttribute('normal',new THREE.BufferAttribute(N,3));g.setAttribute('uv',new THREE.BufferAttribute(U,2));g.setIndex(new THREE.BufferAttribute(ix,1));g.computeBoundingSphere();
+  g.userData.dim=[(mx[0]-mn[0])*KS,(mx[1]-mn[1])*KS,(mx[2]-mn[2])*KS];return KGEO[key]=g;}
+// instancias: lista de {k,x,y,z,ry,sx,sy,sz}; una InstancedMesh por modelo (la parte en trozos splitInstanced)
+function kPlace(list,shadow=true){const by={};for(const o of list)(by[o.k]||(by[o.k]=[])).push(o);
+  for(const k in by){const L=by[k],im=new THREE.InstancedMesh(kGeo(k),kMat(k[0]),L.length);im.frustumCulled=false;im.castShadow=shadow;im.receiveShadow=true;
+    L.forEach((o,i)=>{qt.setFromAxisAngle(UPV,o.ry);m4.compose(v3.set(o.x,o.y||0,o.z),qt,sc3.set(o.sx||1,o.sy||o.sx||1,o.sz||o.sx||1));im.setMatrixAt(i,m4);});scene.add(im);}}
+// juegos de edificios por zona
+const KMAX={atras:.6,centro:.55,barrio:.6,pueblo:.55,industria:.75,alto:.5},HMAX={atras:7,barrio:7.5,pueblo:6.5,centro:11,industria:13,alto:38};
+const KSET={
+  centro:['c/building-a','c/building-b','c/building-c','c/building-d','c/building-e','c/building-h'],
+  alto:['c/building-skyscraper-a','c/building-skyscraper-b','c/building-skyscraper-c','c/building-skyscraper-e'],
+  barrio:['c/low-detail-building-wide-a','c/low-detail-building-wide-b','c/low-detail-building-n','c/low-detail-building-wide-a','c/low-detail-building-wide-b'],
+  atras:['c/low-detail-building-wide-a','c/low-detail-building-wide-b','c/low-detail-building-n'],
+  industria:['i/building-d','i/building-e','i/building-g','i/building-h','i/building-i','i/building-j','i/building-k','i/building-n','i/building-o','i/building-p','i/building-s'],
+  pueblo:['c/building-c','c/building-e','c/low-detail-building-wide-a','c/low-detail-building-wide-b','c/low-detail-building-n']};
+function kZone(b){const pv=MAPA.places.find(p=>p[3]==='v');if(Math.hypot(b.cx-pv[1],b.cz-pv[2])<450)return'pueblo';
+  if(b.h>18)return'alto';for(const d of DEPOTS)if(Math.hypot(b.cx-d.zone.x,b.cz-d.zone.z)<520)return'industria';return urban(b.cx,b.cz).d>.42?'centro':'barrio';}
+// elige el modelo que mejor llena el lote (casi sin estirarlo) y lo voltea hacia la calle
+function kBuilding(b,rnd){if(b.kk){const face=Math.atan2(b.ux,b.uz)+Math.PI/2+(b.sd===1?0:Math.PI),sy=b.h/kGeo(b.kk).userData.dim[1];return{k:b.kk,x:b.cx,y:0,z:b.cz,ry:face,sx:b.ks,sy,sz:b.ks,h:b.h};}const set=KSET[kZone(b)],W=b.hw*2,D=b.hd*2;let best=[];
+  for(const k of set){const d=kGeo(k).userData.dim;for(const rot of(/^(industria|alto)$/.test(kZone(b))?[0,1]:[0])){const w=rot?d[2]:d[0],dd=rot?d[0]:d[2],e=Math.abs(Math.log((W/D)/(w/dd)));best.push({k,rot,e,w,dd,h:d[1]});}}
+  best.sort((a,c)=>a.e-c.e);const z=kZone(b),p=best[Math.floor(rnd()*Math.min(4,best.length))],s=Math.min(W/p.w,D/p.dd,KMAX[z]),sy=Math.min(s,HMAX[z]/p.h);
+  const hd0=b.hd;b.hw=p.w*s/2;b.hd=p.dd*s/2;b.r=Math.hypot(b.hw,b.hd);if(b.sd){const sh=hd0-b.hd;b.cx-=-b.uz*b.sd*sh;b.cz-=b.ux*b.sd*sh;}
+  const face=Math.atan2(b.ux,b.uz)+Math.PI/2+(b.sd===1?0:Math.PI)+(p.rot?Math.PI/2:0);return{k:p.k,x:b.cx,y:0,z:b.cz,ry:face,sx:s,sy,sz:s,h:p.h*sy};}
+const PADS=[];
 const lows=[],highs=[],trees=[...PARK_TREES],lamps=[];
 for(const e of edges){if(e.type==='ring')continue;for(const sd of [1,-1]){const nx=-e.uz*sd,nz=e.ux*sd;let s=8,ls=40;
   while(ls<e.L-30&&e.w>=20&&e.L>=90&&(e.type==='hwy'||((e.i&1)?sd===1:sd===-1))){const px=e.ax+e.ux*ls,pz=e.az+e.uz*ls;if(urban(px,pz).d>.12){const x=px+nx*(e.w/2+1.6),z=pz+nz*(e.w/2+1.6);if(roadClear(x,z,1.2)&&!nearJ(x,z,3)&&!EXCL.some(o=>inObb(o,x,z)))lamps.push({x,z,nx,nz});}ls+=160;}
+  if(e.w>=10&&e.type!=='mtn'&&e.type!=='dirt'&&urban(e.ax+e.ux*e.L/2,e.az+e.uz*e.L/2).d>.25){   // v138 · calle de ciudad: edificios en fila, pegados a la banqueta
+    let s2=8;while(s2<e.L-12){const px0=e.ax+e.ux*s2,pz0=e.az+e.uz*s2,u=urban(px0,pz0),front=e.w/2+SWW;let back=front+rr(.8,2.2),w0=0;
+      for(let row=0;row<(u.d>.35?2:1);row++){const tallB=row===0&&R()<u.tall*.9,zn=tallB?'alto':row>0?'atras':kZone({cx:px0,cz:pz0,h:0}),set=KSET[zn],k=set[Math.floor(R()*set.length)],dm=kGeo(k).userData.dim,ks=KMAX[zn]*rr(.92,1.05);
+        const bw=dm[0]*ks,bd=dm[2]*ks,h=Math.min(dm[1]*ks,HMAX[zn]),cs=s2+(row===0?bw/2:w0/2);if(cs+bw/2>e.L-8)break;const px=e.ax+e.ux*cs,pz=e.az+e.uz*cs,off=back+bd/2;
+        const o={cx:px+nx*off,cz:pz+nz*off,ux:e.ux,uz:e.uz,hw:bw/2,hd:bd/2,h,sd,kk:k,ks};if(!freeSpot(o)){if(row===0)break;continue;}addObb(o);(h>18?highs:lows).push(o);
+        const a0=row===0?front:back-rr(3,5),b0=back+bd+1.5,pc=(a0+b0)/2;PADS.push({cx:px+nx*pc,cz:pz+nz*pc,ux:e.ux,uz:e.uz,hw:bw/2+.9,hd:(b0-a0)/2});if(row===0)w0=bw;back+=bd+rr(3.5,6);}
+      s2+=w0?w0+rr(1.2,2.6):5;}
+    continue;}
   while(s<e.L-8){s+=rr(10,26);const px=e.ax+e.ux*s,pz=e.az+e.uz*s,u=urban(px,pz);
     if(u.d>.04&&R()<.12+u.d*.85){for(let row=0;row<(u.d>.35?2:1);row++){const bw=rr(12,30),bd=rr(12,26),off=e.w/2+rr(5,10)+bd/2+row*(bd+rr(8,16));
         const tallB=R()<u.tall*.9,h=tallB?rr(22,40)+u.tall*rr(20,80):(u.d>.05?rr(5,13):rr(5,9));
@@ -4834,39 +4922,10 @@ function inst(list,mat,pal){const im=new THREE.InstancedMesh(gB,mat,list.length)
 const lowMat=new THREE.MeshLambertMaterial({color:0xffffff,emissive:0xffc070,emissiveMap:winTex(true),emissiveIntensity:0});lowMat.emissiveMap.repeat.set(2,2);
 const highMat=new THREE.MeshLambertMaterial({color:0xffffff,map:winTex(false),emissive:0xffffff,emissiveMap:winTex(true),emissiveIntensity:0});
 const HIGHMATS=[0,1,2].map(st=>new THREE.MeshLambertMaterial({color:0xffffff,map:winTex(false,st),emissive:0xffffff,emissiveMap:winTex(true,st),emissiveIntensity:0}));
-/* ===== v137 · Kenney (CC0, kenney.nl): City Kit Commercial 2.1, Industrial 2.0 y Roads. Modelos compactos embebidos, una malla instanciada por modelo ===== */
-const KS=14;   // metros por unidad de Kenney
-const KMAT={};
-function kTex(k){const t=new THREE.TextureLoader().load(KENNEY.t[k]);t.flipY=false;t.anisotropy=4;return t;}
-function kMat(p){return KMAT[p]||(KMAT[p]=new THREE.MeshLambertMaterial({map:kTex(p),emissive:0xffffff,emissiveMap:kTex(p+'e'),emissiveIntensity:0}));}
-const KGEO={};
-function kGeo(key){if(KGEO[key])return KGEO[key];const a=KENNEY.m[key],n=a[0],ni=a[1],mn=a.slice(2,5),mx=a.slice(5,8),bin=Uint8Array.from(atob(a[8]),c=>c.charCodeAt(0));
-  const q=new Uint16Array(bin.slice(0,6*n).buffer),u=new Uint16Array(bin.slice(6*n,10*n).buffer),ix=new Uint16Array(bin.slice(10*n,10*n+2*ni).buffer),nr=new Int8Array(bin.slice(10*n+2*ni,13*n+2*ni).buffer);
-  const P=new Float32Array(n*3),U=new Float32Array(n*2),N=new Float32Array(n*3),cx=(mn[0]+mx[0])/2,cz=(mn[2]+mx[2])/2;
-  for(let i=0;i<n;i++){for(let k=0;k<3;k++){P[i*3+k]=(mn[k]+q[i*3+k]/65535*(mx[k]-mn[k])-(k===0?cx:k===1?mn[1]:cz))*KS;N[i*3+k]=nr[i*3+k]/127;}U[i*2]=u[i*2]/65535;U[i*2+1]=u[i*2+1]/65535;}
-  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(P,3));g.setAttribute('normal',new THREE.BufferAttribute(N,3));g.setAttribute('uv',new THREE.BufferAttribute(U,2));g.setIndex(new THREE.BufferAttribute(ix,1));g.computeBoundingSphere();
-  g.userData.dim=[(mx[0]-mn[0])*KS,(mx[1]-mn[1])*KS,(mx[2]-mn[2])*KS];return KGEO[key]=g;}
-// instancias: lista de {k,x,y,z,ry,sx,sy,sz}; una InstancedMesh por modelo (la parte en trozos splitInstanced)
-function kPlace(list,shadow=true){const by={};for(const o of list)(by[o.k]||(by[o.k]=[])).push(o);
-  for(const k in by){const L=by[k],im=new THREE.InstancedMesh(kGeo(k),kMat(k[0]),L.length);im.frustumCulled=false;im.castShadow=shadow;im.receiveShadow=true;
-    L.forEach((o,i)=>{qt.setFromAxisAngle(UPV,o.ry);m4.compose(v3.set(o.x,o.y||0,o.z),qt,sc3.set(o.sx||1,o.sy||o.sx||1,o.sz||o.sx||1));im.setMatrixAt(i,m4);});scene.add(im);}}
-// juegos de edificios por zona
-const KMAX={centro:.62,barrio:.5,pueblo:.48,industria:.8,alto:.7};
-const KSET={
-  centro:['c/building-a','c/building-b','c/building-c','c/building-d','c/building-e','c/building-f','c/building-g','c/building-h','c/building-i'],
-  alto:['c/building-skyscraper-a','c/building-skyscraper-b','c/building-skyscraper-c','c/building-skyscraper-d','c/building-skyscraper-e'],
-  barrio:['c/low-detail-building-wide-a','c/low-detail-building-wide-b','c/building-c','c/building-e','c/low-detail-building-a','c/low-detail-building-d','c/low-detail-building-k'],
-  industria:['i/building-d','i/building-e','i/building-g','i/building-h','i/building-i','i/building-j','i/building-k','i/building-n','i/building-o','i/building-p','i/building-s'],
-  pueblo:['c/building-c','c/building-e','c/low-detail-building-wide-a','c/low-detail-building-wide-b','c/low-detail-building-n']};
-function kZone(b){const pv=MAPA.places.find(p=>p[3]==='v');if(Math.hypot(b.cx-pv[1],b.cz-pv[2])<450)return'pueblo';
-  if(b.h>18)return'alto';for(const d of DEPOTS)if(Math.hypot(b.cx-d.zone.x,b.cz-d.zone.z)<520)return'industria';return urban(b.cx,b.cz).d>.42?'centro':'barrio';}
-// elige el modelo que mejor llena el lote (casi sin estirarlo) y lo voltea hacia la calle
-function kBuilding(b,rnd){const set=KSET[kZone(b)],W=b.hw*2,D=b.hd*2;let best=[];
-  for(const k of set){const d=kGeo(k).userData.dim;for(const rot of(/^(industria|alto)$/.test(kZone(b))?[0,1]:[0])){const w=rot?d[2]:d[0],dd=rot?d[0]:d[2],e=Math.abs(Math.log((W/D)/(w/dd)));best.push({k,rot,e,w,dd,h:d[1]});}}
-  best.sort((a,c)=>a.e-c.e);const z=kZone(b),p=best[Math.floor(rnd()*Math.min(4,best.length))],s=Math.min(W/p.w,D/p.dd,KMAX[z]),sy=s*(z==='alto'?1:.9);
-  const hd0=b.hd;b.hw=p.w*s/2;b.hd=p.dd*s/2;b.r=Math.hypot(b.hw,b.hd);if(b.sd){const sh=hd0-b.hd;b.cx-=-b.uz*b.sd*sh;b.cz-=b.ux*b.sd*sh;}
-  const face=Math.atan2(b.ux,b.uz)+Math.PI/2+(b.sd===1?0:Math.PI)+(p.rot?Math.PI/2:0);return{k:p.k,x:b.cx,y:0,z:b.cz,ry:face,sx:s,sy,sz:s,h:p.h*sy};}
 {const rnd=mulberry32(1337),KL=[];for(const b of[...lows,...highs]){const o=kBuilding(b,rnd);b.h=o.h;KL.push(o);}kPlace(KL);}
+// v138 · piso de concreto bajo los edificios de la ciudad (frente, patio y entre casas): ya no quedan sueltos en el pasto
+{const pm=M(0xd3cfc4).clone();pm.polygonOffset=true;pm.polygonOffsetFactor=pm.polygonOffsetUnits=-1.5;const g=new THREE.PlaneGeometry(1,1);g.rotateX(-Math.PI/2);const im=new THREE.InstancedMesh(g,pm,Math.max(1,PADS.length));im.count=PADS.length;im.frustumCulled=false;im.receiveShadow=true;
+ PADS.forEach((o,i)=>{qt.setFromAxisAngle(UPV,Math.atan2(o.ux,o.uz)+Math.PI/2);m4.compose(v3.set(o.cx,.022,o.cz),qt,sc3.set(o.hw*2,1,o.hd*2));im.setMatrixAt(i,m4);});scene.add(im);}
 function shopTex(){const c=document.createElement('canvas');c.width=128;c.height=32;const g=c.getContext('2d');g.fillStyle='#1d2630';g.fillRect(0,0,128,32);
   for(let x=4;x<128;x+=31){g.fillStyle='#6f8aa3';g.fillRect(x,8,22,22);g.fillStyle='#2b3440';g.fillRect(x+9,14,6,16);}const t=new THREE.CanvasTexture(c);t.wrapS=THREE.RepeatWrapping;t.repeat.set(2,1);return t;}
 const shops=lows.filter(b=>b.store);
@@ -4937,7 +4996,7 @@ const lampHeadMat=new THREE.MeshBasicMaterial({color:0x6f7378});
  const g=new THREE.PlaneGeometry(1.25,5);g.rotateX(-Math.PI/2);const im=new THREE.InstancedMesh(g,mt,Math.max(1,A.length));im.count=A.length;im.frustumCulled=false;
  A.forEach((a,i)=>{qt.setFromAxisAngle(UPV,a.ry);m4.compose(v3.set(a.x,a.y,a.z),qt,sc3.set(1,1,1));im.setMatrixAt(i,m4);});scene.add(im);}
 // v137 · postes de luz eléctrica (Kenney) a un lado de las carreteras de fuera
-{const KP=[];origSubs.forEach(subs=>{if(subs[0].type!=='mtn')return;let acc=20;for(const e of subs){for(let d=acc;d<e.L;d+=48){const x=e.ax+e.ux*d+(-e.uz)*(e.w/2+5),z=e.az+e.uz*d+e.ux*(e.w/2+5);if(urban(x,z).d>.2||!roadClear(x,z,1.5)||EXCL.some(o=>inObb(o,x,z))||FLATS.some(f=>Math.hypot(x-f.x,z-f.z)<f.r+8))continue;KP.push({k:'r/electricity-pole',x,y:H(x,z),z,ry:Math.atan2(e.ux,e.uz)+Math.PI/2,sx:1});OBST.push({x,z,r:.5});}acc=(acc-e.L)%48;if(acc<0)acc+=48;}});kPlace(KP);}
+{const KP=[];origSubs.forEach(subs=>{if(subs[0].type!=='mtn')return;let acc=20;for(const e of subs){for(let d=acc;d<e.L;d+=80){const x=e.ax+e.ux*d+(-e.uz)*(e.w/2+5),z=e.az+e.uz*d+e.ux*(e.w/2+5);if(urban(x,z).d>.2||!roadClear(x,z,1.5)||EXCL.some(o=>inObb(o,x,z))||FLATS.some(f=>Math.hypot(x-f.x,z-f.z)<f.r+8))continue;KP.push({k:'r/electricity-pole',x,y:H(x,z),z,ry:Math.atan2(e.ux,e.uz)+Math.PI/2,sx:1});OBST.push({x,z,r:.5});}acc=(acc-e.L)%80;if(acc<0)acc+=80;}});kPlace(KP);}
 /* optimización: cada grupo grande de instancias se parte en trozos de 400 m para que solo se dibuje lo que se ve */
 const CHUNKS=[];
 function splitInstanced(root){const list=[];root.traverse(o=>{if(o.isInstancedMesh&&!o.frustumCulled&&o.instanceMatrix.count>60)list.push(o);});
@@ -6418,19 +6477,19 @@ function applySave(d){
 const mctx=mini.getContext('2d');
 // dibuja el mapa en el mapa chico o, a alta resolución, en la pantalla del camión
 function drawMap(cv=mini,ctx=mctx,Wc,Hc,dpr0,bigOv){const dpr=dpr0||Math.min(window.devicePixelRatio||1,2),W=Wc||cv.clientWidth,H=Hc||cv.clientHeight,big=bigOv??bigMap,ik=Math.max(1,W/250);if(cv===mini&&cv.width!==Math.round(W*dpr)){cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);}
-  const g=ctx;g.setTransform(dpr,0,0,dpr,0,0);g.fillStyle='#1c231b';g.fillRect(0,0,W,H);g.save();let sc;
+  const g=ctx;g.setTransform(dpr,0,0,dpr,0,0);g.fillStyle='#8cc66a';g.fillRect(0,0,W,H);g.save();let sc;
   if(big){sc=Math.min(W/(BB.x1-BB.x0),H/(BB.z1-BB.z0));g.translate(W/2,H/2);g.scale(sc,sc);g.translate(-(BB.x0+BB.x1)/2,-(BB.z0+BB.z1)/2);}
   else{sc=W/620;g.translate(W/2,H*.58);g.rotate(S.h);g.scale(sc,sc);g.translate(-S.x,-S.z);}
-  g.fillStyle='#4a4636';for(const m of MOUNTS){g.beginPath();g.arc(m.x,m.z,m.r*.85,0,7);g.fill();}g.fillStyle='#3d6b34';for(const p of PARKS)g.fillRect(p.x-p.w/2,p.z-p.d/2,p.w,p.d);g.strokeStyle='#3f7fa0';g.lineWidth=big?Math.max(CANAL_W,2/sc):CANAL_W;g.beginPath();CANAL.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.stroke();g.strokeStyle='#b08a5c';g.lineWidth=big?Math.max(10,2/sc):10;g.setLineDash([24,18]);g.beginPath();TRACK.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.stroke();g.strokeStyle='#c96f4a';g.beginPath();TRACK2.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.stroke();g.setLineDash([]);
-  g.lineCap='round';g.lineJoin='round';for(const e of edges){g.strokeStyle=e.type==='hwy'?'#b9a46a':e.type==='dirt'?'#9c7a52':'#8a9098';g.lineWidth=big?Math.max(e.w,2.4/sc):e.w*1.1;g.beginPath();g.moveTo(e.ax,e.az);g.lineTo(e.bx,e.bz);g.stroke();}
+  g.fillStyle='#4a4636';for(const m of MOUNTS){g.beginPath();g.arc(m.x,m.z,m.r*.85,0,7);g.fill();}g.fillStyle='#5f9e45';for(const p of PARKS)g.fillRect(p.x-p.w/2,p.z-p.d/2,p.w,p.d);g.strokeStyle='#5fa8e0';g.lineWidth=big?Math.max(CANAL_W,2/sc):CANAL_W;g.beginPath();CANAL.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.stroke();g.strokeStyle='#b08a5c';g.lineWidth=big?Math.max(10,2/sc):10;g.setLineDash([24,18]);g.beginPath();TRACK.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.stroke();g.strokeStyle='#c96f4a';g.beginPath();TRACK2.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.stroke();g.setLineDash([]);
+  g.lineCap='round';g.lineJoin='round';for(const e of edges){g.strokeStyle=e.type==='hwy'?'#ffd27a':e.type==='dirt'?'#c79a63':'#fbf7ee';g.lineWidth=big?Math.max(e.w,2.4/sc):e.w*1.1;g.beginPath();g.moveTo(e.ax,e.az);g.lineTo(e.bx,e.bz);g.stroke();}
   for(const d of DEPOTS){g.fillStyle=mission&&curDep()===d?'#ffb53d':'#d8d3c3';const s=big?6/sc:22;g.fillRect(d.zone.x-s,d.zone.z-s,s*2,s*2);}
   if(PARK.placed&&!S.hitched){g.save();g.translate(PARK.x,PARK.z);g.rotate(-PARK.h);g.fillStyle='#7cc4ff';const w=big?3/sc:3,l=big?6/sc:13;g.fillRect(-w,0,w*2,l);g.restore();}
   g.fillStyle='#b98cff';for(const t of TOLLS){const s2=big?4/sc:12;g.fillRect(t.P.x-s2,t.P.z-s2,2*s2,2*s2);}
   g.fillStyle='#f2c21b';for(const w of WEIGHS){const s=big?4/sc:14;g.fillRect(w.plate.cx-s,w.plate.cz-s,2*s,2*s);}
   g.fillStyle='#3fa0ff';for(const st of STATIONS){const s=big?4/sc:14;g.beginPath();g.arc(st.area.cx,st.area.cz,s,0,7);g.fill();}
-  if(gps.pts.length>1){g.strokeStyle='#3fd08a';g.lineWidth=big?4/sc:12;g.beginPath();g.moveTo(S.x,S.z);for(const p of gps.pts.slice(1))g.lineTo(p[0],p[1]);g.stroke();}
+  if(gps.pts.length>1){g.strokeStyle='#2f6fe0';g.lineWidth=big?4/sc:12;g.beginPath();g.moveTo(S.x,S.z);for(const p of gps.pts.slice(1))g.lineTo(p[0],p[1]);g.stroke();}
   if(big){g.textAlign='center';g.fillStyle='rgba(255,255,255,.5)';g.font=`600 ${12/sc}px "Barlow Condensed",sans-serif`;for(const[t,kx,ky]of TOWNS)g.fillText(t.toUpperCase(),kx*KM,-ky*KM+16/sc);
-    g.fillStyle='#d9b98a';g.fillText('BRECHA DEL EJIDO',TRACK[60][0],TRACK[60][1]-40/sc);g.fillText('PEDRERA EL NORTE',PEDRERA.x,PEDRERA.z-14/sc);g.fillText('MIRADOR',MIRADOR.x,MIRADOR.z-12/sc);g.fillStyle='#9fd08a';for(const p of PARKS)g.fillText(p.name,p.x,p.z);g.fillStyle='#7fc0e0';g.fillText('CANAL DEL NORTE',CANAL[Math.floor(CANAL.length*.3)][0],CANAL[Math.floor(CANAL.length*.3)][1]-30/sc);g.fillStyle='#f1c64a';g.fillStyle='#fff';g.font=`700 ${10.5/sc}px "Barlow Condensed",sans-serif`;for(const d of DEPOTS)g.fillText(d.name,d.zone.x,d.zone.z-9/sc);
+    g.fillStyle='#6b4a2f';g.fillText('BRECHA DEL EJIDO',TRACK[60][0],TRACK[60][1]-40/sc);g.fillText('PEDRERA EL NORTE',PEDRERA.x,PEDRERA.z-14/sc);g.fillText('MIRADOR',MIRADOR.x,MIRADOR.z-12/sc);g.fillStyle='#1f4f22';for(const p of PARKS)g.fillText(p.name,p.x,p.z);g.fillStyle='#1f4f8a';g.fillText('CANAL DEL NORTE',CANAL[Math.floor(CANAL.length*.3)][0],CANAL[Math.floor(CANAL.length*.3)][1]-30/sc);g.fillStyle='#1d2a47';g.font=`700 ${10.5/sc}px "Barlow Condensed",sans-serif`;for(const d of DEPOTS)g.fillText(d.name,d.zone.x,d.zone.z-9/sc);
     g.fillStyle='#7cc4ff';g.font=`600 ${10/sc}px "Barlow Condensed",sans-serif`;g.textAlign='left';g.fillText('● Gasolinera',BB.x0+40,BB.z1-40);
     g.save();g.translate(S.x,S.z);g.rotate(-S.h);g.scale(1/sc,1/sc);g.fillStyle='#ffb53d';g.beginPath();g.moveTo(0,-10);g.lineTo(7,8);g.lineTo(0,4);g.lineTo(-7,8);g.closePath();g.fill();g.restore();}
   g.restore();
