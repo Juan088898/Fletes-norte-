@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v144">
+<meta name="fn-version" content="v145">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -7315,7 +7315,7 @@ function applySkin(){if(!SKIN)return;const on=UP(S.model).skin==='deli';if(on)sk
  let G=null,ph=null,scrCv=null,scrG=null,scrTex=null,camMod=false;const _p=new THREE.Vector3(),_v=new THREE.Vector3(),_w=new THREE.Vector3(),_m=new THREE.Matrix4(),_q=new THREE.Quaternion(),_q0=new THREE.Quaternion(),_q1=new THREE.Quaternion(),_e=new THREE.Euler(),_hq=new THREE.Quaternion();
  const logoImg={};for(const a in CELA.logo){const im=new Image();im.onload=()=>paint3d();im.src=CELA.logo[a];logoImg[a]=im;}
  function build3d(){if(G||typeof wheelBase==='undefined')return;G=new THREE.Group();wheelBase.add(G);const blk=new THREE.MeshPhongMaterial({color:0x15171a,shininess:30});
-  const clip=new THREE.Mesh(new THREE.BoxGeometry(.09,.03,.03),blk);clip.position.set(0,-.085,-.012);G.add(clip);const stem=new THREE.Mesh(new THREE.CylinderGeometry(.008,.008,.09,8),blk);stem.rotation.x=Math.PI/2;stem.position.set(0,-.02,-.055);G.add(stem);
+  const clip=new THREE.Mesh(new THREE.BoxGeometry(.09,.03,.03),blk);clip.position.set(0,-.085,-.012);G.add(clip);const stem=new THREE.Mesh(new THREE.CylinderGeometry(.008,.008,.26,8),blk);stem.rotation.x=Math.PI/2;stem.position.set(0,-.02,-.14);G.add(stem);
   const jaw=new THREE.Mesh(new THREE.BoxGeometry(.09,.012,.022),blk);jaw.position.set(0,.083,-.012);G.add(jaw);
   ph=new THREE.Group();const body=new THREE.Mesh(new THREE.BoxGeometry(.074,.152,.009),new THREE.MeshPhongMaterial({color:0x2a2b30,shininess:60}));ph.add(body);ph.userData.body=body;
   scrCv=document.createElement('canvas');scrCv.width=96;scrCv.height=192;scrG=scrCv.getContext('2d');scrTex=new THREE.CanvasTexture(scrCv);
@@ -7329,7 +7329,7 @@ function applySkin(){if(!SKIN)return;const on=UP(S.model).skin==='deli';if(on)sk
   if(p.cls==='alc'){g.strokeStyle='rgba(255,255,255,.5)';g.lineWidth=1;g.beginPath();g.moveTo(75,14);g.lineTo(67,40);g.lineTo(72,60);g.lineTo(55,95);g.moveTo(67,40);g.lineTo(92,48);g.stroke();}
   scrTex.needsUpdate=true;}
  // posición del soporte respecto al volante (en coordenadas de la cabina)
- const MOUNT=new THREE.Vector3(.42,.13,-.24),MROT=new THREE.Euler(-.28,-.5,0);
+ const MOUNT=new THREE.Vector3(.40,.19,-.02),MROT=new THREE.Euler(-.28,-.5,0);
  function placeMount(){wheelBase.updateMatrix();_m.copy(wheelBase.matrix).invert();_p.copy(MOUNT).multiplyScalar(wheelBase.scale.x).add(wheelBase.position);G.position.copy(_p).applyMatrix4(_m);
   _q.setFromEuler(MROT);_q0.copy(wheelBase.quaternion).invert();G.quaternion.copy(_q0).multiply(_q);G.scale.setScalar(1/wheelBase.scale.x);}
  const sm=x=>{x=clamp(x,0,1);return x*x*(3-2*x);};
