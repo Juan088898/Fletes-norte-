@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Config · ajustes del celular (estilo YiYi / JaleYa / Wasapen) -->
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5fd18b"/><stop offset="1" stop-color="#2fa864"/></linearGradient></defs>
+  <rect x="16" y="16" width="480" height="480" rx="120" fill="url(#bg)"/>
+  <circle cx="256" cy="232" r="150" fill="#fff4d6"/>
+  <!-- dos interruptores: uno prendido y otro apagado -->
+  <rect x="160" y="160" width="192" height="64" rx="32" fill="#26324d"/>
+  <circle cx="320" cy="192" r="24" fill="#ffae3d"/>
+  <rect x="160" y="248" width="192" height="64" rx="32" fill="#26324d" opacity=".35"/>
+  <circle cx="192" cy="280" r="24" fill="#26324d"/>
+  <text x="256" y="472" text-anchor="middle" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="76" fill="#fff4d6" letter-spacing="3">Config</text>
+</svg>
