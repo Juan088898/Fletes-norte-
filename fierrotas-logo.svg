@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Fierrotas · estado del camión (estilo YiYi / JaleYa / Wasapen) -->
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f5b812"/><stop offset="1" stop-color="#c98500"/></linearGradient></defs>
+  <rect x="16" y="16" width="480" height="480" rx="120" fill="url(#bg)"/>
+  <circle cx="256" cy="232" r="150" fill="#fff4d6"/>
+  <!-- dos llaves españolas cruzadas detrás -->
+  <g id="llave" transform="rotate(45 256 232)"><rect x="245" y="110" width="22" height="244" rx="11" fill="#ffae3d"/>
+    <circle cx="256" cy="104" r="34" fill="#ffae3d"/><rect x="244" y="62" width="24" height="40" rx="4" fill="#fff4d6"/>
+    <circle cx="256" cy="360" r="30" fill="#ffae3d"/><rect x="245" y="370" width="22" height="30" rx="4" fill="#fff4d6"/></g>
+  <use href="#llave" transform="rotate(-90 256 232)"/>
+  <!-- frente de troca -->
+  <rect x="186" y="176" width="140" height="120" rx="26" fill="#26324d"/>
+  <rect x="202" y="190" width="108" height="40" rx="10" fill="#9fd3ff"/>
+  <g stroke="#fff4d6" stroke-width="7" stroke-linecap="round"><path d="M214 250h84M214 266h84"/></g>
+  <circle cx="206" cy="282" r="8" fill="#ffe08a"/><circle cx="306" cy="282" r="8" fill="#ffe08a"/>
+  <text x="256" y="472" text-anchor="middle" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="64" fill="#fff4d6" letter-spacing="2" stroke="#9a6400" stroke-width="2" paint-order="stroke">Fierrotas</text>
+</svg>
