@@ -51,6 +51,11 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - Se quitó el encargo sin remolque de la Pedrera (también se cancela si estaba guardado).
 - Pendiente de etapas siguientes: góndola de volteo, rancho/ganado/leche, obras, refacción, guardado cada 2 min, mundo.
 
+### Hecho en v146 · Fase 3, etapa 2 (góndola de volteo)
+- Cargas nuevas Grava (18 t) y Piedra triturada (24 t, nivel 3+) en góndola de volteo; salen solo de Cantera La Silla.
+- Carga en el andén con cargador frontal (Kenney Car Kit tractor-shovel): 3 cucharones. Al entregar se abre la compuerta y se levanta la caja con pistón.
+- Pendiente: Pedrera El Norte como patio de origen (hoy no es patio con andenes; va con las obras de la etapa 4, que serán el destino de la piedra).
+
 ## Pendientes de la fase 1 (v139–v140)
 - Esquinas redondeadas en las banquetas (por ahora solo se cortan antes del cruce).
 - Confirmar en el Redmi que las llantas ya no se ven hundidas en la terracería y que el GPS funciona en la brecha.
