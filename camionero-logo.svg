@@ -1,28 +1,27 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <!-- Camionero · modo principal de Fletes del Norte (logo original) -->
+  <!-- Camionero · modo principal de Fletes del Norte (logo original, pareja del de YiYi) -->
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#ffb34a"/>
-      <stop offset="1" stop-color="#f08a1c"/>
+      <stop offset="0" stop-color="#ffae3d"/>
+      <stop offset="1" stop-color="#f07f12"/>
     </linearGradient>
   </defs>
   <rect x="16" y="16" width="480" height="480" rx="120" fill="url(#bg)"/>
-  <rect x="16" y="436" width="480" height="60" rx="30" fill="#b85f0c" opacity=".5"/>
-  <!-- carretera que se pierde al fondo -->
-  <path d="M206 404L246 210h20l40 194z" fill="#26324d" opacity=".35"/>
-  <!-- frente de tráiler -->
-  <rect x="150" y="150" width="212" height="190" rx="34" fill="#26324d"/>
-  <rect x="172" y="170" width="168" height="72" rx="16" fill="#9fd3ff"/>
-  <path d="M182 232l40-52h20l-40 52z" fill="#ffffff" opacity=".45"/>
-  <rect x="180" y="262" width="152" height="46" rx="10" fill="#fff4d6"/>
-  <g stroke="#26324d" stroke-width="7" stroke-linecap="round"><path d="M196 276h120M196 294h120"/></g>
-  <circle cx="176" cy="320" r="13" fill="#ffe08a"/>
-  <circle cx="336" cy="320" r="13" fill="#ffe08a"/>
-  <!-- escapes -->
-  <rect x="126" y="112" width="18" height="190" rx="9" fill="#fff4d6"/>
-  <rect x="368" y="112" width="18" height="190" rx="9" fill="#fff4d6"/>
+  <!-- círculo crema, como el pin de YiYi -->
+  <circle cx="256" cy="232" r="150" fill="#fff4d6"/>
+  <!-- tráiler de lado: caja + cabina -->
+  <g fill="#26324d">
+    <rect x="128" y="168" width="168" height="96" rx="14"/>
+    <path d="M306 196h52c10 0 18 5 23 13l22 34c3 5 5 11 5 17v14c0 8-6 14-14 14H306z"/>
+    <rect x="128" y="270" width="270" height="16" rx="8"/>
+  </g>
+  <path d="M322 208h34l18 30h-52z" fill="#9fd3ff"/>
+  <!-- franja naranja en la caja -->
+  <rect x="146" y="206" width="132" height="18" rx="9" fill="#ffae3d"/>
   <!-- llantas -->
-  <rect x="160" y="336" width="54" height="40" rx="12" fill="#1d2a47"/>
-  <rect x="298" y="336" width="54" height="40" rx="12" fill="#1d2a47"/>
+  <g fill="#26324d" stroke="#fff4d6" stroke-width="8">
+    <circle cx="170" cy="292" r="24"/><circle cx="222" cy="292" r="24"/><circle cx="360" cy="292" r="24"/>
+  </g>
+  <g fill="#ffae3d"><circle cx="170" cy="292" r="7"/><circle cx="222" cy="292" r="7"/><circle cx="360" cy="292" r="7"/></g>
   <text x="256" y="472" text-anchor="middle" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="56" fill="#fff4d6" letter-spacing="3">CAMIONERO</text>
 </svg>
