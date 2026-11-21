@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v139">
+<meta name="fn-version" content="v140">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -231,6 +231,13 @@ body{font-variant-numeric:tabular-nums}
 .opt:hover,.opt.sel{border-color:var(--route);background:#3b5285}
 .opt .tag{border-radius:8px;background:#1d5a3a;color:#bff2d4}.opt .tag.m{background:#6a4415;color:#ffd9a3}.opt .tag.l{background:#6e2620;color:#ffc2b8}
 .opt .pay{color:#8af0b2}
+/* === v140 · menos estorbo: mapa redondo chico y velocímetro compacto y transparente === */
+body:not(.cab) .mapcard{width:min(100px,19vh);height:min(100px,19vh);margin-bottom:22px;border-radius:50%;border-width:3px}
+body:not(.cab) .mapcard .mission{display:none}
+.hudcard{min-width:0!important;padding:3px 12px 4px!important;background:rgba(34,46,72,.55)!important;box-shadow:none!important}
+.hudcard .spd{font-size:min(5.5vh,26px)!important;gap:4px!important}.hudcard .spd b{font-size:min(5.5vh,24px)!important;margin-left:6px!important}
+.hudcard .lim{width:30px;height:30px;font-size:13px;line-height:20px;border-width:4px}
+.hudcard .rpmbar{height:5px!important}
 /* === pantalla de inicio === */
 #start{position:fixed;inset:0;z-index:60;background:linear-gradient(#0b1224,#1c2c46 58%,#3a4258 62%,#10150f 62%);overflow:hidden;--u:min(1vh,.5vw);font-family:var(--display);color:var(--ink)}
 #start .st-stars{position:absolute;inset:0 0 50% 0;background:radial-gradient(1px 1px at 12% 20%,#fff8,transparent),radial-gradient(1px 1px at 38% 35%,#fff7,transparent),radial-gradient(1.5px 1.5px at 66% 14%,#fffa,transparent),radial-gradient(1px 1px at 82% 40%,#fff7,transparent),radial-gradient(1px 1px at 92% 18%,#fff8,transparent)}
