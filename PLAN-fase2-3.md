@@ -14,6 +14,13 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - Guía de la primera vez solo para el celular (se puede saltar).
 - GPS en el tablero. Afuera, mapa redondo chico (ya hecho en v140).
 
+### Hecho en v141 (rama etapa2-mapa-nuevo)
+- Celular en soporte a la derecha del volante; 📱 lo toma (mano + cámara en cabina; afuera al centro, más chico).
+- Apps: JaleYa (bolsa + Tienda de celulares), Wasapen (chat con respuestas rápidas → propina y estrellas), Fierrotas (estado, no notifica), Rola (radio del juego), Config (sonido, vibración, guía, cambiar celular). YiYi apagada.
+- Celulares: Alcanzel (inicio, pantalla estrellada, lento, pila corta, sin vista previa), Rojomi $8,000, Samsón $22,000, Chaifon $30,000.
+- Avisos solo de clientes y fletes nuevos (sonido Kenney + vibración + aviso arriba). Distracción a más de 20 km/h. Guía de primera vez.
+- Pendiente: compra en gasolinera, GPS con tráfico.
+
 ## Fase 3 · Remolques y mundo
 - Todos los fletes llevan remolque. Se quita el encargo sin remolque de la Pedrera.
 - Remolque según la carga:
