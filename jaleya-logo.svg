@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <!-- Camionero · modo principal de Fletes del Norte (logo original, pareja del de YiYi) -->
+  <!-- JaleYa · modo camionero de Fletes del Norte (logo original, pareja del de YiYi) -->
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#ffae3d"/>
@@ -23,5 +23,5 @@
     <circle cx="170" cy="292" r="24"/><circle cx="222" cy="292" r="24"/><circle cx="360" cy="292" r="24"/>
   </g>
   <g fill="#ffae3d"><circle cx="170" cy="292" r="7"/><circle cx="222" cy="292" r="7"/><circle cx="360" cy="292" r="7"/></g>
-  <text x="256" y="472" text-anchor="middle" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="56" fill="#fff4d6" letter-spacing="3">CAMIONERO</text>
+  <text x="256" y="472" text-anchor="middle" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="74" fill="#fff4d6" letter-spacing="4">JaleYa</text>
 </svg>
