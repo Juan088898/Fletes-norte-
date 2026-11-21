@@ -46,6 +46,11 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - Gráficos: solo calidad manual en Ajustes (Baja/Media/Alta).
 - Publicar primero en el enlace (artifact PDzLfKWpvtBwNGSsdCnwh7); pasar a `main` (APK) solo cuando Juan lo apruebe.
 
+### Hecho en v143 · Fase 3, etapa 1 (remolques)
+- El remolque espera vacío en el patio (frente a otro andén). Retrocedes hasta el perno → mangueras roja y azul se conectan → suben las patas → vas a tu andén a cargar (montacargas o manguera de pipa) → entregas.
+- Se quitó el encargo sin remolque de la Pedrera (también se cancela si estaba guardado).
+- Pendiente de etapas siguientes: góndola de volteo, rancho/ganado/leche, obras, refacción, guardado cada 2 min, mundo.
+
 ## Pendientes de la fase 1 (v139–v140)
 - Esquinas redondeadas en las banquetas (por ahora solo se cortan antes del cruce).
 - Confirmar en el Redmi que las llantas ya no se ven hundidas en la terracería y que el GPS funciona en la brecha.
