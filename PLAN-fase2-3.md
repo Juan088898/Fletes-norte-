@@ -71,7 +71,8 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - 3 obras en la ciudad (Obra Torre Centro, Obra Puente Huinalá, Obra Fracc. Las Lomas): sin nave, con barda, grúa torre, estructura, montones, conos y vallas de Kenney Roads. Reciben Grava y Piedra triturada; la piedra cae al piso detrás de la góndola.
 - Pedrera El Norte ya es patio (sobre la Brecha del Ejido, +25% terracería). La piedra sale de la Cantera o la Pedrera.
 - Los patios nuevos no cambian la versión del mapa: no se cancelan fletes guardados.
-- Llanta de refacción incluida: el chofer se baja y la cambia (~50 s, se puede saltar). Se repone en gasolinera o Taller (3V · P$3,800). Sin refacción: Auxilio Vial 3V por Wasapen (P$5,300, llega en ~30 s).
+- v153: cambio de llanta animado (~58 s, se puede saltar): conos, refacción de abajo del chasis, gato que levanta la esquina, 10 birlos, ponchada fuera, refacción montada. Auxilio: llega una pickup de Llantas 3V con su mecánico (Kenney Car Kit truck-flat).
+- Llanta de refacción incluida. Se repone en gasolinera o Taller (3V · P$3,800). Sin refacción: Auxilio Vial 3V por Wasapen (P$5,300, llega en ~30 s).
 
 ## Pendientes de la fase 1 (v139–v140)
 - Esquinas redondeadas en las banquetas (por ahora solo se cortan antes del cruce).
