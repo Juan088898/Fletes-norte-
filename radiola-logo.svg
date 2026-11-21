@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Radiola · app del celular (estilo YiYi / JaleYa / Wasapen) -->
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff6fb0"/><stop offset="1" stop-color="#d63c86"/></linearGradient></defs>
+  <rect x="16" y="16" width="480" height="480" rx="120" fill="url(#bg)"/>
+  <circle cx="256" cy="232" r="150" fill="#fff4d6"/>
+  <!-- nota musical con ondas -->
+  <path d="M226 128v132" stroke="#26324d" stroke-width="22" stroke-linecap="round"/>
+  <path d="M226 128l78-22v44l-78 22z" fill="#26324d"/>
+  <ellipse cx="196" cy="270" rx="44" ry="34" fill="#26324d"/>
+  <g fill="none" stroke="#ffae3d" stroke-width="14" stroke-linecap="round"><path d="M298 210a50 50 0 0 1 0 64"/><path d="M326 184a90 90 0 0 1 0 116"/></g>
+  <text x="256" y="472" text-anchor="middle" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="72" fill="#fff4d6" letter-spacing="3">Radiola</text>
+</svg>

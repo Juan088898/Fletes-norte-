@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Tuercas · app del celular (estilo YiYi / JaleYa / Wasapen) -->
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6f86bd"/><stop offset="1" stop-color="#3e4f80"/></linearGradient></defs>
+  <rect x="16" y="16" width="480" height="480" rx="120" fill="url(#bg)"/>
+  <circle cx="256" cy="232" r="150" fill="#fff4d6"/>
+  <!-- tuerca con flecha de ajuste -->
+  <path d="M256 124l94 54v108l-94 54-94-54V178z" fill="#26324d"/>
+  <circle cx="256" cy="232" r="42" fill="#fff4d6"/>
+  <path d="M198 232a58 58 0 0 1 98-42" fill="none" stroke="#ffae3d" stroke-width="16" stroke-linecap="round"/>
+  <path d="M308 166l-6 40-34-20z" fill="#ffae3d"/>
+  <text x="256" y="472" text-anchor="middle" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="70" fill="#fff4d6" letter-spacing="3">Tuercas</text>
+</svg>
