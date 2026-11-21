@@ -50,4 +50,4 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - Viajes cortos en la ciudad que llegan por el celular, pasajeros con prisa, calificación de estrellas.
 
 ## Apps del celular (iconos en `apps-celular.svg`)
-- JaleYa (fletes, naranja) · Camión (avisos, verde, medidor) · Mensajes (clientes, azul, globo de chat) · Radio (música, rojo) · Ajustes (gris azulado, engrane). YiYi solo en el modo chofer.
+- JaleYa (fletes, naranja) · Camión (avisos, verde, medidor) · Wasapen (chat con clientes, azul, globo de chat; no imitar el logo de WhatsApp) · Radio (música, rojo) · Ajustes (gris azulado, engrane). YiYi solo en el modo chofer.
