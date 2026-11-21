@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- YiYi · app de viajes de Fletes del Norte (logo original) -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7a5cff"/>
+      <stop offset="1" stop-color="#4b2fd6"/>
+    </linearGradient>
+  </defs>
+  <rect x="16" y="16" width="480" height="480" rx="120" fill="url(#bg)"/>
+  <rect x="16" y="436" width="480" height="60" rx="30" fill="#3a22b0" opacity=".55"/>
+  <!-- pin de ubicación -->
+  <path d="M256 92c-66 0-118 51-118 115 0 86 118 197 118 197s118-111 118-197c0-64-52-115-118-115z" fill="#fff4d6"/>
+  <!-- dos "y" que forman un camino que se junta -->
+  <path d="M206 160l50 62 50-62" fill="none" stroke="#4b2fd6" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M256 222v74" fill="none" stroke="#4b2fd6" stroke-width="30" stroke-linecap="round"/>
+  <circle cx="206" cy="160" r="9" fill="#ffc83d"/>
+  <circle cx="306" cy="160" r="9" fill="#ffc83d"/>
+  <text x="256" y="472" text-anchor="middle" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="74" fill="#fff4d6" letter-spacing="4">YiYi</text>
+</svg>
