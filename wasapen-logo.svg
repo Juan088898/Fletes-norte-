@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Wasapen · chat con clientes (logo original, mismo estilo que YiYi y JaleYa) -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5fa0ff"/>
+      <stop offset="1" stop-color="#2f6fe0"/>
+    </linearGradient>
+  </defs>
+  <rect x="16" y="16" width="480" height="480" rx="120" fill="url(#bg)"/>
+  <circle cx="256" cy="232" r="150" fill="#fff4d6"/>
+  <!-- dos globos de chat: cliente y trailero -->
+  <path d="M150 150h150c14 0 26 12 26 26v64c0 14-12 26-26 26h-82l-40 32v-32h-28c-14 0-26-12-26-26v-64c0-14 12-26 26-26z" fill="#26324d"/>
+  <g fill="#fff4d6"><circle cx="186" cy="208" r="12"/><circle cx="226" cy="208" r="12"/><circle cx="266" cy="208" r="12"/></g>
+  <path d="M290 238h74c12 0 22 10 22 22v42c0 12-10 22-22 22h-10v26l-32-26h-32c-12 0-22-10-22-22v-42c0-12 10-22 22-22z" fill="#ffae3d" stroke="#fff4d6" stroke-width="8"/>
+  <path d="M312 282l14 14 26-28" fill="none" stroke="#26324d" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="256" y="472" text-anchor="middle" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="70" fill="#fff4d6" letter-spacing="3">Wasapen</text>
+</svg>
