@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v138">
+<meta name="fn-version" content="v139">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -4617,6 +4617,7 @@ const SWW=3,SWH=.18,SWT={st:1,av:1,hwy:1},SWMAT=M(0xcfccc4).clone(),CURBM=new TH
 // cara vertical de la guarnición (de y0 a y1 sobre el piso)
 function curb(P,y0,y1){const n=P.length;if(n<2)return;const pos=new Float32Array(n*6),idx=[];for(let k=0;k<n;k++){pos.set([P[k].x,P[k].y+y0,P[k].z,P[k].x,P[k].y+y1,P[k].z],k*6);if(k<n-1)idx.push(k*2,k*2+2,k*2+1,k*2+1,k*2+2,k*2+3);}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();const m=new THREE.Mesh(g,CURBM);m.receiveShadow=true;scene.add(m);}SWMAT.userData.keep=1;SWMAT.polygonOffset=true;SWMAT.polygonOffsetFactor=SWMAT.polygonOffsetUnits=-3;
 function offPts(P,o){const n=P.length,r=[];for(let k=0;k<n;k++){const a=P[Math.max(0,k-1)],b=P[Math.min(n-1,k+1)];let dx=b.x-a.x,dz=b.z-a.z;const l=Math.hypot(dx,dz)||1;dx/=l;dz/=l;r.push({x:P[k].x-dz*o,y:P[k].y,z:P[k].z+dx*o});}return r;}
+function swRuns(P,subs){const own=new Set(subs.map(e=>e.i)),out=[];let cur=[];for(const p of P){let bad=false;for(const e of edgesNear(p.x,p.z,1)){if(own.has(e.i))continue;if(segDist(p.x,p.z,e).d<e.w/2+SWW*.5+1){bad=true;break;}}if(bad){if(cur.length>1)out.push(cur);cur=[];}else cur.push(p);}if(cur.length>1)out.push(cur);return out;}
 function swAt(x,z){const i=Math.floor(x/EGC),j=Math.floor(z/EGC);for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++){const l=EGM.get(egk(i+a,j+b));if(!l)continue;for(const e of l){if(!SWT[e.type])continue;const d=segDist(x,z,e).d-e.w/2;if(d>.05&&d<SWW-.1)return urban(x,z).d>.25;}}return false;}
 {const gI=new THREE.CircleGeometry(11,24);gI.rotateX(-Math.PI/2);const gS=new THREE.CircleGeometry(7.6,16);gS.rotateX(-Math.PI/2);const gR=new THREE.CircleGeometry(7,16);gR.rotateX(-Math.PI/2);
  {const R0=new Map(),HUL=new Map(),CUT=new Map();
@@ -4643,7 +4644,7 @@ function swAt(x,z){const i=Math.floor(x/EGC),j=Math.floor(z/EGC);for(let a=-1;a<
       for(let k=0;k<P.length-1;k++){const a=P[k],b=P[k+1];let dx=b.x-a.x,dz=b.z-a.z;const ll=Math.hypot(dx,dz);if(ll<.2)continue;dx/=ll;dz/=ll;const ex=dx*w*.25,ez=dz*w*.25,nx=-dz*w/2,nz=dx*w/2,y=a.y+.07,bs=QP.length/3;
       QP.push(a.x-ex+nx,y,a.z-ez+nz,a.x-ex-nx,y,a.z-ez-nz,b.x+ex+nx,y,b.z+ez+nz,b.x+ex-nx,y,b.z+ez-nz);QU.push(0,0,1,0,0,1,1,1);QI.push(bs,bs+2,bs+1,bs+1,bs+2,bs+3);}
       if(P.length>=2){const cs=[];for(const[pa,pb]of[[P[0],P[1]],[P[P.length-1],P[P.length-2]]]){let dx=pb.x-pa.x,dz=pb.z-pa.z;const ll=Math.hypot(dx,dz)||1;dx/=ll;dz/=ll;cs.push([pa.x-dz*w/2,pa.z+dx*w/2],[pa.x+dz*w/2,pa.z-dx*w/2]);}for(const nn of[f,l])if(HUL.has(nn))HUL.get(nn).push(...cs);}continue;}
-    C=dens(smooth(C));{const Q=[C[0]];for(let k=1;k<C.length;k++)if(Math.hypot(C[k].x-Q[Q.length-1].x,C[k].z-Q[Q.length-1].z)>1||k===C.length-1)Q.push(C[k]);if(Q.length>2&&Math.hypot(Q[Q.length-1].x-Q[Q.length-2].x,Q[Q.length-1].z-Q[Q.length-2].z)<1)Q.splice(Q.length-2,1);C=Q;}strip(C,w,.03+rk*.006+(subs[0].orig%5)*.0015,RMX[key]);if(SWT[subs[0].type]&&urban(C[C.length>>1].x,C[C.length>>1].z).d>.25)for(const sd of[1,-1]){strip(offPts(C,sd*(w/2+SWW/2)),SWW,SWH,SWMAT);curb(offPts(C,sd*(w/2+.02)),.02,SWH+.005);curb(offPts(C,sd*(w/2+SWW-.02)),-.3,SWH+.005);}
+    C=dens(smooth(C));{const Q=[C[0]];for(let k=1;k<C.length;k++)if(Math.hypot(C[k].x-Q[Q.length-1].x,C[k].z-Q[Q.length-1].z)>1||k===C.length-1)Q.push(C[k]);if(Q.length>2&&Math.hypot(Q[Q.length-1].x-Q[Q.length-2].x,Q[Q.length-1].z-Q[Q.length-2].z)<1)Q.splice(Q.length-2,1);C=Q;}strip(C,w,.03+rk*.006+(subs[0].orig%5)*.0015,RMX[key]);if(SWT[subs[0].type]&&urban(C[C.length>>1].x,C[C.length>>1].z).d>.25)for(const sd of[1,-1])for(const R of swRuns(offPts(C,sd*(w/2+SWW/2)),subs)){strip(R,SWW,SWH,SWMAT);curb(offPts(R,-sd*(SWW/2-.02)),.02,SWH+.005);curb(offPts(R,sd*(SWW/2-.02)),-.3,SWH+.005);}
     else if(subs[0].type==='mtn'||subs[0].type==='hwy')for(const sd of[1,-1])strip(offPts(C,sd*(w/2+.9)),1.8,.025,SHMAT);
     if(R0.has(f))endC(f,C[0],C[1],w);if(R0.has(l))endC(l,C[C.length-1],C[C.length-2],w);
     for(const [ni,a,b] of [[f,C[0],C[1]],[l,C[C.length-1],C[C.length-2]]]){if(R0.has(ni)||nodes[ni].kind==='shape'||nodes[ni].edges.length!==2)continue;if(!J2.has(ni))J2.set(ni,[]);let dx=b.x-a.x,dz=b.z-a.z;const ll=Math.hypot(dx,dz)||1;dx/=ll;dz/=ll;J2.get(ni).push([a.x-dz*w/2,a.z+dx*w/2],[a.x+dz*w/2,a.z-dx*w/2]);}}});
@@ -4951,7 +4952,7 @@ for(const e of edges){if(e.type!=='hwy'&&e.type!=='av')continue;for(let k=0;k<e.
 /* v103 · vados: espejos de agua en el fondo de las zanjas que cruza la brecha; solo se ven cuando ha llovido */
 const VADOS=[];{const wm=new THREE.MeshLambertMaterial({color:0x5d7078,transparent:true,opacity:0,depthWrite:false});VADOS.mat=wm;let last=null;
  for(let i=1;i<TRACK.length;i++){const a=TRACK[i-1],b=TRACK[i],L=Math.hypot(b[0]-a[0],b[1]-a[1]);for(let d=0;d<L;d+=6){const x=a[0]+(b[0]-a[0])*d/L,z=a[1]+(b[1]-a[1])*d/L;
-   if(offMask(x,z)>.5&&zanjaK(x,z)>.92&&(!last||Math.hypot(x-last[0],z-last[1])>40)){last=[x,z];const m=new THREE.Mesh(new THREE.CircleGeometry(11,20),wm);m.rotation.x=-Math.PI/2;m.position.set(x,Math.max(H(x,z),meshH(x,z)||0)+.16,z);m.visible=false;m.userData.keep=true;scene.add(m);VADOS.push(m);}}}}
+   if(offMask(x,z)>.5&&zanjaK(x,z)>.92&&(!last||Math.hypot(x-last[0],z-last[1])>40)){last=[x,z];const cg=new THREE.CircleGeometry(11,20);cg.rotateX(-Math.PI/2);const pa=cg.attributes.position;for(let i=0;i<pa.count;i++)pa.setY(i,H(x+pa.getX(i),z+pa.getZ(i))-H(x,z)+.07);const m=new THREE.Mesh(cg,wm);m.position.set(x,H(x,z),z);m.visible=false;m.userData.keep=true;scene.add(m);VADOS.push(m);}}}}
 /* v136 · Pedrera El Norte a media Brecha del Ejido, Mirador de la Sierra y letreros de la terracería */
 {const f=PEDRERA,y=f.y,d=new THREE.Mesh(new THREE.CircleGeometry(f.r+6,40),M(0x9a958a));d.rotation.x=-Math.PI/2;d.position.set(f.x,y+.03,f.z);d.receiveShadow=true;scene.add(d);
  const ob=(dx,dz,hw,hd)=>addObb({cx:f.x+dx,cz:f.z+dz,ux:1,uz:0,hw,hd});
@@ -4963,7 +4964,7 @@ const VADOS=[];{const wm=new THREE.MeshLambertMaterial({color:0x5d7078,transpare
 {const f=MIRADOR,d2=new THREE.Mesh(new THREE.CircleGeometry(f.r+4,28),M(0x9a958a));d2.rotation.x=-Math.PI/2;d2.position.set(f.x,f.y+.03,f.z);scene.add(d2);
  const ry=Math.atan2(-f.nx,-f.nz);signAt('MIRADOR DE LA SIERRA',f.x-f.nx*(f.r-3),f.z-f.nz*(f.r-3),ry,f.y+3,10,'#6b4a2f','#ffffff');for(const s of[-1,1])box(scene,.3,3.4,.3,0x8e9399,f.x-f.nx*(f.r-3)-f.nz*4.5*s,f.y+1.7,f.z-f.nz*(f.r-3)+f.nx*4.5*s);
  for(let k=-2;k<=2;k++){const x=f.x+f.nx*(f.r+1)-f.nz*k*3.5,z=f.z+f.nz*(f.r+1)+f.nx*k*3.5;box(scene,.25,1,.25,0x6b4a2f,x,f.y+.5,z);}box(scene,3,.45,.6,0x6b4a2f,f.x,f.y+.25,f.z);}
-{const p=TRACK[0],q=TRACK[3],l=Math.hypot(q[0]-p[0],q[1]-p[1]),ux=(q[0]-p[0])/l,uz=(q[1]-p[1])/l,x=p[0]+ux*30+uz*7,z=p[1]+uz*30-ux*7,y=H(x,z),ry=Math.atan2(-ux,-uz);
+{const p=TRACK[0],q=TRACK[3],l=Math.hypot(q[0]-p[0],q[1]-p[1]),ux=(q[0]-p[0])/l,uz=(q[1]-p[1])/l,x=p[0]+ux*30+uz*14,z=p[1]+uz*30-ux*14,y=H(x,z),ry=Math.atan2(-ux,-uz);
  for(const s of[-5,5])box(scene,.35,4.6,.35,0x8e9399,x-uz*s,y+2.3,z+ux*s);
  signAt('BRECHA DEL EJIDO · PEDRERA · RANCHO',x,z,ry,y+3.6,12,'#6b4a2f','#ffffff');signAt('TERRACERÍA · BAJE LA VELOCIDAD',x,z,ry,y+1.6,9,'#f1c22b','#1e1f22');}
 {const p=TRACK2[0],y=H(p[0],p[1]);box(scene,.3,3.6,.3,0x8e9399,p[0],y+1.8,p[1]);signAt('ATAJO DE LAS LOMAS',p[0],p[1]+.2,0,y+3.4,8,'#c96f4a','#ffffff');}
@@ -5064,7 +5065,7 @@ function bumpAt(x,z){const arr=BH.get(bk(Math.floor(x/BC),Math.floor(z/BC)));if(
   for(const b of arr){if(b.kind==='tope'){const dx=x-b.x,dz=z-b.z,al=dx*b.ux+dz*b.uz,ac=-dx*b.uz+dz*b.ux;if(Math.abs(ac)<b.hw&&Math.abs(al)<b.len){const c=Math.cos(Math.PI/2*al/b.len);h+=b.h*c*c;}}
     else{const d=Math.hypot(x-b.x,z-b.z);if(d<b.r){const c=Math.cos(Math.PI/2*d/b.r);h+=b.h*c*c;}}}return h;}
 /* v136: el piso del juego es la rejilla H(); las calles van 3–5 cm arriba y los cruces 7 cm, igual que se dibujan */
-const RDY={'st': 0.035, 'av': 0.045, 'hwy': 0.055, 'ring': 0.045, 'mtn': 0.05, 'dirt': 0.03};
+const RDY={'st': 0.035, 'av': 0.045, 'hwy': 0.055, 'ring': 0.045, 'mtn': 0.06, 'dirt': 0.07};
 function roadAt(x,z){const i=Math.floor(x/EGC),j=Math.floor(z/EGC);let by=null,bm=.3;for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++){const l=EGM.get(egk(i+a,j+b));if(!l)continue;for(const e of l){const p=segDist(x,z,e),mg=p.d-(e.w||10)/2;if(mg<bm){bm=mg;by=e;}}}return by;}
 function surf(x,z){const bn=bumpAt(x,z)+.012*(vnoise(x*.55,z*.55)-.5)+.006*(vnoise(x*2.3+7,z*2.3)-.5)+offRough(x,z),h=H(x,z);
   if(FLATS.some(f=>Math.hypot(x-f.x,z-f.z)<f.r))return h+bn+.03;
@@ -6409,6 +6410,16 @@ function rescue(manual){S.air=1;if(BAT()<.3){save.bat=.6;toast('Te pasaron corri
   if(S.fuel<=1){S.fuel=60;save.money-=3000;persist();toast('La grúa te dejó 60 L de diésel: $3,000',true);}else if(manual)toast('Camión de vuelta en el camino',true);}
 const fuelBtn=$('#fuelBtn');let atStation=null;
 /* ponchaduras */
+// v139 · clavos y vidrio tirados en el camino: se ven, el GPS pita antes y si los pisas se poncha la llanta
+const HAZ=[];{const HR=mulberry32(919),cand=edges.filter(e=>e.type!=='ring'&&e.L>20);let tot=0;for(const e of cand)tot+=e.L;let n=Math.round(tot/3800);
+ for(let k=0;k<n*4&&HAZ.length<n;k++){const e=cand[Math.floor(HR()*cand.length)],w=(e.type==='dirt'||/Industrial|Villacero|LG|Prolec|KALOS|Milenium/.test(e.name))?1:.45;if(HR()>w)continue;
+  const t=HR(),off=(HR()<.5?-1:1)*(1+HR()*(e.w/2-2.2)),x=e.ax+e.ux*e.L*t-e.uz*off,z=e.az+e.uz*e.L*t+e.ux*off;if(HAZ.some(h=>Math.hypot(h.x-x,h.z-z)<400))continue;HAZ.push({x,z,y:H(x,z),glass:HR()<.4,on:true});}
+ const gN=new THREE.BoxGeometry(.05,.05,.42),gG=new THREE.TetrahedronGeometry(.16),mN=new THREE.MeshLambertMaterial({color:0x9aa3ad,emissive:0x333a44}),mG=new THREE.MeshLambertMaterial({color:0xbfe6ff,transparent:true,opacity:.75,emissive:0x2a4a66});
+ for(const h of HAZ){const g=new THREE.Group();for(let i=0;i<9;i++){const m=new THREE.Mesh(h.glass?gG:gN,h.glass?mG:mN);m.position.set((Math.random()-.5)*1.4,.08,(Math.random()-.5)*1.4);m.rotation.set(h.glass?Math.random()*3:0,Math.random()*6,h.glass?Math.random()*3:0);g.add(m);}g.position.set(h.x,h.y+RDY.av,h.z);scene.add(g);h.g=g;}}
+let hazBeep=0,hazNear=null;
+function hazTick(dt,sp){hazNear=null;const[fx,fz]=fwdOf(S.h);let best=1e9;for(const h of HAZ){if(!h.on)continue;const dx=h.x-S.x,dz=h.z-S.z,al=dx*fx+dz*fz,lat=Math.abs(dx*fz-dz*fx);
+   if(al>-3&&al<160&&lat<7&&al<best){best=al;hazNear=h;}if(Math.hypot(dx,dz)<1.6&&sp>1.5){h.on=false;h.g.visible=false;if(Math.random()<.75)flatTire();else toast('Pisaste '+(h.glass?'vidrio':'clavos')+', te salvaste');}}
+  if(hazNear&&best>0){hazBeep-=dt;if(hazBeep<=0){hazBeep=clamp(best/80,.15,1.2);noise(.07,1750,'square',.05);}if(!hazNear.warned){hazNear.warned=1;toast('⚠ '+(hazNear.glass?'Vidrio':'Clavos')+' en el camino a '+Math.round(best/10)*10+' m');buzz(60);}}}
 const btnTire=$('#btnTire');
 function flatTire(){if(S.flat)return;const side=Math.random()<.5?-1:1;S.flat={side,t:S.t};noise(.5,700,'lowpass',.7);buzz(150);S.camKick=Math.max(S.camKick||0,.8);
   toast('¡Se ponchó una llanta! El camión se jala: para y cámbiala (o Menú → Rescatar)',true);}
@@ -6432,7 +6443,7 @@ function tireLoadSq(W,w){const md=MD(),mT=Math.max(0,MASS-(md.rigid?7500:8000)),
 btnTire.addEventListener('click',()=>{if(Math.abs(S.v)>.3){toast('Detén el camión primero');return;}if(!S.flat){if(save.money<350){toast('Te faltan '+fmtMoney(350-save.money));return;}save.money-=350;persist();inflateAll();noise(.8,1200,'highpass',.12);toast('Llantas infladas y parchadas',true);return;}if(save.money<1800){toast('No te alcanza: Menú → Rescatar');return;}
   save.money-=1800;persist();btnTire.hidden=true;toast('Cambiando la llanta…',true);noise(.6,500,'lowpass',.3);setTimeout(()=>{fixTire();toast('Llanta cambiada. ¡A seguir!',true);},2500);});
 function tireTick(dt){pressureTick(dt);const low=!S.flat&&(S.minP??1)<.9&&atStation;btnTire.hidden=!((S.flat||low)&&Math.abs(S.v)<.3);if(!btnTire.hidden){const tx=S.flat?'Cambiar llanta · $1,800':'Inflar y parchar · $350';if(btnTire.textContent!==tx)btnTire.textContent=tx;}
-  if(!S.flat){const sp=Math.abs(S.v);if(S.offroad&&sp>6&&Math.random()<dt*.004)flatTire();else if(sp>10&&Math.random()<dt*(S.tireBad?.0006:.00004))flatTire();return;}
+  if(!S.flat){const sp=Math.abs(S.v);hazTick(dt,sp);return;}
   const W=WHEELS[S.model].front[S.flat.side<0?0:1];if(W&&!W.sq)W.piv.scale.y=.84;
   // golpeteo de la llanta ponchada
   const sp=Math.abs(S.v);if(sp>1){S.flatPh=(S.flatPh||0)+sp*dt/3.3;if(S.flatPh>1){S.flatPh-=1;noise(.08,140,'lowpass',.18+Math.min(.3,sp*.01));S.camKick=Math.max(S.camKick||0,.12);}}}
@@ -6514,10 +6525,10 @@ let BRD=null,BRT=-99;
 function gpsInfo(){if(!mission&&!BRECHA_JOB&&gps.br)gps={pts:[],names:[],len:0};
  if(!mission&&BRECHA_JOB){const bk=BRECHA_JOB.back,inZ=offMask(S.x,S.z)>0;
   // camino a la entrada del camino de tierra: ruta por calles con vueltas y voz
-  if(!bk&&!inZ){if(!BRD){const ne=nearestEdge(TRACK[2][0],TRACK[2][1]);BRD={e:ne.e,t:ne.t,E:{x:ne.px,z:ne.pz},zone:{x:TRACK[2][0],z:TRACK[2][1]},name:'Brecha del Ejido'};}
+  if(!bk){if(inZ){if(!BRD||BRD.name!=='Pedrera El Norte'){const ne=nearestEdge(PEDRERA.road.x,PEDRERA.road.z);BRD={e:ne.e,t:ne.t,E:{x:ne.px,z:ne.pz},zone:{x:PEDRERA.x,z:PEDRERA.z},name:'Pedrera El Norte'};gps.br=false;}}else if(!BRD||BRD.name==='Pedrera El Norte'){const ne=nearestEdge(TRACK[2][0],TRACK[2][1]);BRD={e:ne.e,t:ne.t,E:{x:ne.px,z:ne.pz},zone:{x:TRACK[2][0],z:TRACK[2][1]},name:'Brecha del Ejido'};}
    if(S.t-BRT>2.5||!gps.br){gps=planRoute(S.x,S.z,S.h,BRD,'dist');gps.br=true;BRT=S.t;}
    const nv=navTxt(gps.pts,gps.names),left=Math.hypot(S.x-BRD.zone.x,S.z-BRD.zone.z);
-   return{txt:left<70?'Entra a la Brecha del Ejido':(nv.txt||`Sigue ${nv.acc} m por ${gps.names[0]||'el camino'}`),sub:(gps.len/1000).toFixed(1)+' km a la Brecha del Ejido',ang:nv.ang};}
+   return{txt:left<70?(inZ?'Llegaste: entra al patio de la Pedrera':'Entra a la Brecha del Ejido'):(nv.txt||`Sigue ${nv.acc} m por ${gps.names[0]||'el camino'}`),sub:(gps.len/1000).toFixed(1)+(inZ?' km a la Pedrera':' km a la Brecha del Ejido'),ang:nv.ang};}
   if(gps.br)gps={pts:[],names:[],len:0};
   const t=bk?TRACK[0]:inZ?[PEDRERA.x,PEDRERA.z]:TRACK[0],d=Math.hypot(t[0]-S.x,t[1]-S.z);return{txt:bk?'Lleva las muestras a la salida del camino de tierra':inZ?'Sigue la Brecha del Ejido hasta la Pedrera El Norte':'Ve a la Brecha del Ejido, al poniente por el Blvd. Carlos Salinas',sub:(d/1000).toFixed(1)+' km en línea recta',ang:(Math.atan2(t[0]-S.x,-(t[1]-S.z))+S.h)*180/Math.PI};}
   const p=gps.pts;if(!mission||p.length<2)return{txt:'Elige una carga',sub:'—',ang:0};
