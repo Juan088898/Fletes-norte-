@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v149">
+<meta name="fn-version" content="v150">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -521,7 +521,7 @@ body.cine .quick{display:none}
   <div class="chip" id="park" hidden>Estacionando…</div>
   <button class="btn" id="fuelBtn" hidden>Cargar diésel</button>
   <button class="btn" id="btnSkip" hidden>Saltar ▶▶</button>
-  <button class="btn" id="btnTire" hidden>Cambiar llanta · P$6,500</button>
+  <button class="btn" id="btnTire" hidden>Llanta 3V · P$3,800</button>
   <button class="btn" id="btnRest" hidden>Dormir 8 h</button>
   <div id="sleepFx"></div>
   <div class="quick" id="quick" role="toolbar" aria-label="Accesos rápidos">
@@ -6517,14 +6517,15 @@ $('#btnCancel').addEventListener('click',()=>{menu.hidden=true;if(!mission){toas
   const cn=DEPOTS[mission.to].name;repAdd(cn,-.5);if(S.hitched)unhitch();clearCargo();mission=null;updMass();zoneG.visible=beacon.visible=SEM.visible=false;gps={pts:[],names:[],len:0};els.park.hidden=true;S.doorT=0;save.money-=500;save.job=null;persist();
   $('#mCargo').textContent='Sin carga';$('#mRoute').textContent='Elige un viaje';toast('Flete cancelado: multa de P$500 y baja tu reputación con '+short(cn));});
 function finishMission(){const m=mission,d=DEPOTS[m.to],el=S.t-(m.t0??S.t),late=el-m.lim,bonus=late<=0?Math.round(m.pay*(m.cond>=95?.2:.15)/50)*50:-Math.round(m.pay*Math.min(.4,late/5*.01)/50)*50;
-  const urgLate=m.urgent&&late>0?-Math.round(m.pay*.45/50)*50:0;const base=m.pay+bonus+urgLate,pen=Math.round(base*(100-m.cond)/100),tot=base-pen;let tip=0;try{if(window.__celTip)tip=window.__celTip(m,d,late)||0;}catch(e){}save.money+=tot+tip;save.job=null;try{if(window.__bankDeposit)window.__bankDeposit(tot,tip,m,d);}catch(e){}
+  const urgLate=m.urgent&&late>0?-Math.round(m.pay*.45/50)*50:0;const base=m.pay+bonus+urgLate,pen=Math.round(base*(100-m.cond)/100),tot=base-pen;let tip=0;try{if(window.__celTip)tip=window.__celTip(m,d,late)||0;}catch(e){}let bono=0;if((save.bonoN||0)<10){save.bonoN=(save.bonoN||0)+1;bono=1500;}   // v150: bono de bienvenida de JaleYa en los primeros 10 fletes
+  save.money+=tot+tip+bono;save.job=null;try{if(window.__bankDeposit)window.__bankDeposit(tot,tip,m,d,bono,save.bonoN);}catch(e){}if(bono)setTimeout(()=>toast(`Bono de bienvenida JaleYa: +P$1,500 (${save.bonoN}/10)`,true),2200);
   {const lv0=LVL(),gx=Math.round(m.len/10+m.t*20+(m.cond>=95?250:0)+(late<=0?200:0)+(m.urgent&&late<=0?300:0));save.xp=(save.xp||0)+gx;const lv1=LVL();setTimeout(()=>toast(lv1>lv0?`¡Subiste a nivel ${lv1}! Ganas 5% más por flete`+(lv1===2?' y ya salen cargas frágiles y urgentes':lv1===3?' y ya salen pipas y cargas pesadas':''):`+${gx} de experiencia · Nivel ${lv1}`,true),1200);}
   {const r0=repN(d.name),ok=late<=0,dR=ok&&m.cond>=95?.5:ok&&m.cond>=80?.25:!ok&&m.cond<80?-.5:-.25;repAdd(d.name,dR);const r1=repN(d.name);
    $('#dRep').textContent=repStars(d.name)+(r1>r0?' · subió':r1<r0?' · bajó':dR>0?' · va subiendo':' · va bajando');$('#dRepRow').firstChild.textContent='Reputación con '+short(d.name)+' ';}
   persist();here=m.to;
   $('#dTitle').textContent=`${m.cargo} entregado en ${d.name}`;$('#dDist').textContent=(m.len/1000).toFixed(1)+' km';$('#dTime').textContent=fmtTime(el)+' de '+fmtTime(m.lim);
   $('#dBase').textContent=fmtMoney(m.pay);$('#dTimeRow').firstChild.textContent=bonus>=0?'Bono por llegar a tiempo ':'Descuento por llegar tarde ';$('#dBonus').textContent=(bonus+urgLate>=0?'+':'')+fmtMoney(bonus+urgLate);
-  $('#dPen').textContent=pen?'−'+fmtMoney(pen):'P$0';$('#dTot').textContent=fmtMoney(tot+tip);$('#dTipRow').style.display=tip?'':'none';$('#dTip').textContent='+'+fmtMoney(tip);$('#dMoney').textContent=fmtMoney(save.money);
+  $('#dPen').textContent=pen?'−'+fmtMoney(pen):'P$0';$('#dTot').textContent=fmtMoney(tot+tip+bono);$('#dTipRow').style.display=tip?'':'none';$('#dTip').textContent='+'+fmtMoney(tip);$('#dMoney').textContent=fmtMoney(save.money);
   $('#done').hidden=false;mission=null;zoneG.visible=beacon.visible=SEM.visible=false;gps={pts:[],names:[],len:0};noise(.6,900,'highpass',.15);$('#mCargo').textContent='Sin carga';$('#mRoute').textContent='Elige un viaje';}
 $('#btnNext').addEventListener('click',()=>{$('#done').hidden=true;openJobs();});
 let shopFromJobs=false;
@@ -6539,7 +6540,7 @@ function openShop(){menu.hidden=true;$('#shopMoney').textContent=fmtMoney(save.m
   const body=$('#shopBody');body.innerHTML='';const grid=document.createElement('div');grid.className='opts';body.appendChild(grid);
   if(shopTab==='trucks'){{if(!save.mt)save.mt={};const mt=save.mt[S.model]||(save.mt[S.model]={odo:0,oil:0,tire:0});
     grid.appendChild(opt(mt.oil>OIL_KM?'URGENTE':'ACEITE','Cambio de aceite',[`${Math.round(mt.oil)} de ${OIL_KM} km desde el último`,mt.oil>OIL_KM?'El motor pierde fuerza y se calienta':'Mantén el motor sano'],fmtMoney(6800)+(save.money<6800?' · no te alcanza':''),save.money<6800||mt.oil<5,()=>{save.money-=6800;mt.oil=0;S.oilW=0;persist();toast('Aceite cambiado',true);openShop();}));
-    grid.appendChild(opt(mt.tire>TIRE_KM?'URGENTE':'LLANTAS','Llantas nuevas',[`${Math.round(mt.tire)} de ${TIRE_KM} km de uso`,mt.tire>TIRE_KM?'Se ponchan seguido y agarran menos':'Buen agarre'],fmtMoney(58000)+(save.money<58000?' · no te alcanza':''),save.money<58000||mt.tire<5,()=>{save.money-=58000;mt.tire=0;S.tireW=0;persist();toast('Llantas nuevas puestas',true);openShop();}));}
+    grid.appendChild(opt(mt.tire>TIRE_KM?'URGENTE':'LLANTAS 3V','Llantas 3V · Vueno, Vonito, Varato',[`Juego de 10 llantas renovadas · ${Math.round(mt.tire)} de ${TIRE_KM} km de uso`,mt.tire>TIRE_KM?'Se ponchan seguido y agarran menos':'Buen agarre'],fmtMoney(35000)+(save.money<35000?' · no te alcanza':''),save.money<35000||mt.tire<5,()=>{save.money-=35000;mt.tire=0;S.tireW=0;persist();toast('Llantas 3V puestas: vuenas, vonitas y varatas',true);openShop();}));}
     {const mt=MT(),w=mt.susp||0,cost=Math.round((9000+w*30000)/50)*50;grid.appendChild(opt(w>=.7?'URGENTE':'SUSPENSIÓN','Amortiguadores y muelles',[`${Math.round(w*100)}% de desgaste por golpes`,w>=.35?'El camión rebota y se mece más de lo normal':'Absorbe bien los golpes'],fmtMoney(cost)+(save.money<cost?' · no te alcanza':''),save.money<cost||w<.03,()=>{save.money-=cost;mt.susp=0;persist();toast('Suspensión como nueva',true);openShop();}));}
     for(const[k,tag,name,l0,l1,base,per]of[['clu','CLUTCH','Clutch (disco y plato)','Acopla completo','Patina: el motor sube de vueltas pero no jala igual',18000,24000],['brk','FRENOS','Balatas y tambores','Frenan parejo','Cristalizados: frena hasta 40% menos',12000,16000],['tur','TURBO','Turbocompresor','Sopla completo','Dañado: el motor pierde fuerza',28000,30000]]){const mt=MT(),w=mt[k]||0;if(w<.03)continue;const cost=Math.round((base+w*per)/50)*50;
       grid.appendChild(opt(w>=.7?'URGENTE':tag,name,[`${Math.round(w*100)}% de desgaste`,w>=.35?l1:l0],fmtMoney(cost)+(save.money<cost?' · no te alcanza':''),save.money<cost,()=>{save.money-=cost;mt[k]=0;persist();toast(name+' como nuevo',true);openShop();}));}
@@ -6608,9 +6609,9 @@ function tireLoadSq(W,w){const md=MD(),mT=Math.max(0,MASS-(md.rigid?7500:8000)),
   if(!W){per=(MASS-tr)/6/2;}else if(W.front.includes(w))per=Nf/2;else{const nr=W.rear.filter(q=>q.piv.visible).length||2;per=Nd/nr/2;}
   return clamp(per*f/TIRE_REF*TIRE_DEF,.006,.12);}
 
-btnTire.addEventListener('click',()=>{if(Math.abs(S.v)>.3){toast('Detén el camión primero');return;}if(!S.flat){if(save.money<450){toast('Te faltan '+fmtMoney(450-save.money));return;}save.money-=450;persist();inflateAll();noise(.8,1200,'highpass',.12);toast('Llantas infladas y parchadas',true);return;}if(save.money<6500){toast('No te alcanza: Menú → Rescatar');return;}
-  save.money-=6500;persist();btnTire.hidden=true;toast('Cambiando la llanta…',true);noise(.6,500,'lowpass',.3);setTimeout(()=>{fixTire();toast('Llanta cambiada. ¡A seguir!',true);},2500);});
-function tireTick(dt){pressureTick(dt);const low=!S.flat&&(S.minP??1)<.9&&atStation;btnTire.hidden=!((S.flat||low)&&Math.abs(S.v)<.3);if(!btnTire.hidden){const tx=S.flat?'Cambiar llanta · P$6,500':'Inflar y parchar · P$450';if(btnTire.textContent!==tx)btnTire.textContent=tx;}
+btnTire.addEventListener('click',()=>{if(Math.abs(S.v)>.3){toast('Detén el camión primero');return;}if(!S.flat){if(save.money<450){toast('Te faltan '+fmtMoney(450-save.money));return;}save.money-=450;persist();inflateAll();noise(.8,1200,'highpass',.12);toast('Llantas infladas y parchadas',true);return;}if(save.money<3800){toast('No te alcanza: Menú → Rescatar');return;}
+  save.money-=3800;persist();btnTire.hidden=true;toast('Cambiando la llanta…',true);noise(.6,500,'lowpass',.3);setTimeout(()=>{fixTire();toast('Llanta 3V puesta. ¡A seguir!',true);},2500);});
+function tireTick(dt){pressureTick(dt);const low=!S.flat&&(S.minP??1)<.9&&atStation;btnTire.hidden=!((S.flat||low)&&Math.abs(S.v)<.3);if(!btnTire.hidden){const tx=S.flat?'Llanta 3V · P$3,800':'Inflar y parchar · P$450';if(btnTire.textContent!==tx)btnTire.textContent=tx;}
   if(!S.flat){const sp=Math.abs(S.v);hazTick(dt,sp);return;}
   const W=WHEELS[S.model].front[S.flat.side<0?0:1];if(W&&!W.sq)W.piv.scale.y=.84;
   // golpeteo de la llanta ponchada
@@ -7309,8 +7310,8 @@ function applySkin(){if(!SKIN)return;const on=UP(S.model).skin==='deli';if(on)sk
  function bankTx(a,c){const b=BK();a=Math.round(a);if(!a)return;b.tx.unshift({a,c,h:hhmm()});if(b.tx.length>60)b.tx.length=60;b.last+=a;}
  window.__bankTx=bankTx;
  // depósito de un flete: lo llama finishMission después de pagar
- window.__bankDeposit=(tot,tip,m,d)=>{bankTx(tot,'Flete · '+m.cargo+' para '+d.name);if(tip)bankTx(tip,'Propina · '+d.name);persist();
-  notify('banco','brebreuvaA','Depósito de '+fmtMoney(tot+tip)+' por el flete de '+m.cargo.toLowerCase(),()=>openCel('banco'));if(open&&app==='banco')render();};
+ window.__bankDeposit=(tot,tip,m,d,bono,bn)=>{bankTx(tot,'Flete · '+m.cargo+' para '+d.name);if(tip)bankTx(tip,'Propina · '+d.name);if(bono)bankTx(bono,'Bono de bienvenida JaleYa ('+bn+'/10)');persist();
+  notify('banco','brebreuvaA','Depósito de '+fmtMoney(tot+tip+(bono||0))+' por el flete de '+m.cargo.toLowerCase(),()=>openCel('banco'));if(open&&app==='banco')render();};
  // el resto de los movimientos se detecta solo y toma el concepto del último aviso del juego (multa, báscula, grúa, taller…)
  let lastMsg={m:'',t:0};const _toast=toast;toast=function(m,g){lastMsg={m:String(m),t:performance.now()};return _toast(m,g);};
  function concept(d){const m=performance.now()-lastMsg.t<4000?lastMsg.m:'';if(/patrulla|Multa|multa/.test(m))return 'Multa · '+(m.match(/(patrulla|rojo|báscula|direccional|sobrepeso|cancelado)/i)||['tránsito'])[0];
