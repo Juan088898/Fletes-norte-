@@ -62,6 +62,12 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - Leche (pipa): Ejido → Parque Industrial Este (planta láctea). Pacas de alfalfa (plataforma), Alimento para ganado y Fertilizante (caja): de la ciudad al Ejido.
 - Pendiente: letrero/edificio de planta láctea y casa del rancho (etapa 5).
 
+### Hecho en v148 · Economía en peluchorales (P$), 1 P$ = 1 peso
+- Fuentes (nov 2026): diésel NL ~P$26–27/L; tráiler 53' P$36–48/km y viaje local desde ~P$6,800; operador de tráiler ~P$5,000–10,000 semanales; llanta 11R22.5 ~P$4,100–7,600; multas Monterrey 5–15 UMA (UMA P$117.31); Galaxy S26 Ultra ~P$24–30k, iPhone 17 Pro Max P$30,999.
+- Pago = P$6,800 + P$42 por km real (1 km del mapa ≈ 4 km reales) + P$90/t arriba de 10 t. +20% ganado y leche, +35% frágil, +25% brecha (terracería), +50% urgente; bono a tiempo 15% (20% si llega ≥95%).
+- Taller, mejoras, multas, llantas, grúa, celulares y choferes ajustados a precios reales. Reposición única de P$80,000 por el flete perdido en v147.
+- Etapa 4 pendiente: obras en la ciudad, Pedrera como patio, llanta de refacción con animación y auxilio por celular.
+
 ## Pendientes de la fase 1 (v139–v140)
 - Esquinas redondeadas en las banquetas (por ahora solo se cortan antes del cruce).
 - Confirmar en el Redmi que las llantas ya no se ven hundidas en la terracería y que el GPS funciona en la brecha.
