@@ -48,3 +48,6 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - YiYi: app de viajes inventada (no usar nombre ni logo de DiDi). Logos: `jaleya-logo.svg` (naranja, tráiler de lado en círculo crema) y `yiyi-logo.svg` (morado, pin crema con dos "y" que se juntan como camino).
 - Auto: sedán compacto blanco genérico tipo "carro de app" (base: Kenney Car Kit `sedan`), sin logos ni nombre de marca real.
 - Viajes cortos en la ciudad que llegan por el celular, pasajeros con prisa, calificación de estrellas.
+
+## Apps del celular (iconos en `apps-celular.svg`)
+- JaleYa (fletes, naranja) · Camión (avisos, verde, medidor) · Mensajes (clientes, azul, globo de chat) · Radio (música, rojo) · Ajustes (gris azulado, engrane). YiYi solo en el modo chofer.

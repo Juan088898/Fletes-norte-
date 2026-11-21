@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 420" width="1600" height="420">
+  <!-- Iconos de las apps del celular (mismo estilo que JaleYa y YiYi) -->
+  <style>text{font-family:Fredoka,"Arial Rounded MT Bold",sans-serif;font-weight:700;fill:#fff4d6;text-anchor:middle}</style>
+  <!-- Camión: avisos del camión (verde) -->
+  <g transform="translate(40,20)">
+    <rect width="360" height="360" rx="90" fill="#3fbf7a"/>
+    <circle cx="180" cy="160" r="104" fill="#fff4d6"/>
+    <circle cx="180" cy="160" r="74" fill="none" stroke="#26324d" stroke-width="16"/>
+    <path d="M128 200a74 74 0 0 1 104-104" fill="none" stroke="#3fbf7a" stroke-width="16" stroke-linecap="round"/>
+    <path d="M180 160l42-38" stroke="#ff6b5b" stroke-width="14" stroke-linecap="round"/>
+    <circle cx="180" cy="160" r="14" fill="#26324d"/>
+    <text x="180" y="330" font-size="52">Camión</text>
+  </g>
+  <!-- Mensajes: chat con clientes (azul) -->
+  <g transform="translate(440,20)">
+    <rect width="360" height="360" rx="90" fill="#4a86e8"/>
+    <path d="M86 92h188c18 0 32 14 32 32v86c0 18-14 32-32 32H170l-52 42v-42H86c-18 0-32-14-32-32v-86c0-18 14-32 32-32z" fill="#fff4d6"/>
+    <g fill="#26324d"><circle cx="128" cy="168" r="14"/><circle cx="180" cy="168" r="14"/><circle cx="232" cy="168" r="14"/></g>
+    <text x="180" y="330" font-size="52">Mensajes</text>
+  </g>
+  <!-- Radio: música (rojo) -->
+  <g transform="translate(840,20)">
+    <rect width="360" height="360" rx="90" fill="#ee5a52"/>
+    <rect x="70" y="102" width="220" height="140" rx="26" fill="#fff4d6"/>
+    <path d="M108 102l118-46" stroke="#fff4d6" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="140" cy="172" r="42" fill="#26324d"/><circle cx="140" cy="172" r="14" fill="#fff4d6"/>
+    <rect x="204" y="134" width="64" height="12" rx="6" fill="#26324d"/>
+    <rect x="204" y="164" width="64" height="12" rx="6" fill="#26324d"/>
+    <rect x="204" y="194" width="64" height="12" rx="6" fill="#26324d"/>
+    <text x="180" y="330" font-size="52">Radio</text>
+  </g>
+  <!-- Ajustes (gris azulado) -->
+  <g transform="translate(1240,20)">
+    <rect width="320" height="360" rx="90" fill="#6c7fa8"/>
+    <g transform="translate(160,168)" fill="#fff4d6">
+      <circle r="66"/>
+      <g><rect x="-16" y="-96" width="32" height="40" rx="8"/><rect x="-16" y="56" width="32" height="40" rx="8"/><rect x="-96" y="-16" width="40" height="32" rx="8"/><rect x="56" y="-16" width="40" height="32" rx="8"/></g>
+      <g transform="rotate(45)"><rect x="-16" y="-96" width="32" height="40" rx="8"/><rect x="-16" y="56" width="32" height="40" rx="8"/><rect x="-96" y="-16" width="40" height="32" rx="8"/><rect x="56" y="-16" width="40" height="32" rx="8"/></g>
+      <circle r="26" fill="#6c7fa8"/>
+    </g>
+    <text x="160" y="330" font-size="52">Ajustes</text>
+  </g>
+</svg>
