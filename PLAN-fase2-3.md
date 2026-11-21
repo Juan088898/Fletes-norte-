@@ -52,3 +52,7 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 ## Apps del celular (iconos en `apps-celular.svg`)
 - Logos individuales estilo YiYi: `jaleya-logo.svg`, `wasapen-logo.svg`, `tallerya-logo.svg` (TallerYa = estado del camión, turquesa), `rola-logo.svg` (Rola = música, rosa), `config-logo.svg` (Config = ajustes, verde, interruptores). `fierrotas-logo.svg` (Fierrotas = estado del camión, amarillo mostaza, frente de troca con llaves cruzadas) (reemplazan a `apps-celular.svg`).
 - JaleYa (fletes, naranja) · Camión (avisos, verde, medidor) · Wasapen (chat con clientes, azul; logo propio `wasapen-logo.svg` con globo azul marino y respuesta naranja con palomita; no imitar WhatsApp) · Radio (música, rojo) · Ajustes (gris azulado, engrane). YiYi solo en el modo chofer.
+
+## Elegir celular (boceto `celular-mockup.svg`)
+- Al empezar se elige **Chaifon** (Chaifon 17 Pro Máx, parodia de iPhone) o **Android**. En Android se elige marca: **Rojomi** Nota 14 Pro 5G+ Máx (parodia del Redmi de Juan, el de por defecto), **Samsón** Galaxio S26 Ultra, **Motorolo** Moto G Chido. Nombres inventados, sin logos reales.
+- En la pantalla de inicio van reloj, clima de Apodaca, notificaciones y las apps; YiYi aparece apagada en modo Camionero. En el juego los iconos son los logos reales de cada app.

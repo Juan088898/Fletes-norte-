@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 820" width="1240" height="820" font-family="Fredoka, Arial Rounded MT Bold, sans-serif">
+  <!-- Boceto del celular del juego: 1) elegir celular, 2) pantalla de inicio del "Rojomi Nota 14 Pro 5G+ Máx" -->
+  <rect width="1240" height="820" fill="#1b2438"/>
+  <text x="300" y="52" fill="#fff4d6" font-size="30" font-weight="700" text-anchor="middle">1 · Elige tu celular</text>
+  <text x="900" y="52" fill="#fff4d6" font-size="30" font-weight="700" text-anchor="middle">2 · Rojomi Nota 14 Pro 5G+ Máx</text>
+
+  <!-- ===== Selector ===== -->
+  <g transform="translate(40,80)">
+    <rect width="520" height="700" rx="30" fill="#26324d" stroke="#ffffff33" stroke-width="3"/>
+    <!-- Chaifon -->
+    <g transform="translate(30,30)">
+      <rect width="460" height="190" rx="22" fill="#34466e" stroke="#fff4d6" stroke-width="3"/>
+      <rect x="24" y="22" width="84" height="146" rx="20" fill="#e9ecf2"/><rect x="34" y="34" width="64" height="122" rx="12" fill="#1d2a47"/><rect x="52" y="38" width="28" height="8" rx="4" fill="#000"/>
+      <text x="134" y="78" fill="#fff4d6" font-size="40" font-weight="700">Chaifon</text>
+      <text x="134" y="118" fill="#c4cfe6" font-size="22">Chaifon 17 Pro Máx</text>
+      <text x="134" y="150" fill="#c4cfe6" font-size="20">Esquinas redondas, todo blanco</text>
+    </g>
+    <!-- Android -->
+    <g transform="translate(30,240)">
+      <rect width="460" height="430" rx="22" fill="#34466e" stroke="#5fd18b" stroke-width="5"/>
+      <text x="24" y="54" fill="#fff4d6" font-size="40" font-weight="700">Android</text>
+      <text x="24" y="88" fill="#c4cfe6" font-size="20">Elige la marca:</text>
+      <g transform="translate(24,110)">
+        <rect width="412" height="86" rx="18" fill="#ee5a52" stroke="#fff4d6" stroke-width="4"/>
+        <text x="20" y="40" fill="#fff4d6" font-size="30" font-weight="700">Rojomi</text><text x="20" y="70" fill="#ffe1dd" font-size="18">Nota 14 Pro 5G+ Máx  ✓</text>
+      </g>
+      <g transform="translate(24,208)">
+        <rect width="412" height="86" rx="18" fill="#4a86e8"/>
+        <text x="20" y="40" fill="#fff4d6" font-size="30" font-weight="700">Samsón</text><text x="20" y="70" fill="#dbe7ff" font-size="18">Galaxio S26 Ultra</text>
+      </g>
+      <g transform="translate(24,306)">
+        <rect width="412" height="86" rx="18" fill="#3a3f4b"/>
+        <text x="20" y="40" fill="#fff4d6" font-size="30" font-weight="700">Motorolo</text><text x="20" y="70" fill="#d6d9e0" font-size="18">Moto G Chido</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ===== Celular Rojomi ===== -->
+  <g transform="translate(730,80)">
+    <rect width="340" height="700" rx="46" fill="#2a2f3a"/>
+    <rect x="12" y="12" width="316" height="676" rx="38" fill="#5aa0e8"/>
+    <rect x="12" y="12" width="316" height="676" rx="38" fill="url(#fondo)"/>
+    <circle cx="170" cy="36" r="9" fill="#111"/>
+    <text x="40" y="44" fill="#fff" font-size="18" font-weight="600">09:01</text>
+    <text x="300" y="44" fill="#fff" font-size="16" text-anchor="end">5G ▮▮▮ 87%</text>
+    <!-- reloj grande -->
+    <text x="170" y="150" fill="#fff" font-size="72" font-weight="700" text-anchor="middle">09:01</text>
+    <text x="170" y="184" fill="#ffffffcc" font-size="20" text-anchor="middle">sáb 21 nov · Apodaca 24°</text>
+    <!-- notificación -->
+    <g transform="translate(30,212)">
+      <rect width="280" height="72" rx="18" fill="#ffffffee"/>
+      <rect x="12" y="14" width="44" height="44" rx="12" fill="#2f6fe0"/><circle cx="34" cy="36" r="12" fill="#fff4d6"/>
+      <text x="68" y="34" fill="#26324d" font-size="16" font-weight="700">Wasapen · Villacero</text>
+      <text x="68" y="56" fill="#26324d" font-size="15">¿Qué onda, ya vienes? Andén 3</text>
+    </g>
+    <!-- apps -->
+    <g font-size="15" font-weight="600" fill="#fff" text-anchor="middle">
+      <g transform="translate(40,330)"><rect width="64" height="64" rx="18" fill="#f08a1c"/><circle cx="32" cy="32" r="20" fill="#fff4d6"/><text x="32" y="88">JaleYa</text></g>
+      <g transform="translate(138,330)"><rect width="64" height="64" rx="18" fill="#2f6fe0"/><circle cx="32" cy="32" r="20" fill="#fff4d6"/><text x="32" y="88">Wasapen</text><circle cx="60" cy="4" r="11" fill="#ee5a52"/><text x="60" y="9" font-size="13">2</text></g>
+      <g transform="translate(236,330)"><rect width="64" height="64" rx="18" fill="#d99a06"/><circle cx="32" cy="32" r="20" fill="#fff4d6"/><text x="32" y="88">Fierrotas</text></g>
+      <g transform="translate(40,440)"><rect width="64" height="64" rx="18" fill="#e0458e"/><circle cx="32" cy="32" r="20" fill="#fff4d6"/><text x="32" y="88">Rola</text></g>
+      <g transform="translate(138,440)"><rect width="64" height="64" rx="18" fill="#2fa864"/><circle cx="32" cy="32" r="20" fill="#fff4d6"/><text x="32" y="88">Config</text></g>
+      <g transform="translate(236,440)" opacity=".45"><rect width="64" height="64" rx="18" fill="#6a46ea"/><circle cx="32" cy="32" r="20" fill="#fff4d6"/><text x="32" y="88">YiYi</text></g>
+    </g>
+    <!-- barra inferior -->
+    <rect x="30" y="590" width="280" height="64" rx="24" fill="#ffffff33"/>
+    <rect x="120" y="668" width="100" height="6" rx="3" fill="#fff"/>
+    <!-- botones laterales -->
+    <rect x="336" y="170" width="6" height="70" rx="3" fill="#2a2f3a"/><rect x="336" y="260" width="6" height="40" rx="3" fill="#2a2f3a"/>
+    <text x="170" y="760" fill="#c4cfe6" font-size="18" text-anchor="middle">Camara triple atrás · funda roja gastada opcional</text>
+  </g>
+  <defs><linearGradient id="fondo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9e3d"/><stop offset=".55" stop-color="#ee5a52"/><stop offset="1" stop-color="#6a46ea"/></linearGradient></defs>
+</svg>
