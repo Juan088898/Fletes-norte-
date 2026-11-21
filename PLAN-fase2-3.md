@@ -56,6 +56,12 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - Carga en el andén con cargador frontal (Kenney Car Kit tractor-shovel): 3 cucharones. Al entregar se abre la compuerta y se levanta la caja con pistón.
 - Pendiente: Pedrera El Norte como patio de origen (hoy no es patio con andenes; va con las obras de la etapa 4, que serán el destino de la piedra).
 
+### Hecho en v147 · Fase 3, etapa 3 (rancho)
+- Rancho = Ejido Santa Rosa. Nuevo patio Rastro Municipal sobre el Libramiento Sur (el mapa cambió: se cancela sin costo un flete guardado).
+- Ganado (16 t, jaula ganadera con 10 vacas de Quaternius): Ejido → Rastro. Suben/bajan por la compuerta-rampa, se mecen y recargan su peso en curvas; frenazos, baches y curvas fuertes bajan la condición y la paga. Paga de carga delicada.
+- Leche (pipa): Ejido → Parque Industrial Este (planta láctea). Pacas de alfalfa (plataforma), Alimento para ganado y Fertilizante (caja): de la ciudad al Ejido.
+- Pendiente: letrero/edificio de planta láctea y casa del rancho (etapa 5).
+
 ## Pendientes de la fase 1 (v139–v140)
 - Esquinas redondeadas en las banquetas (por ahora solo se cortan antes del cruce).
 - Confirmar en el Redmi que las llantas ya no se ven hundidas en la terracería y que el GPS funciona en la brecha.
