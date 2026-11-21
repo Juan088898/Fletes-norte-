@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v143">
+<meta name="fn-version" content="v144">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -6199,7 +6199,7 @@ function physics(dt){
    S.wasEng=eng;
    // clutch patinando con gas: se calienta
    const slipping=ratio!==0&&engage>.08&&engage<.9&&Math.abs(S.mis||0)>250&&S.ped.gas>.2;
-   S.cheat=clamp((S.cheat||0)+(slipping?dt*(.18+S.ped.gas*.35)*heavy:-dt*.06),0,2.4);
+   S.cheat=clamp((S.cheat||0)+(slipping?dt*(.18+S.ped.gas*.35)*heavy*.4:-dt*.22),0,2.4);   // v144: se calienta menos de la mitad de rápido y se enfría casi 4 veces más rápido
    if(S.cheat>1&&!S.cWarn){S.cWarn=1;toast('¡Huele a clutch quemado! Deja de patinarlo');buzz(120);}if(S.cheat<.5)S.cWarn=0;
    // pasado de revoluciones al reducir
    // motor ahogado: cascabeleo antes de apagarse
@@ -6614,7 +6614,8 @@ function drawMap(cv=mini,ctx=mctx,Wc,Hc,dpr0,bigOv){const dpr=dpr0||Math.min(win
 /* ================= UI ================= */
 const lastUI={};function setText(el,key,v){if(lastUI[key]!==v){el.textContent=v;lastUI[key]=v;}}
 const els={lim:$('#hudLim'),grade:$('#hudGrade'),cop:$('#cop'),spd:$('#hudSpd'),gear:$('#hudGear'),rpm:$('#hudRpm'),hint:$('#hint'),hs:$('#hintStep'),ht:$('#hintTxt'),gpsA:$('#gpsArrow'),gpsT:$('#gpsTxt'),cond:$('#mCond'),time:$('#mTime'),money:$('#mMoney'),park:$('#park'),warn:$('#warn'),wd:$('#wheelDeg'),clock:$('#hudClock'),wx:$('#hudWx'),fuel:$('#hudFuel')};
-let BRECHA_JOB=null;save.brecha=null;   // v143: se quitó el encargo sin remolque de la Pedrera (fase 3: todos los fletes llevan remolque)
+let BRECHA_JOB=null;save.brecha=null;
+if(!save.cluFix144){save.cluFix144=1;if(save.mt)for(const k in save.mt)if(save.mt[k])save.mt[k].clu=0;}   // v144: clutch nuevo una vez, con el desgaste ya corregido   // v143: se quitó el encargo sin remolque de la Pedrera (fase 3: todos los fletes llevan remolque)
 // indicaciones de vuelta a partir de una ruta (la usan los fletes y el encargo de brecha)
 function navTxt(p,N){const m10=x=>Math.round(x/10)*10;let acc=p.length>1?Math.hypot(p[1][0]-S.x,p[1][1]-S.z):0,txt=null,k=1;
   for(;k<p.length-1;k++){const inRing=(N[k]||'').startsWith('Glorieta'),prevRing=(N[k-1]||'').startsWith('Glorieta');
@@ -7044,7 +7045,7 @@ function applySkin(){if(!SKIN)return;const on=UP(S.model).skin==='deli';if(on)sk
   if(S.flat)a.push('Llanta ponchada');else if((S.minP??1)<.85)a.push('Llanta baja de presión');const w=suspW();if(w>=.7)a.push('Suspensión muy dañada');else if(w>=.35)a.push('Suspensión golpeada');if((mt.oil||0)>OIL_KM)a.push('Cambio de aceite vencido');if((mt.clu||0)>=.35)a.push('Clutch gastado, patina');if((mt.brk||0)>=.35)a.push('Frenos cristalizados');if((mt.tur||0)>=.35)a.push('Turbo dañado');return a;}
  // desgaste por mal manejo: clutch quemado al patinarlo, frenos cristalizados al sobrecalentarlos, turbo dañado al apagar en caliente
  let prevRun=false,turboHot=0;
- function wearTick(){const mt=MT(),b=S.running?(S.boost||0):0;if((S.cheat||0)>1)mt.clu=Math.min(1,(mt.clu||0)+.003*(S.cheat-.7));if((S.bt||0)>.8)mt.brk=Math.min(1,(mt.brk||0)+.0025*((S.bt-.8)/.2+.3));
+ function wearTick(){const mt=MT(),b=S.running?(S.boost||0):0;if((S.cheat||0)>1.4)mt.clu=Math.min(1,(mt.clu||0)+.003*(S.cheat-1.2));   // v144: solo se gasta si lo patinas mucho rato (antes bastaba con calentarlo un poco)if((S.bt||0)>.8)mt.brk=Math.min(1,(mt.brk||0)+.0025*((S.bt-.8)/.2+.3));
   if(prevRun&&!S.running&&turboHot>.45&&S.fuel>0){mt.tur=Math.min(1,(mt.tur||0)+.12*turboHot);persist();toast('Apagaste con el turbo caliente y se dañó un poco. Déjalo en ralentí unos 20 s antes de apagar');}
   turboHot+=(b-turboHot)*(b>turboHot?.05:.012);prevRun=S.running;}
  let alPrev=[];function alertVoice(){const a=alerts();for(const x of a)if(!alPrev.includes(x)){say('Atención. '+x);break;}alPrev=a;return a;}
