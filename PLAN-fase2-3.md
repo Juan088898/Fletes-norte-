@@ -45,6 +45,6 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 
 ## Fase 5 · Modo chofer de app (después de los remolques)
 - En el menú de inicio se elige: **Camionero** (modo actual, sin cambios) o **YiYi**.
-- YiYi: app de viajes inventada (no usar nombre ni logo de DiDi). Logo propio: `yiyi-logo.svg` (morado, pin crema con dos "y" que se juntan como camino).
+- YiYi: app de viajes inventada (no usar nombre ni logo de DiDi). Logos: `camionero-logo.svg` (naranja, frente de tráiler) y `yiyi-logo.svg` (morado, pin crema con dos "y" que se juntan como camino).
 - Auto: sedán compacto blanco genérico tipo "carro de app" (base: Kenney Car Kit `sedan`), sin logos ni nombre de marca real.
 - Viajes cortos en la ciudad que llegan por el celular, pasajeros con prisa, calificación de estrellas.
