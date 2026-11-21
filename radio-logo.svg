@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Radio · app del celular (estilo YiYi / JaleYa / Wasapen) -->
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff7d6e"/><stop offset="1" stop-color="#e0463c"/></linearGradient></defs>
+  <rect x="16" y="16" width="480" height="480" rx="120" fill="url(#bg)"/>
+  <circle cx="256" cy="232" r="150" fill="#fff4d6"/>
+  <!-- radio con antena y bocina -->
+  <path d="M190 160l120-52" stroke="#26324d" stroke-width="14" stroke-linecap="round"/><circle cx="312" cy="106" r="11" fill="#ffae3d"/>
+  <rect x="132" y="160" width="248" height="156" rx="30" fill="#26324d"/>
+  <circle cx="204" cy="238" r="46" fill="#fff4d6"/><circle cx="204" cy="238" r="18" fill="#26324d"/>
+  <rect x="270" y="196" width="80" height="34" rx="10" fill="#ffae3d"/>
+  <g fill="#fff4d6"><circle cx="284" cy="262" r="9"/><circle cx="310" cy="262" r="9"/><circle cx="336" cy="262" r="9"/></g>
+  <text x="256" y="472" text-anchor="middle" font-family="Fredoka, Arial Rounded MT Bold, sans-serif" font-weight="700" font-size="72" fill="#fff4d6" letter-spacing="3">Radio</text>
+</svg>
