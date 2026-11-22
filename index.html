@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v181">
+<meta name="fn-version" content="v182">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -635,7 +635,7 @@ body.cine .quick{display:none}
           <button class="st-opt" id="startSet">Ajustes <small>Manejo y sonido</small></button>
           <button class="st-opt" id="startTut">Tutorial <small>Aprende a manejarlo</small></button>
         </div>
-        <div class="st-foot"><span id="stVer">v181 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
+        <div class="st-foot"><span id="stVer">v182 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
       </div>
       <div class="st-garage" id="startGarage" hidden>
         <h3>TU CAMIÓN</h3><div class="n">Semi Lowpoly</div>
@@ -4801,7 +4801,14 @@ function swAt(x,z){const i=Math.floor(x/EGC),j=Math.floor(z/EGC);for(let a=-1;a<
     const at=q=>{let i=1;while(i<P.length-1&&L[i]<q)i++;const t=Math.max(0,Math.min(1,(q-L[i-1])/((L[i]-L[i-1])||1)));return{x:P[i-1].x+(P[i].x-P[i-1].x)*t,y:P[i-1].y+(P[i].y-P[i-1].y)*t,z:P[i-1].z+(P[i].z-P[i-1].z)*t};};
     const o=[at(d0)];for(let i=0;i<P.length;i++)if(L[i]>d0+3&&L[i]<T-d1-3)o.push(P[i]);o.push(at(T-d1));return o;};
   const dens=P=>{const o=[];for(let i=0;i<P.length;i++){const a=P[i];if(i>0){const b=P[i-1],l=Math.hypot(a.x-b.x,a.z-b.z),mh=H((a.x+b.x)/2,(a.z+b.z)/2);if(l>8&&(mh!==0||H(a.x,a.z)!==0||H(b.x,b.z)!==0)){const n=Math.floor(l/7);for(let k=1;k<=n;k++){const t=k/(n+1),x=b.x+(a.x-b.x)*t,z=b.z+(a.z-b.z)*t;o.push({x,y:H(x,z),z});}}}o.push({x:a.x,y:H(a.x,a.z),z:a.z});}return o;};
-  const smooth=P=>{let Q=P;for(let it=0;it<2&&Q.length>2;it++){const o=[Q[0]];for(let i=0;i<Q.length-1;i++){const a=Q[i],b=Q[i+1];if(i>0)o.push({x:a.x*.75+b.x*.25,y:a.y*.75+b.y*.25,z:a.z*.75+b.z*.25});if(i<Q.length-2)o.push({x:a.x*.25+b.x*.75,y:a.y*.25+b.y*.75,z:a.z*.25+b.z*.75});}o.push(Q[Q.length-1]);Q=o;}return Q;};
+  /* v181: curva en cada vértice que se separa de la línea real de la calle a lo más 0.6 m (antes el suavizado la metía hasta 6.6 m:
+     el asfalto que se veía no era donde el juego cree que está la calle → edificios y pretiles encima, GPS y tráfico fuera del asfalto) */
+  const smooth=P=>{if(P.length<3)return P;const DEV=.6,o=[P[0]];for(let i=1;i<P.length-1;i++){const a=P[i-1],b=P[i],c=P[i+1],l1=Math.hypot(b.x-a.x,b.z-a.z),l2=Math.hypot(c.x-b.x,c.z-b.z);
+    if(l1<.5||l2<.5){o.push(b);continue;}const u1x=(b.x-a.x)/l1,u1z=(b.z-a.z)/l1,u2x=(c.x-b.x)/l2,u2z=(c.z-b.z)/l2,th=Math.acos(Math.max(-1,Math.min(1,u1x*u2x+u1z*u2z)));
+    if(th<.02){o.push(b);continue;}const t=Math.min(2*DEV/Math.sin(th/2),.45*Math.min(l1,l2)),n=Math.max(2,Math.ceil(th/.12));
+    const p1={x:b.x-u1x*t,y:b.y+(a.y-b.y)*t/l1,z:b.z-u1z*t},p2={x:b.x+u2x*t,y:b.y+(c.y-b.y)*t/l2,z:b.z+u2z*t};
+    for(let k=0;k<=n;k++){const q=k/n,w0=(1-q)*(1-q),w1=2*q*(1-q),w2=q*q;o.push({x:w0*p1.x+w1*b.x+w2*p2.x,y:w0*p1.y+w1*b.y+w2*p2.y,z:w0*p1.z+w1*b.z+w2*p2.z});}}
+    o.push(P[P.length-1]);return o;};
   const endC=(ni,p,q,w)=>{const h=HUL.get(ni);if(!h)return;let dx=q.x-p.x,dz=q.z-p.z;const l=Math.hypot(dx,dz)||1;dx/=l;dz/=l;
    /* v181: en cruces en ángulo agudo la calle se corta hasta 70 m antes; la placa del cruce solo llega a ~0.9 del ancho mayor y de ahí a la punta va un tramo liso del ancho de la calle.
       Antes la placa unía las puntas lejanas y rellenaba de asfalto el triángulo de pasto entre las dos calles (ahí salían edificios "en la calle") */
