@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v156">
+<meta name="fn-version" content="v157">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -5767,7 +5767,7 @@ function updateRearCam(){const k=S.model,nt=NT(),par=nt?truck:trailer;par.add(re
 const REAL={},REALI={};
 // calibración de cada modelo (medida de sus llantas): escala, eje trasero, piso, hacia dónde ve el frente
 const REALCAL={
- cab:{el:'glbCab',mode:'fz',s:1,zR:-2.785,y0:.147,fZ:2.316,rearZ:[-.771,.471],rearX:.93,frontX:.746,glass:/^BSC_Windows$/,paintRx:/^Paint$/},
+ cab:{el:'glbCab',mode:'fz',s:1,zR:-2.785,y0:.147,fZ:2.316,rearZ:[-.771,.471],rearX:.93,frontX:.746,glass:/^BSC_Windows$/,paintRx:/^Paint$/,inter:{wheel:[.763,2.324,2.589],paint:/^Paint$/}},
  amer:{el:'glbSemi',mode:'fz',s:1,zR:-3.815,y0:.01,fZ:1.78,rearZ:[-.55,.55],rearX:.97,frontX:.94,hideName:/^(Trailer$|Wheel_|SteeringWheel$)/,gpsDy:.24,glass:/^Window$/,inter:{wheel:[.69,1.81,.35],paint:/^Material$/},wS:.62,cz:.26,cs:.54,axle:/^Axle_/,cab:1,seat:0x5e564b,trim:[0x3a3e45,0x50555d],dash:[0x4a4e55,0x24272b],mir:{x:1.29,y:2.32,z:-4.378,sx:1,sy:1.25,ry:.4,ux:.61},mir2:{pts:[[-1.414,2.153,.474],[-1.348,2.136,.515],[-1.319,2.06,.54],[-1.353,1.983,.527],[-1.421,1.964,.488],[-1.474,2.014,.452],[-1.471,2.101,.445]]}}};
 let CAB_KEEP=null;
 // con interior real: el volante y el tablero son los del modelo; dejamos el retrovisor, el GPS, el rosario y el parabrisas estrellado
