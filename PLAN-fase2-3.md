@@ -91,6 +91,13 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - 3 retenes: Guardia Nacional (Libramiento Sur, más estricta), Policía Estatal (Pesquería), Tránsito Estatal (Sierra). Oficiales por sentido, patrullas, carpa, conos, vibradores a ±40 m y letreros a 400 y 150 m.
 - Revisión: peso, carta porte (fletes nuevos "sin carta porte" pagan +25%), carga recorrida o ganado golpeado. Multa en UMA o mordida (~40%): la acepta / la rechaza (multa + 30 UMA cohecho + 20 s) / se la queda y multa igual. Pasarse el retén: 40 UMA. A veces piden "para el refresco".
 
+### Hecho en v161 · Fase 4, etapa 4 (cargas) y economía (decisiones de Juan)
+- Sin deslizamiento de carga en plataforma. Tirón de clutch: solo muy fuertes (>1600 rpm de diferencia) y mitad de daño. Frágiles: daño solo en frenadas en seco (>6 m/s²), mitad de daño; siguen pagando +35%.
+- Daños: el primer 10% no descuenta. Llegar tarde: solo pierdes el bono (sin descuento, también urgentes). Tiempo límite: ETA×2.2+120 s (urgente ETA×1.5+60 s).
+- Pago = P$14,000 + P$2,000 por km del mapa (P$500/km real) + P$300/t arriba de 10 t. Medido en las 210 rutas × 19 cargas: mín P$15,400, mediana P$25,450, máx P$44,800, promedio P$26,364 → Chato (P$520,000) en ~18 fletes a tiempo, ~20 sin bono.
+- Ir por la carga: ya no se paga por km; se reembolsa el diésel gastado (litros × P$26.50).
+- Pendiente: subir el pago de los choferes de la empresa (siguen con la fórmula vieja).
+
 ## Fase 4 · Confirmado por Juan (21 nov 2026), falta hacer
 1. **Clima y temporadas:** calor de verano, frío, lluvias.
 2. ✔ (v160) **Retenes y básculas en carretera.** En el retén, si te encuentran algo (sobrepeso, papeles, carga irregular, etc.), hay opción de **sobornar** (“mordida”), como en México; también pagar la multa normal (en UMA, P$117.31). Definir riesgo de que el soborno salga mal.

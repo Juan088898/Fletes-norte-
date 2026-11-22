@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v160">
+<meta name="fn-version" content="v161">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -673,7 +673,8 @@ body.cine .quick{display:none}
         <div>Tiempo <b id="dTime">0:00</b></div>
         <div>Pago por flete <b id="dBase">P$0</b></div>
         <div id="dTimeRow">A tiempo <b id="dBonus">P$0</b></div>
-        <div>Descuento por daños <b id="dPen">P$0</b></div>
+        <div id="dFuelRow" style="display:none">Diésel para ir por la carga <b id="dFuel">P$0</b></div>
+        <div>Descuento por daños (el primer 10% no cuenta) <b id="dPen">P$0</b></div>
         <div id="dTipRow" style="display:none">Propina del cliente <b id="dTip" style="color:var(--route)">P$0</b></div>
         <div id="dRepRow">Reputación <b id="dRep" style="color:var(--amber);letter-spacing:.08em">—</b></div>
         <div class="tot">Ganaste <b id="dTot">P$0</b></div>
@@ -6298,7 +6299,7 @@ function physics(dt){
     let nv=S.v+ad*h-9.8*S.gsin*h;const off=(SF().rr-.008)*MASS*9.8;
     const resist=scrubF*(Math.abs(nv)>.05?1:0)+((S.flat?.02:0)+(S.pRes||0))*MASS*9.8*(Math.abs(nv)>.05?1:0)+pB*BF+(NT()?3.2:(TRP[S.ttype]||TTYPE.caja).cd)*nv*nv+(Math.abs(nv)>.05?.008*MASS*9.8+off:0);
     const dv=resist/MASS*h;nv=Math.abs(nv)<=dv?0:nv-Math.sign(nv)*dv;S.v=nv;}
-  const rawA=(S.v-v0)/dt;if(mission&&mission.fragile&&mission.phase==='deliver'&&Math.abs(rawA)>4.2){damage(dt*5);if(!S.fragT||S.t-S.fragT>6){S.fragT=S.t;toast('¡Frenazo! La carga frágil se maltrata');}}S.jerk=clamp((rawA-(S.rawA??rawA))/dt,-60,60);S.rawA=rawA;
+  const rawA=(S.v-v0)/dt;if(mission&&mission.fragile&&mission.phase==='deliver'&&Math.abs(rawA)>6){damage(dt*2.5);if(!S.fragT||S.t-S.fragT>6){S.fragT=S.t;toast('¡Frenazo! La carga frágil se maltrata');}}S.jerk=clamp((rawA-(S.rawA??rawA))/dt,-60,60);S.rawA=rawA;
   S.kpF=NT()?0:-Math.max(0,MASS-8000)*(rawA+9.8*S.gsin+.008*9.8*Math.sign(S.v))-(S.tBrkF+scrubF)*Math.sign(S.v);S.scrubF=scrubF;S.kpF+=S.slF||0;
   // aire de los frenos: cada frenada gasta aire, el compresor lo recupera con el motor encendido
   {S.air=S.air??1;const bp=S.ped.brake;if(bp>.25&&!(S.bpOn))S.air-=.025+.02*bp;S.bpOn=bp>.25;S.air-=bp*.004*dt;if(S.running)S.air+=dt*(.012+.02*clamp(S.rpm/1800,0,1.2));S.air=clamp(S.air,0,1);
@@ -6312,7 +6313,7 @@ function physics(dt){
      if(Math.abs(S.sl)>.55&&S.t-(S.slT||0)>5){S.slT=S.t;toast('Se siente el oleaje de la pipa');noise(.4,220,'lowpass',.15);}}else{S.sl*=.9;S.slV=0;S.slF=0;}}S.accel+=(rawA-S.accel)*lerpK(4,dt);
   {const eng=ratio!==0&&engage>.45,load=mission?mission.t:0,heavy=.6+load/25;
    if(eng&&!S.wasEng&&Math.abs(S.mis||0)>300&&Math.abs(S.v)>.5){const k=clamp(Math.abs(S.mis)/1500,.15,1)*Math.sign(S.mis);S.pv+=k*.09;S.slackV-=k*.35*heavy;S.camKick=.6*Math.abs(k);clunk();buzz(Math.round(30+60*Math.abs(k)));
-     if(Math.abs(S.mis)>1100&&S.ped.clutch<.1){damage(.5+load*.05);toast('¡Tirón fuerte! Suelta el clutch más suave');}}
+     if(Math.abs(S.mis)>1600&&S.ped.clutch<.1){damage(.25+load*.025);toast('¡Tirón fuerte! Suelta el clutch más suave');}}
    // cambio de marcha como en un carro real: 1) al pisar clutch se corta la fuerza y el cuerpo se va hacia adelante; 2) al soltarlo engancha con un empujón suave
    if(!eng&&S.wasEng&&Math.abs(S.v)>1.2){const pw=clamp(S.accel/1.0,0,1);S.slackV+=.22*heavy;S.pv-=(.03+.05*pw)*heavy;S.nodV=(S.nodV||0)+(1.1+1.4*pw);}
    if(eng&&!S.wasEng&&Math.abs(S.v)>1.2){const bite=clamp(Math.abs(S.mis||0)/600,0,1);S.pv+=.035*heavy;S.slackV-=.12*heavy;S.nodV=(S.nodV||0)-(1.3+1.2*bite+.6*S.ped.gas);if(Math.abs(S.mis||0)<=300)clunk();}
@@ -6369,11 +6370,8 @@ function physics(dt){
     if(S.crashCD<=0&&sp>1.5){toast('¡Golpe! Cuidado con la carga');damage(Math.min(25,sp*2));truckHit(sp);S.crashT=.35;noise(.35,500,'lowpass',.5);S.crashCD=.8;}S.v=0;}
   {const ne=nearestEdge(S.x,S.z);S.curEdge=ne.e;S.offroad=(ne.d>9||ne.e.type==='dirt')&&!EXCL.some(o=>inObb(o,S.x,S.z))&&!FLATS.some(f=>Math.hypot(S.x-f.x,S.z-f.z)<f.r);surfTick(dt,ne);}
   const aLat=S.v*S.yaw,aT=NT()?aLat:S.v*Math.cos(art)*(S.tyaw||0),load=mission?mission.t:0;
-  // carga en plataforma: con curvas o frenazos fuertes se recorre, se ladea el remolque y se daña
-  if(mission&&mission.phase==='deliver'&&!NT()&&S.ttype==='plat'){const its=TRG.cargo.userData.items||[];S.lshift=S.lshift||0;
-    if(Math.abs(aT)>2.7&&its.length){const d=Math.sign(aT)*dt*.25;S.lshift=clamp(S.lshift+d,-.35,.35);its.forEach(it=>it.position.x=S.lshift);damage(dt*2);if(!S.lsW||S.t-S.lsW>8){S.lsW=S.t;toast('¡Se recorrió la carga en la plataforma!');noise(.3,300,'lowpass',.3);}}
-    if(rawA<-4&&its.length){its.forEach(it=>it.position.z-=dt*.15);damage(dt*2);}}
-  else S.lshift=0;
+  // v161: Juan pidió quitar el deslizamiento de la carga en plataforma (y su daño)
+  S.lshift=0;
   {const rt=clamp(-aLat*(.017+load*.0003),-.1,.1);S.rollV=(S.rollV||0)+((rt-S.roll)*16-(S.rollV||0)*3.2)*dt;S.roll+=S.rollV*dt;}{const tgt=clamp(S.accel*.007*(1+load/35),-.045,.045),K=40,C=6;S.pv=(S.pv||0)+((tgt-S.pitch)*K-S.pv*C)*dt;S.pitch=clamp(S.pitch+S.pv*dt,-.07,.07);
    const Ks=38,Cs=6.5;S.slack=(S.slack||0);S.slackV=(S.slackV||0)+((-S.slack)*Ks-S.slackV*Cs)*dt;S.slack=clamp(S.slack+S.slackV*dt,-.18,.18);
    S.tpitch=(S.tpitch||0)+((-S.slack*.05)-S.tpitch)*lerpK(6,dt);S.camKick=Math.max(0,(S.camKick||0)-dt*2.5);}
@@ -6445,7 +6443,7 @@ function unhitch(){const[hx,hz]=hinge();PARK.x=hx;PARK.z=hz;PARK.h=S.th;PARK.pla
 function updMass(){const md=MD();let m=md.rigid?7500:8000;if(!md.rigid&&S.hitched)m+={caja:6500,plat:5500,tanque:7000,volteo:7200,jaula:6800}[S.ttype]||6500;if(mission&&(md.rigid||S.hitched))m+=mission.t*1000*(mission.frac||0);MASS=m;}
 // peso bruto: límite legal según el camión
 const emptyT=tt=>MD().rigid?7.5:8+({caja:6.5,plat:5.5,tanque:7,volteo:7.2,jaula:6.8}[tt]||6.5),grossLim=()=>MD().rigid?7.5+MD().maxT+.5:41.5;
-const payFor=(len,t)=>Math.round((6800+(len/1000)*4*42+Math.max(0,t-10)*90)*(MD().payMul||1)/50)*50;   // v148: economía realista en peluchorales
+const payFor=(len,t)=>Math.round((14000+(len/1000)*2000+Math.max(0,t-10)*300)*(MD().payMul||1)/50)*50;   // v161: P$14,000 + P$2,000 por km del mapa (P$500 por km real) + P$300/t arriba de 10 t   // v148: economía realista en peluchorales
 const short=n=>{const w=n.split(' ');return(w[0]==='San'||w[0]==='Santa')?w.slice(0,2).join(' '):w[0];};
 const loadSide=()=>!mission||mission.phase==='hook'||mission.phase==='dock'||mission.phase==='loading';
 function curDep(){return DEPOTS[loadSide()?mission.from:mission.to];}
@@ -6470,7 +6468,7 @@ function makeJobs(){const md=MD(),lv=LVL(),cargos=CARGO.filter(c=>(md.rigid?(c[2
   return out.sort((a,b)=>a.len-b.len);}
 function openJobs(){if(window.__auJobsBack)window.__auJobsBack();$('#jFrom').textContent='BOLSA DE FLETES';$('#jTitle').textContent='Elige tu flete';jobs=makeJobs();
   const list=$('#jobList');list.innerHTML='';list.hidden=false;$('#routeList').hidden=true;$('#btnBack').hidden=true;const md=MD();
-  jobs.forEach((j,k)=>{const last=k===jobs.length-1,tg=k===0?['CORTA','']:last?['LARGA','l']:['MEDIA','m'];j.pay=payFor(j.len,j.t)+Math.round(j.toP/1000*4*21/50)*50+(last?500:0);if(j.over)j.pay=Math.round(j.pay*1.3/50)*50;if(j.papers)j.pay=Math.round(j.pay*1.25/50)*50;if(j.cargo==='Ganado'||j.cargo==='Leche')j.pay=Math.round(j.pay*1.2/50)*50;else if(j.fragile)j.pay=Math.round(j.pay*1.35/50)*50;if([j.from,j.to].some(i=>/Brecha/.test((DEPOTS[i].e&&DEPOTS[i].e.name)||'')))j.pay=Math.round(j.pay*1.25/50)*50;if(j.urgent)j.pay=Math.round(j.pay*1.5/50)*50;j.pay=Math.round(j.pay*(1+.05*(LVL()-1))/50)*50;j.pay=Math.round(j.pay*repMul(DEPOTS[j.to].name)/50)*50;
+  jobs.forEach((j,k)=>{const last=k===jobs.length-1,tg=k===0?['CORTA','']:last?['LARGA','l']:['MEDIA','m'];j.pay=payFor(j.len,j.t)+(last?500:0);if(j.over)j.pay=Math.round(j.pay*1.3/50)*50;if(j.papers)j.pay=Math.round(j.pay*1.25/50)*50;if(j.cargo==='Ganado'||j.cargo==='Leche')j.pay=Math.round(j.pay*1.2/50)*50;else if(j.fragile)j.pay=Math.round(j.pay*1.35/50)*50;if([j.from,j.to].some(i=>/Brecha/.test((DEPOTS[i].e&&DEPOTS[i].e.name)||'')))j.pay=Math.round(j.pay*1.25/50)*50;if(j.urgent)j.pay=Math.round(j.pay*1.5/50)*50;j.pay=Math.round(j.pay*(1+.05*(LVL()-1))/50)*50;j.pay=Math.round(j.pay*repMul(DEPOTS[j.to].name)/50)*50;
     if(j.urgent)tg[0]='URGENTE '+tg[0];else if(j.fragile)tg[0]='FRÁGIL · '+tg[0];const b=document.createElement('button');b.className='opt';b.innerHTML=`<em class="tag ${tg[1]}">${tg[0]}</em><b></b><span></span><span></span><span class="rep"></span><span class="pay"></span>`;
     b.querySelector('b').textContent=`${j.cargo} · ${j.t} t`;const sp=b.querySelectorAll('span');sp[0].textContent=`Recoge en ${DEPOTS[j.from].name} → entrega en ${DEPOTS[j.to].name}`;
     sp[1].textContent=`${md.rigid?'En tu torton':TTYPE[j.tt]} · ${(j.len/1000).toFixed(1)} km de viaje · ${(j.toP/1000).toFixed(1)} km para llegar`+(j.over?' · ⚠ SOBREPESO: paga más, pero si te pesan en báscula hay multa':'')+(j.papers?' · ⚠ SIN CARTA PORTE: paga más, pero en un retén te pueden multar':'')+(j.fragile?' · FRÁGIL: se daña con baches y frenazos':'')+(j.urgent?' · URGENTE: paga doble, tiempo justo':'');
@@ -6482,7 +6480,7 @@ function chooseRoute(j){const P=DEPOTS[j.from],D=DEPOTS[j.to],h=Math.atan2(-P.e.
   const tollSet=new Set(TOLLS.map(t=>t.orig)),d4=planRoute(P.E.x,P.E.z,h,D,'dist',tollSet);
   const opts=[['Más corta','dist',null,a],['Por carretera','rapida',null,b],['Alterna','dist',a.used,c],['Libre','dist',tollSet,d4]],seen=new Set();
   const list=$('#routeList');list.innerHTML='';$('#jobList').hidden=true;list.hidden=false;$('#btnBack').hidden=false;
-  for(const[label,mode,pen,r]of opts){if(seen.has(r.sig))continue;seen.add(r.sig);const lim=j.urgent?Math.round(r.eta*1.25+25):Math.round(r.eta*1.7+45);
+  for(const[label,mode,pen,r]of opts){if(seen.has(r.sig))continue;seen.add(r.sig);const lim=j.urgent?Math.round(r.eta*1.5+60):Math.round(r.eta*2.2+120);
     const via=[...new Set(r.names.filter(n=>!n.startsWith('patio')&&!n.startsWith('Glorieta')))].slice(0,3).join(' → ');
     const bt=document.createElement('button');bt.className='opt';bt.innerHTML='<em class="tag"></em><b></b><span></span><span></span><span class="pay"></span>';
     bt.querySelector('.tag').textContent=label.toUpperCase();bt.querySelector('b').textContent=`${(r.len/1000).toFixed(1)} km · ${Math.max(1,Math.round(r.eta/60))} min`;
@@ -6634,15 +6632,15 @@ $('#btnSkip').addEventListener('click',()=>{for(let k=0;k<4000&&LOAD.active;k++)
 $('#btnCancel').addEventListener('click',()=>{menu.hidden=true;if(!mission){toast('No llevas ningún flete');return;}if(LOAD.active){LOAD.active=false;forklift.visible=false;hose.visible=false;setDockOpen(false);$('#btnSkip').hidden=true;document.body.classList.remove('cine');if(S.view===9)setView(S.prevView||0);}
   const cn=DEPOTS[mission.to].name;repAdd(cn,-.5);if(S.hitched)unhitch();clearCargo();mission=null;updMass();zoneG.visible=beacon.visible=SEM.visible=false;gps={pts:[],names:[],len:0};els.park.hidden=true;S.doorT=0;save.money-=500;save.job=null;persist();
   $('#mCargo').textContent='Sin carga';$('#mRoute').textContent='Elige un viaje';toast('Flete cancelado: multa de P$500 y baja tu reputación con '+short(cn));});
-function finishMission(){const m=mission,d=DEPOTS[m.to],el=S.t-(m.t0??S.t),late=el-m.lim,bonus=late<=0?Math.round(m.pay*(m.cond>=95?.2:.15)/50)*50:-Math.round(m.pay*Math.min(.4,late/5*.01)/50)*50;
-  const urgLate=m.urgent&&late>0?-Math.round(m.pay*.45/50)*50:0;const base=m.pay+bonus+urgLate,pen=Math.round(base*(100-m.cond)/100),tot=base-pen;let tip=0;try{if(window.__celTip)tip=window.__celTip(m,d,late)||0;}catch(e){}let bono=0;if((save.bonoN||0)<10){save.bonoN=(save.bonoN||0)+1;bono=1500;}   // v150: bono de bienvenida de JaleYa en los primeros 10 fletes
+function finishMission(){const m=mission,d=DEPOTS[m.to],el=S.t-(m.t0??S.t),late=el-m.lim,bonus=late<=0?Math.round(m.pay*(m.cond>=95?.2:.15)/50)*50:0;
+  const urgLate=0,fuelBack=Math.round((m.emptyL||0)*FUEL_PRICE/50)*50;const base=m.pay+bonus+urgLate,pen=Math.round(base*Math.max(0,90-m.cond)/100),tot=base-pen+fuelBack;let tip=0;try{if(window.__celTip)tip=window.__celTip(m,d,late)||0;}catch(e){}let bono=0;if((save.bonoN||0)<10){save.bonoN=(save.bonoN||0)+1;bono=1500;}   // v150: bono de bienvenida de JaleYa en los primeros 10 fletes
   save.money+=tot+tip+bono;save.job=null;try{if(window.__bankDeposit)window.__bankDeposit(tot,tip,m,d,bono,save.bonoN);}catch(e){}if(bono)setTimeout(()=>toast(`Bono de bienvenida JaleYa: +P$1,500 (${save.bonoN}/10)`,true),2200);
   {const lv0=LVL(),gx=Math.round(m.len/10+m.t*20+(m.cond>=95?250:0)+(late<=0?200:0)+(m.urgent&&late<=0?300:0));save.xp=(save.xp||0)+gx;const lv1=LVL();setTimeout(()=>toast(lv1>lv0?`¡Subiste a nivel ${lv1}! Ganas 5% más por flete`+(lv1===2?' y ya salen cargas frágiles y urgentes':lv1===3?' y ya salen pipas y cargas pesadas':''):`+${gx} de experiencia · Nivel ${lv1}`,true),1200);}
   {const r0=repN(d.name),ok=late<=0,dR=ok&&m.cond>=95?.5:ok&&m.cond>=80?.25:!ok&&m.cond<80?-.5:-.25;repAdd(d.name,dR);const r1=repN(d.name);
    $('#dRep').textContent=repStars(d.name)+(r1>r0?' · subió':r1<r0?' · bajó':dR>0?' · va subiendo':' · va bajando');$('#dRepRow').firstChild.textContent='Reputación con '+short(d.name)+' ';}
   persist();here=m.to;
   $('#dTitle').textContent=`${m.cargo} entregado en ${d.name}`;$('#dDist').textContent=(m.len/1000).toFixed(1)+' km';$('#dTime').textContent=fmtTime(el)+' de '+fmtTime(m.lim);
-  $('#dBase').textContent=fmtMoney(m.pay);$('#dTimeRow').firstChild.textContent=bonus>=0?'Bono por llegar a tiempo ':'Descuento por llegar tarde ';$('#dBonus').textContent=(bonus+urgLate>=0?'+':'')+fmtMoney(bonus+urgLate);
+  $('#dBase').textContent=fmtMoney(m.pay);$('#dTimeRow').firstChild.textContent=late<=0?'Bono por llegar a tiempo ':'Llegaste tarde: sin bono ';$('#dFuelRow').style.display=fuelBack?'':'none';$('#dFuel').textContent='+'+fmtMoney(fuelBack);$('#dBonus').textContent=(bonus+urgLate>=0?'+':'')+fmtMoney(bonus+urgLate);
   $('#dPen').textContent=pen?'−'+fmtMoney(pen):'P$0';$('#dTot').textContent=fmtMoney(tot+tip+bono);$('#dTipRow').style.display=tip?'':'none';$('#dTip').textContent='+'+fmtMoney(tip);$('#dMoney').textContent=fmtMoney(save.money);
   $('#done').hidden=false;mission=null;zoneG.visible=beacon.visible=SEM.visible=false;gps={pts:[],names:[],len:0};noise(.6,900,'highpass',.15);$('#mCargo').textContent='Sin carga';$('#mRoute').textContent='Elige un viaje';}
 $('#btnNext').addEventListener('click',()=>{$('#done').hidden=true;openJobs();});
@@ -7064,6 +7062,7 @@ function rtInspect(){const{r,st}=RT_OPEN,eb='RETÉN · '+r.corp.toUpperCase(),gr
       else if(x<pa+ph){const C=umas(30);rtPay(F+C,`¡No aceptó la mordida! Multa del retén de ${fmtMoney(F)} más ${fmtMoney(C)} por cohecho`);rtShow(eb,'Salió mal',rows,'',[]);
         rtHold(20,'"¿Me está queriendo sobornar?" Te levantan multa por cohecho y revisan todo',()=>done('Pagaste la multa y la de cohecho. Ya puedes seguir.'));}
       else{rtPay(M+F,`El oficial se quedó con la mordida (${fmtMoney(M)}) y aun así te puso multa del retén de ${fmtMoney(F)}`);done('Se guardó el billete… y aun así te levantó la infracción.');}},'ghost']]);}
+function emptyFuelTick(){if(!mission){return;}const f=S.fuel;if(mission.phase!=='deliver'&&mission.phase!=='unloading'){const d=(mission._lf??f)-f;if(d>0)mission.emptyL=(mission.emptyL||0)+d;}mission._lf=f;}
 function retenTick(dt){const fl=Math.floor(S.t*4)%2,act=mission&&mission.phase==='deliver';if(act)mission.rz=mission.rz||{};
   if(RT_OPEN){S.v=0;if(RT_OPEN.phase==='check'||RT_OPEN.phase==='hold'){RT_OPEN.T-=dt;if(RT_OPEN.phase==='check')RTU.p.textContent=`El oficial revisa tu carta porte, el peso y cómo va la carga… ${Math.max(0,RT_OPEN.T).toFixed(0)} s`;
       else RTU.p.textContent=`${RT_OPEN.msg}… ${Math.max(0,RT_OPEN.T).toFixed(0)} s`;if(RT_OPEN.T<=0){if(RT_OPEN.phase==='check'){RT_OPEN.phase='res';rtInspect();}else{RT_OPEN.phase='res';RT_OPEN.then();}}}return;}
@@ -7225,7 +7224,7 @@ function loopBody(now){
   ignTick(dt);keyTick(dt);fxTick(dt);if(S.view===0)interiorTick(dt);tireTick(dt);try{spareTick(dt);spareUI();}catch(e){}sigTick(dt);if(frame%3===0)turnTick();if(frame%6===0)tempUI();
   atStation=STATIONS.find(s=>inObb(s.area,S.x,S.z))||null;fuelBtn.hidden=!(atStation&&Math.abs(S.v)<.3&&S.fuel<tankCap()-1);
   if(!fuelBtn.hidden)fuelBtn.textContent=`Cargar diésel · ${Math.round(tankCap()-S.fuel)} L · ${fmtMoney((tankCap()-S.fuel)*(atStation?atStation.price:FUEL_PRICE))}`;
-  try{if(LOAD.active)loadTick(dt);else{missionTick(dt);weighTick(dt);}retenTick(dt);tollTick();}catch(e){showErr('flete',e);if(LOAD.active){LOAD.active=false;}}animTrailerParts(dt);fatigueTick(dt);corpTick(dt);
+  try{if(LOAD.active)loadTick(dt);else{missionTick(dt);weighTick(dt);}emptyFuelTick();retenTick(dt);tollTick();}catch(e){showErr('flete',e);if(LOAD.active){LOAD.active=false;}}animTrailerParts(dt);fatigueTick(dt);corpTick(dt);
   wheelRot.rotation.z=-S.steer*Math.PI/180;const lshk=S.running?(.006+.012*(S.jud||0)+.02*(S.camKick||0))*Math.sin(S.t*2*Math.PI*Math.max(S.rpm,300)/60*1.5):0;leverPiv.rotation.x=S.ky*.32+lshk;leverPiv.rotation.z=-S.kx*.22;leverPiv.userData.rs.position.y=S.range==='H'?.5:.42;
   pbLever.rotation.x=S.pbrake?-.9:0;for(const kk in pedals3)pedals3[kk].piv.rotation.x=S.ped[kk]*.55;
   const shifting=S.drag||S.path.length>0||(S.t-S.lastShift<.55);S.handT+=(1-S.handT)*lerpK(9,dt);S.crashT=Math.max(0,S.crashT-dt);
