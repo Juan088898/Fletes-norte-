@@ -156,6 +156,7 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - v167: la tapa ahora es redondeada (orillas con bisel de 1.2 cm), sigue la forma del tablero en arco alrededor de los tacómetros y lleva una ceja en media luna que sobresale 10 cm hacia el chofer (y .895–.945), calculada para no tapar las carátulas desde el ojo.
 - v168 (Juan): mejor recta y hacia el parabrisas: tapa plana con orilla recta en z .775 (detrás de los tacómetros), y .85–.88, hasta el parabrisas; repisas planas a los lados (y .845–.851) para que no haya hueco. Sin ceja.
 - v170 (Juan: vibraba mucho): cabeceo y ladeo del carro suavizados (filtro ~0.2 s) y a 45 % (la suspensión es la del tráiler y con 2.465 m entre ejes daba 2.3× más cabeceo); balanceo de cabeza, golpes y vibración del motor a ~25 %.
+- v172 (Juan): se usan los mismos brazos y manos del camión (mano cerrada sobre el aro, mismo agarre y misma mano en la perilla), pasados al carro y ajustados a sus medidas.
 - v171 (Juan): brazos y manos del chofer en el carro: hombros 25 cm abajo y 8 cm atrás del ojo, brazo 30 cm y antebrazo 28 cm con codo (IK de dos huesos); manos con dedos y pulgar en el aro a las 10 y 2 que giran con el volante (hasta ±72°); la derecha va a la perilla al cambiar y regresa.
 - v169 (Juan): una sola capa: se quitaron las repisas y la tapa se recorrió 4 cm hacia la izquierda (x −.06 a .74).
 - Palanca de carro: varilla cromada de 28 cm, perilla de bola con el patrón grabado, fuelle de hule y aro; se mueve con cada cambio. Al cambiar, la cámara voltea hacia la palanca y regresa.
