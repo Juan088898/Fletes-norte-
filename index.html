@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v169">
+<meta name="fn-version" content="v170">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -7875,17 +7875,20 @@ function carInterior(){const G=new THREE.Group();carIntr=G;carM.add(G);const o=c
 
 /* ---- cada cuadro: pose del carro, llantas, volante y palanca ---- */
 function carFrame(dt,delta){if(!carG)carBuild();truck.visible=false;if(typeof trailer!=='undefined')trailer.visible=false;carF++;
-  carG.position.set(S.x,S.cy,S.z);carG.rotation.set(S.cp,S.h,S.cr);
-  carBody.rotation.set(-(S.pitch||0)*.6,0,(S.roll||0));carBody.position.y=(S.running?Math.sin(S.t*2*Math.PI*Math.max(S.rpm,500)/60*2)*.0007:0);
+  // v170 (Juan: vibraba mucho): la suspensión del juego está hecha para el tráiler; con la distancia entre ejes corta del carro (2.465 m contra 5.6 m)
+  // el mismo bache daba 2.3 veces más cabeceo. Se suaviza (filtro de ~0.2 s) y se escala a 45 %.
+  S.ccp=(S.ccp??S.cp)+(S.cp-(S.ccp??S.cp))*lerpK(5,dt);S.ccr=(S.ccr??S.cr)+(S.cr-(S.ccr??S.cr))*lerpK(5,dt);
+  carG.position.set(S.x,S.cy,S.z);carG.rotation.set(S.ccp*.45,S.h,S.ccr*.45);
+  carBody.rotation.set(-(S.pitch||0)*.6,0,(S.roll||0));carBody.position.y=(S.running?Math.sin(S.t*2*Math.PI*Math.max(S.rpm,500)/60*2)*.00015:0);
   const spin=S.v/CAR.wheelR*dt;for(const w of carWheels){w.sp.rotation.x+=spin;if(w.front)w.piv.rotation.y=delta;}
   if(carSW)carSW.quaternion.setFromAxisAngle(carSW.userData.ax,-S.steer*Math.PI/180);   // gira sobre su columna (26.6° de inclinación)
   if(S.view===0&&carF%3===0)carDrawClu();
   if(carLever){carLever.rotation.x=-S.ky*.28;carLever.rotation.z=S.kx*.2;}   // R/1/3/5 adelante, 2/4 atrás; columna izquierda inclina a la izquierda
   if(carNd&&S.view===0){const N=carNd;N.Needle_Speedometer.rotation.z=clamp(Math.abs(S.v)*3.6/180,0,1)*4.0;N.Needle_RPM.rotation.z=clamp(S.rpm/7000,0,1)*4.0;N.Needle_Fuel.rotation.z=clamp(S.fuel/tankCap(),0,1)*1.3;}}
 function carCabCam(dt){const kick=S.camKick||0;
-  camera.position.set(clamp(-S.yaw*S.v*.002,-.02,.02)+(Math.random()-.5)*kick*.02,(SET().seatY||0)*.4,clamp(S.accel*.004,-.02,.02)-(SET().seatZ||0)*.4);
+  camera.position.set(clamp(-S.yaw*S.v*.0006,-.006,.006)+(Math.random()-.5)*kick*.004,(SET().seatY||0)*.4,clamp(S.accel*.0012,-.006,.006)-(SET().seatZ||0)*.4);   // v170: balanceo de cabeza y golpes a ~25 %
   const sh=S.drag||S.path.length>0||(S.t-S.lastShift<.5);S.glance=(S.glance||0)+((sh?1:0)-(S.glance||0))*lerpK(sh?6:3,dt);   // al cambiar, el chofer voltea a la palanca (abajo y a la derecha)
-  camera.rotation.order='YXZ';camera.rotation.set(-.06-.55*S.glance,-.32*S.glance,0);if(S.crashT>0){camera.position.x+=(Math.random()-.5)*S.crashT*.05;camera.position.y+=(Math.random()-.5)*S.crashT*.05;}
+  camera.rotation.order='YXZ';camera.rotation.set(-.06-.55*S.glance,-.32*S.glance,0);if(S.crashT>0){camera.position.x+=(Math.random()-.5)*S.crashT*.03;camera.position.y+=(Math.random()-.5)*S.crashT*.03;}
   if(carMirRT&&carF%(HI()?4:6)===1){carMirCam.rotation.set(0,0,0);carMirCam.lookAt(carMirCam.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3().setFromMatrixColumn(carM.matrixWorld,2).multiplyScalar(-10)));
     carIntr.visible=false;renderer.setRenderTarget(carMirRT);renderer.render(scene,carMirCam);renderer.setRenderTarget(null);carIntr.visible=true;}}
 

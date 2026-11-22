@@ -154,6 +154,7 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - v166: se tapó el hueco que dejó la cubierta: tapa de y .845 a .895 de z .765 al parabrisas y rellenos a los lados del tablero.
 - v167: la tapa ahora es redondeada (orillas con bisel de 1.2 cm), sigue la forma del tablero en arco alrededor de los tacómetros y lleva una ceja en media luna que sobresale 10 cm hacia el chofer (y .895–.945), calculada para no tapar las carátulas desde el ojo.
 - v168 (Juan): mejor recta y hacia el parabrisas: tapa plana con orilla recta en z .775 (detrás de los tacómetros), y .85–.88, hasta el parabrisas; repisas planas a los lados (y .845–.851) para que no haya hueco. Sin ceja.
+- v170 (Juan: vibraba mucho): cabeceo y ladeo del carro suavizados (filtro ~0.2 s) y a 45 % (la suspensión es la del tráiler y con 2.465 m entre ejes daba 2.3× más cabeceo); balanceo de cabeza, golpes y vibración del motor a ~25 %.
 - v169 (Juan): una sola capa: se quitaron las repisas y la tapa se recorrió 4 cm hacia la izquierda (x −.06 a .74).
 - Palanca de carro: varilla cromada de 28 cm, perilla de bola con el patrón grabado, fuelle de hule y aro; se mueve con cada cambio. Al cambiar, la cámara voltea hacia la palanca y regresa.
 - Pendiente: etapa 3 (app YiYi, solicitudes, pasajeros, estrellas y pago), Lada Vesta con crédito, sonido de motor de gasolina (hoy usa el sintetizador del diésel con 4 cilindros).
