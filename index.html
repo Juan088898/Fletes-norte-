@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v161">
+<meta name="fn-version" content="v162">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -6492,7 +6492,7 @@ function parkAtDock(){const d=DEPOTS[mission.from],q=d.dockPt((mission.dockP+2)%
 function startMission(j,mode,pen,lim){const md=MD(),P=DEPOTS[j.from],D=DEPOTS[j.to];
   if(S.hitched)unhitch();clearCargo();
   mission={...j,cond:100,mode,pen,lim,t0:null,phase:md.rigid?'dock':'hook',frac:0,dockP:Math.floor(Math.random()*4),dockD:Math.floor(Math.random()*4)};
-  if(!md.rigid){setTrailerType(j.tt);parkAtDock();}
+  if(!md.rigid){setTrailerType(j.tt);parkAtDock();fillCargo();}   // v162: el remolque ya te espera cargado; solo enganchas y te vas
   updMass();setTarget();$('#jobs').hidden=true;$('#mCargo').textContent=`${j.cargo} · ${j.t} t`;$('#mRoute').textContent=`${short(P.name)} → ${short(D.name)}`;
   toast(md.rigid?`Ve a ${P.name} y métete de reversa al andén ${mission.dockP+1}`:`Ve a ${P.name}: el remolque (${TTYPE[j.tt]}) te espera en el patio. Retrocede hasta el perno`,true);}
 // si la carga/descarga se quedó a medias (sin montacargas trabajando), se arregla sola
@@ -6503,9 +6503,9 @@ function recoverLoad(){const ph=mission.phase,par=cargoParent(),items=(par.userD
   else{if(items===0&&(n>0||mission.frac<=.01)){if(!MD().rigid&&S.hitched)unhitch();clearCargo();mission.frac=0;updMass();finishMission();return;}mission.phase='deliver';toast('La descarga se interrumpió: acomódate otra vez en el andén',true);}
   updMass();setTarget();}
 function missionTick(dt){if(!mission)return;const md=MD(),ph=mission.phase;if(ph==='loading'||ph==='unloading'){recoverLoad();return;}
-  if(S.coupT>0){S.coupT-=dt;S.v=0;els.park.hidden=false;els.park.textContent=S.coupT>1.6?'Conectando mangueras de aire…':'Subiendo las patas del remolque…';if(S.coupT<=0){S.coupT=0;els.park.hidden=true;toast(`Listo. Métete de reversa al andén ${mission.dockP+1} para cargar`,true);}return;}
+  if(S.coupT>0){S.coupT-=dt;S.v=0;els.park.hidden=false;els.park.textContent=S.coupT>1.6?'Conectando mangueras de aire…':'Subiendo las patas del remolque…';if(S.coupT<=0){S.coupT=0;els.park.hidden=true;toast(mission.phase==='deliver'?`Listo. Lleva ${mission.cargo.toLowerCase()} a ${DEPOTS[mission.to].name}`:`Listo. Métete de reversa al andén ${mission.dockP+1} para cargar`,true);}return;}
   if(ph==='hook'){const[hx,hz]=hinge(),dd=Math.hypot(hx-PARK.x,hz-PARK.z),ang=Math.abs(wrapA(S.h-PARK.h));S.hookD=dd;
-    if(dd<1.9&&ang<.45&&Math.abs(S.v)<2.2){hitch();S.coupT=3.2;mission.phase='dock';mission.frac=0;updMass();setTarget();toast('¡Enganchado al perno! Conectando mangueras y subiendo patas',true);}
+    if(dd<1.9&&ang<.45&&Math.abs(S.v)<2.2){hitch();S.coupT=3.2;mission.phase='deliver';mission.frac=1;mission.t0=S.t;updMass();setTarget();toast('¡Enganchado al perno! Conectando mangueras y subiendo patas',true);}
     else{const near=dd<14;els.park.hidden=!near;if(near)els.park.textContent=ang>=.45?'Endereza el camión con el remolque':`Retrocede despacio · ${dd.toFixed(1)} m`;}}
   else if(ph==='dock'||ph==='deliver'){const d=curDep(),q=d.dockPt(dockIdx()),root=md.rigid?truck:trailer,rzl=md.rigid?(md.rear||3.45)+.05:12.45;
     if(!md.rigid&&!S.hitched){toast('Se soltó el remolque. Cancela el flete desde el Menú');mission.phase='lost';return;}
@@ -6838,10 +6838,12 @@ const MAPV=(()=>{const j=JSON.stringify([APO.dep,APO.start,APO.nodes.length,APO.
 function snapJob(){if(!mission||mission.phase==='lost'){save.job=null;return;}const m={...mission};delete m.dest;if(m.pen&&m.pen instanceof Set)m.pen=[...m.pen];
   m.phase=m.phase==='loading'?'dock':m.phase==='unloading'?'deliver':m.phase;m.frac=m.phase==='deliver'?1:0;m.el=m.t0!=null?+(S.t-m.t0).toFixed(1):null;delete m.t0;
   save.job={m,mapv:MAPV,model:S.model,hitched:S.hitched,park:{x:PARK.x,z:PARK.z,h:PARK.h},pos:{x:+S.x.toFixed(2),z:+S.z.toFixed(2),h:+S.h.toFixed(4),th:+S.th.toFixed(4)}};}
+function fillCargo(){clearCargo();if(mission.tt==='tanque'&&!MD().rigid)return;const par=cargoParent();par.userData.items=[];for(const sl of cargoSlots()){const it=makeItem(sl);par.add(it);par.userData.items.push(it);}}
 function restoreJob(){const J=save.job;if(!J||!J.m||J.model!==S.model)return false;if(J.mapv!==MAPV||!DEPOTS[J.m.from]||!DEPOTS[J.m.to]){save.job=null;persist();toast('El mapa cambió: tu flete anterior se canceló sin costo',true);return false;}try{
   mission={...J.m,t0:J.m.el!=null?S.t-J.m.el:null};if(mission.pen&&!(mission.pen instanceof Set))mission.pen=new Set(Array.isArray(mission.pen)?mission.pen:[]);delete mission.el;const md=MD();clearCargo();
   if(J.pos&&Number.isFinite(J.pos.x)&&!hitAt(J.pos.x,J.pos.z)&&(nearestEdge(J.pos.x,J.pos.z).d<14||EXCL.some(o=>inObb(o,J.pos.x,J.pos.z)))){S.x=J.pos.x;S.z=J.pos.z;S.h=J.pos.h;S.th=J.pos.th??J.pos.h;}S.v=0;S.steer=0;S.fy=null;S.ayq=null;S.trr=null;
   if(!md.rigid){setTrailerType(mission.tt);if(J.hitched){const th=S.th;const[hx,hz]=hinge();placeTrailerAt(hx,hz,th);S.th=th;S.hitched=true;S.legT=1;updateRearCam();}else{const dp=DEPOTS[mission.from].park,ok=J.park&&mission.phase!=='hook'&&Number.isFinite(J.park.x)&&!hitAt(J.park.x,J.park.z)&&(nearestEdge(J.park.x,J.park.z).d<14||EXCL.some(o=>inObb(o,J.park.x,J.park.z)));if(ok)placeTrailerAt(J.park.x,J.park.z,J.park.h);else if(mission.phase==='hook')parkAtDock();else placeTrailerAt(dp.x,dp.z,dp.h);}}
+  if(mission.phase==='hook'&&!md.rigid)fillCargo();
   if(mission.phase==='deliver'&&mission.tt!=='tanque'||mission.phase==='deliver'&&md.rigid){const par=cargoParent();par.userData.items=[];for(const sl of cargoSlots()){const it=makeItem(sl);par.add(it);par.userData.items.push(it);}}
   updMass();setTarget();$('#jobs').hidden=true;$('#mCargo').textContent=`${mission.cargo} · ${mission.t} t`;$('#mRoute').textContent=`${short(DEPOTS[mission.from].name)} → ${short(DEPOTS[mission.to].name)}`;
   toast('Seguimos con tu flete donde lo dejaste',true);return true;}catch(e){mission=null;save.job=null;return false;}}

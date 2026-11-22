@@ -98,6 +98,9 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - Ir por la carga: ya no se paga por km; se reembolsa el diésel gastado (litros × P$26.50).
 - Pendiente: subir el pago de los choferes de la empresa (siguen con la fórmula vieja).
 
+### Hecho en v162
+- El remolque ya te espera cargado en el patio: retrocedes al perno, enganchas y te vas directo a entregar (sin andén de carga). La descarga al entregar sigue igual. El tiempo corre desde que enganchas.
+
 ## Fase 4 · Confirmado por Juan (21 nov 2026), falta hacer
 1. **Clima y temporadas:** calor de verano, frío, lluvias.
 2. ✔ (v160) **Retenes y básculas en carretera.** En el retén, si te encuentran algo (sobrepeso, papeles, carga irregular, etc.), hay opción de **sobornar** (“mordida”), como en México; también pagar la multa normal (en UMA, P$117.31). Definir riesgo de que el soborno salga mal.
