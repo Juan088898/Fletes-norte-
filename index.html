@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v165">
+<meta name="fn-version" content="v166">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -7851,6 +7851,10 @@ function carInterior(){const G=new THREE.Group();carIntr=G;carM.add(G);const o=c
      ojo E=(.374,1.109,−.02); volante centro (.374,.785,.531), aro interior .175, inclinado 26.6°.
      Rayos del ojo por la orilla del cubo (+.055) y del aro (+.17) cortan el plano z=.735 en y .744 y .899 → ventana de 15.5 cm.
      El tablero llena la ventana: 35.7 × 15.5 cm (misma proporción 600×260), centro y .821, y mira al ojo: inclinado atan(.288/.765)=20.6° (.36 rad). */
+  // tapa del hueco que dejó quitar la cubierta (lo quitado empieza en y .851): cara de atrás del tablero detrás del borde de arriba (z .765)
+  // y rellenos a los lados del tablero (x .552–.71 hacia la puerta y −.11–.196 al centro), del borde del tablero (y .845) al de la cubierta (y .895)
+  {const dm=new THREE.MeshLambertMaterial({color:0x1d1e21}),bx=(x0,x1,y0,y1,z0,z1)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(x1-x0,y1-y0,z1-z0),dm);b.position.set((x0+x1)/2,(y0+y1)/2,(z0+z1)/2+o);G.add(b);};
+   bx(-.11,.71,.845,.895,.765,1.015);bx(.552,.71,.845,.895,.70,.765);bx(-.11,.196,.845,.895,.70,.765);}
   carClu=document.createElement('canvas');carClu.width=600;carClu.height=260;carCluTex=new THREE.CanvasTexture(carClu);carCluTex.encoding=THREE.sRGBEncoding;carCluTex.anisotropy=4;
   const cp=new THREE.Mesh(new THREE.PlaneGeometry(.357,.155),new THREE.MeshBasicMaterial({map:carCluTex,transparent:true}));cp.position.set(.374,.821,.735+o);cp.rotation.set(.36,Math.PI,0);G.add(cp);carDrawClu();
   // palanca de carro (no de camión): varilla delgada cromada de 28 cm inclinada 8° hacia el chofer, perilla de bola negra Ø 5 cm con el patrón grabado y fuelle de hule.
