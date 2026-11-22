@@ -151,6 +151,12 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - Estrellas: 5 menos 1 por cada choque o multa con el pasajero arriba. Cancelar: dos rechazos en la tasa y una calificación de 3.
 - Probado: viaje completo en simulación (solicitud → recoger → subir → destino → pago P$2,320, 5 estrellas) y capturas de la tarjeta y del pasajero.
 
+### v176 · PRUEBA: carro nuevo con el estilo del juego (pedido de Juan)
+- Juan descartó el Subaro y el Lada (no van con la estética). Los modelos deben venir de Sketchfab (de ahí salieron el volante y las llantas del camión; la carrocería del camión es de itch.io, Craig Snedeker).
+- Prueba: Nizzan Versito = "2015 Nissan Versa Sedan 1.6" (Ddiaz Design, Sketchfab, CC BY-NC-SA 4.0) estilizado: sin emblemas, sin texturas (colores planos, sombreado facetado), 840,742 → ~48 mil triángulos, 37 piezas; con su interior; volante, perilla y llantas sueltas para animar. Física: 1.6 L 109 hp, caja 3.727/2.048/1.393/1.097/.892, ABS.
+- Otros modelos que mandó Juan: sedán y vagoneta low poly (tipo Corolla 90s, sin interior, ~3.9 mil triángulos c/u) y "Tozzo '98 Tuned" (Daniel Zhabotinsky, CC BY 4.0, 19 mil triángulos, interior sencillo). BMW con 3.6 M triángulos: descartado.
+- El trabajo del Lada y del crédito está guardado en `git stash` ("v176 WIP lada+credito") hasta que Juan elija los carros.
+
 ### v175 (bug de Juan): la tapa del tablero llega a x −.115 (ya no hay hueco junto al celular) y el celular se acomoda con un rayo del ojo a la cara del tablero, 3.5 cm enfrente (antes se metía en el tablero).
 
 ### Hecho en v174 (Juan)
