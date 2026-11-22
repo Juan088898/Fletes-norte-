@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v179">
+<meta name="fn-version" content="v180">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -8237,9 +8237,11 @@ document.addEventListener('click',e=>{if(!e.isTrusted||e.detail===0||e.pointerTy
 try{navigator.serviceWorker&&navigator.serviceWorker.register('sw.js').catch(()=>{});}catch(e){}
 let busy=false;
 const banner=t=>{const d=document.createElement('div');d.style.cssText='position:fixed;left:50%;top:10px;transform:translateX(-50%);z-index:99999;padding:10px 16px;border-radius:12px;background:#ffb53d;color:#1a1206;font:700 15px/1.2 sans-serif;box-shadow:0 4px 20px #0008';d.textContent=t;document.body.appendChild(d);};
-const check=async()=>{if(busy)return;try{const r=await fetch('version.json?'+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();if(!j.v||j.v===V)return;
- const last=+localStorage.getItem('fnUpd')||0;if(Date.now()-last<180000)return;localStorage.setItem('fnUpd',Date.now());busy=true;banner('Nueva versión '+j.v+' disponible · actualizando…');
- setTimeout(()=>{const c=document.getElementById('c');try{c&&c.dispatchEvent(new Event('webglcontextlost',{cancelable:true}));}catch(e){}setTimeout(()=>location.reload(),2200);},1500);}catch(e){}};
+const num=v=>+(String(v).match(/\d+/)||[0])[0];   /* v180: solo actualiza si la versión del servidor es MÁS NUEVA, una sola vez por versión y nunca a media partida */
+const check=async()=>{if(busy)return;try{const r=await fetch('version.json?'+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();if(!j.v||num(j.v)<=num(V))return;
+ if(localStorage.getItem('fnUpdV')===j.v)return;const st=document.getElementById('start');if(!st||st.hidden||getComputedStyle(st).display==='none')return;
+ localStorage.setItem('fnUpdV',j.v);busy=true;banner('Nueva versión '+j.v+' disponible · actualizando…');
+ setTimeout(()=>location.reload(),1500);}catch(e){}};
 setTimeout(check,4000);setInterval(check,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check();});})();
 </script>
 </body></html>

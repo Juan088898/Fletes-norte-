@@ -204,3 +204,4 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - Inicio: **Alcanzel Pixal Pro Max Plus 5G Super** (nombre inventado, chiste: el más barato con el nombre más largo; no usar la marca real) (pantalla estrellada, lento, batería que dura poco, notificaciones sin vista previa).
 - Se compran en la tienda (app JaleYa o en gasolinera): **Rojomi Nota 14 Pro 5G+ Máx** ~$8,000 · **Samsón Galaxio S26 Ultra** ~$22,000 · **Chaifon 17 Pro Máx** ~$30,000 (precios a balancear).
 - Mejor celular = abre más rápido, más batería, vista previa de mensajes, GPS con tráfico y mejores propinas por contestar rápido. Puedes quedarte en Android o pasarte a Chaifon.
+- v180: arreglado el aviso "Nueva versión… actualizando" que recargaba cada pocos minutos (el version.json publicado decía v162 y el juego otra versión → bucle). Ahora solo actualiza si la del servidor es más nueva, una vez por versión y solo en la pantalla de inicio, nunca a media partida.
