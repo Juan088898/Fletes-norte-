@@ -125,6 +125,25 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - Auto: sedán compacto blanco genérico tipo "carro de app" (base: Kenney Car Kit `sedan`), sin logos ni nombre de marca real.
 - Viajes cortos en la ciudad que llegan por el celular, pasajeros con prisa, calificación de estrellas.
 
+### Decisiones de Juan (21 nov 2026, chat de la fase 5)
+- Orden: primero YiYi (etapas 1–3) y al final quitar el panel de cargas de JaleYa.
+- Carros (en lugar del `sedan` de Kenney): **Subaro Leal 1992** (Subaru Loyale de CBSpicer, sin logos ni marcas) es el inicial y gratis; **Lado Vasta** (Lada Vesta, aligerado a ~30–40 mil triángulos, <3 MB) es la mejora y cuesta P$300,000. Kia Forte Koup y Dodge Neon descartados.
+- Los dos carros con cámara de cabina (al Loyale se le arma interior a medida porque el modelo trae una caja negra). Caja estándar de 5 en los dos.
+- Dinero, celular y crédito compartidos entre JaleYa y YiYi.
+- Crédito compartido (fase 5 solo para el Lada; el del camión después y con permiso de Juan): puntaje 300–850, empiezas en 550; +5 por pago a tiempo, +20 por liquidar antes, −25 por atraso. <600: enganche 30 %, interés 25 %, 10/20 pagos · 600–699: 20 %, 15 %, 10/20/30 · ≥700: 10 %, 8 %, 10/20/30. Un pago por día de juego, tope 40 % de lo que ganas al día, recargo 5 %, 3 atrasos seguidos = embargo (regresas al Loyale y pierdes lo pagado). Lada con puntaje 550: enganche P$90,000 + 20 pagos de P$13,125.
+- Tarifa YiYi: P$1,500–3,000 por viaje (misma escala que los fletes).
+- Solicitudes como en las apps reales: llegan una por una cada 20–60 s con tono propio de YiYi (no el de DiDi) y vibración; tarjeta con distancia al pasajero, distancia del viaje, pago, estrellas del pasajero y si va con prisa; 15 s para Aceptar/Rechazar. Rechazar mucho baja la tasa de aceptación y te llegan menos y peores.
+- Pasajeros visibles: esperan en la banqueta, suben atrás y bajan en el destino.
+- Al final (después de YiYi): quitar el panel "Elige tu viaje"; las cargas solo en la app JaleYa, el Taller pasa a una app **TallerYa** y "Entrega completada" se vuelve aviso + recibo en el celular (desglose en JaleYa › Historial, depósito en brebreuvaA). Los demás paneles (retén, báscula, guardar) se quedan.
+
+### Hecho en v163 · Fase 5, etapas 1 y 2
+- Pantalla de inicio: se elige **JaleYa** (camionero) o **YiYi** (chofer de app). Cambiar de modo guarda y recarga; el camión y el carro nunca corren juntos. En JaleYa nada cambia.
+- YiYi: Subaro Leal 1992 (5,324 triángulos, 343 KB). Escala por distancia entre ejes real (2.465 m / 2.050 del modelo = 1.2024): largo 4.45 m, llanta Ø 0.571 m. Sin logos: emblemas borrados, "SUBARO" y "LEAL", placas de Nuevo León inventadas, pintado blanco.
+- Manejo de carro propio (no toca la física del camión): motor 1.8 L (137 N·m a 2,800 rpm, ralentí 780, corte 6,000), caja 3.545/2.111/1.448/1.088/0.871, R 3.416, final 3.70; clutch de fricción, se apaga si sueltas mal; frenos sin ABS (se bloquean); tracción delantera; giro 34.6° (radio 3.6 m en el eje trasero); subviraje y derrape por agarre; gasolina 50 L aparte del diésel. Probado: 0→30 km/h en 1ª ~3 s, 85 km/h en 3ª.
+- Cámaras: cabina a la altura de los ojos (y 1.12 m, 36 cm a la izquierda del centro), tablero con velocímetro/tacómetro/gasolina, volante Ø 38 cm, palanca, retrovisor con imagen; atrás, arriba y llantas ajustadas al tamaño del carro. Faros movidos al carro.
+- Celular: YiYi encendida y JaleYa apagada en modo chofer; sin fletes ni bienvenida de JaleYa.
+- Pendiente: etapa 3 (app YiYi, solicitudes, pasajeros, estrellas y pago), Lada Vesta con crédito, sonido de motor de gasolina (hoy usa el sintetizador del diésel con 4 cilindros).
+
 ## Apps del celular (iconos en `apps-celular.svg`)
 - Logos individuales estilo YiYi: `jaleya-logo.svg`, `wasapen-logo.svg`, `tallerya-logo.svg` (TallerYa = estado del camión, turquesa), `rola-logo.svg` (Rola = música, rosa), `config-logo.svg` (Config = ajustes, verde, interruptores). `fierrotas-logo.svg` (Fierrotas = estado del camión, amarillo mostaza, frente de troca con llaves cruzadas) (reemplazan a `apps-celular.svg`).
 - JaleYa (fletes, naranja) · Camión (avisos, verde, medidor) · Wasapen (chat con clientes, azul; logo propio `wasapen-logo.svg` con globo azul marino y respuesta naranja con palomita; no imitar WhatsApp) · Radio (música, rojo) · Ajustes (gris azulado, engrane). YiYi solo en el modo chofer.
