@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v168">
+<meta name="fn-version" content="v169">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -7855,7 +7855,7 @@ function carInterior(){const G=new THREE.Group();carIntr=G;carM.add(G);const o=c
      de los tacómetros (z .762), de y .85 a .88, y hasta la base del parabrisas (z 1.0). A los lados del tablero de tacómetros, una repisa plana
      a la altura donde terminó lo que se quitó (y .845–.851, z .70–.775) para que no se vea hueco. */
   {const dm=new THREE.MeshLambertMaterial({color:0x1d1e21}),bx=(x0,x1,y0,y1,z0,z1)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(x1-x0,y1-y0,z1-z0),dm);b.position.set((x0+x1)/2,(y0+y1)/2,(z0+z1)/2+o);G.add(b);};
-   bx(-.10,.70,.85,.88,.775,1.0);bx(.552,.70,.845,.851,.70,.775);bx(-.10,.196,.845,.851,.70,.775);}
+   bx(-.06,.74,.85,.88,.775,1.0);}   // v169 (Juan): una sola capa (sin repisas) y 4 cm hacia la izquierda (hacia la puerta del chofer)
   carClu=document.createElement('canvas');carClu.width=600;carClu.height=260;carCluTex=new THREE.CanvasTexture(carClu);carCluTex.encoding=THREE.sRGBEncoding;carCluTex.anisotropy=4;
   const cp=new THREE.Mesh(new THREE.PlaneGeometry(.357,.155),new THREE.MeshBasicMaterial({map:carCluTex,transparent:true}));cp.position.set(.374,.821,.735+o);cp.rotation.set(.36,Math.PI,0);G.add(cp);carDrawClu();
   // palanca de carro (no de camión): varilla delgada cromada de 28 cm inclinada 8° hacia el chofer, perilla de bola negra Ø 5 cm con el patrón grabado y fuelle de hule.
