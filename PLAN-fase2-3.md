@@ -90,6 +90,7 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 1. **Clima y temporadas:** calor de verano, frío, lluvias.
 2. **Retenes y básculas en carretera.** En el retén, si te encuentran algo (sobrepeso, papeles, carga irregular, etc.), hay opción de **sobornar** (“mordida”), como en México; también pagar la multa normal (en UMA, P$117.31). Definir riesgo de que el soborno salga mal.
 3. **Más camiones para comprar** además del Chato.
+4. **Reajustar cargas:** cargas frágiles (daño y castigo), deslizamiento/oleaje de la carga y otros detalles de cómo se comporta la carga (Juan dará detalles; preguntarle qué se siente mal antes de cambiar).
 
 ## Regla de trabajo (Juan)
 - Todo acomodo o ajuste (posiciones, tamaños, alineación, cámaras, tableros) se hace con **cálculos y medidas reales del modelo**, no a ojo; luego se comprueba con captura.
