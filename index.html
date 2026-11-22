@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v173">
+<meta name="fn-version" content="v174">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -5982,7 +5982,7 @@ function drawClusterCab(){const g=cluCtx;g.setTransform(2,0,0,2,0,0);g.clearRect
 window.__navDraw=(g,W,H)=>{let gi={txt:'',sub:'',ang:0};try{gi=gpsInfo();}catch(e){}
   try{if((cluMapN++)%2===0)drawMap(cluMap,cluMapG,232,300,2,false);g.drawImage(cluMap,116,174,232,300,0,0,W,H);}catch(e){g.fillStyle='#08121f';g.fillRect(0,0,W,H);}
   g.fillStyle='rgba(8,12,18,.9)';g.fillRect(0,0,W,44);g.save();g.translate(14,22);g.rotate((gi.ang||0)*Math.PI/180);g.fillStyle='#3fd08a';g.beginPath();g.moveTo(0,-10);g.lineTo(8,7);g.lineTo(0,3);g.lineTo(-8,7);g.closePath();g.fill();g.restore();
-  let d='',t=gi.txt||'',m;if(m=t.match(/^En (\d+) m (.*)$/)){d=m[1]+' m';t=m[2].replace(/^gira a la /,'').replace(/^entra a la /,'');}else if(!mission){d='Sin flete';t='';}else d=(gi.sub||'').replace(' al destino','');
+  let d='',t=gi.txt||'',m;if(m=t.match(/^En (\d+) m (.*)$/)){d=m[1]+' m';t=m[2].replace(/^gira a la /,'').replace(/^entra a la /,'');}else if(!mission&&!(CARM&&YY&&YY.trip)){d=CARM?'YiYi':'Sin flete';t=CARM?(gi.txt||'').replace('YiYi · ',''):'';}else d=(gi.sub||'').replace(' al destino','');
   g.textAlign='left';g.textBaseline='middle';g.fillStyle='#f2f4f5';g.font='700 15px "Barlow Condensed",sans-serif';g.fillText(d||t,28,14);if(d&&t){g.fillStyle='#9fe1cb';g.font='600 11px "Barlow Condensed",sans-serif';g.fillText(t.slice(0,12),28,32);}
   g.fillStyle='rgba(8,12,18,.9)';g.fillRect(0,H-24,W,24);g.fillStyle='#eaf2ff';g.font='400 13px "Share Tech Mono",monospace';g.textAlign='center';g.fillText(Math.round(Math.abs(S.v)*3.6)+' km/h',W/2,H-12);};
 function drawCluster(){if(S.model==='cab'){drawClusterCab();return;}const g=cluCtx;g.setTransform(2,0,0,2,0,0);g.fillStyle='#16171a';g.fillRect(0,0,620,278);
@@ -7542,7 +7542,14 @@ function applySkin(){if(!SKIN)return;const on=UP(S.model).skin==='deli';if(on)sk
  function status(){$('#celTime').textContent=hhmm();const c=CS(),b=$('#celBat'),v=Math.round(c.bat);b.querySelector('b').textContent=v+'%';b.querySelector('s').style.width=Math.max(4,v)+'%';b.classList.toggle('low',v<=15);b.classList.toggle('chg',!!S.running&&!open);}
  const hd=(a,title)=>`<div class="cel-hd" style="--ac:${APPS[a]?APPS[a].c:'#26324d'}"><button data-n="back" aria-label="Atrás">‹</button><img src="${CELA.logo[a]}" alt="">${esc(title||APPS[a].n)}</div>`;
  // ---- YiYi (modo chofer de app): conectarse, estrellas, tasa, viaje actual e historial ----
- function yiyi(){const y=yyS(),t=YY&&YY.trip,st=yyStars(),rt=Math.round(yyRate()*100);
+ function yiyi(){const y=yyS(),t=YY&&YY.trip,st=yyStars(),rt=Math.round(yyRate()*100),q=YY&&YY.req;
+  if(q){const f=clamp(q.T/15,0,1);V.innerHTML=hd('yiyi','YiYi').replace('#26324d','#6a4cf0')+`<div class="cel-card" style="background:#1a1533;border:2px solid #7a5cff;text-align:center">
+    <div style="font-weight:700;color:#b9a8ff;letter-spacing:.06em">NUEVA SOLICITUD${q.prisa?' · <span style="color:#ffd45a">⚡ CON PRISA</span>':''}</div>
+    <div style="margin:.5em auto;width:4.2em;height:4.2em;border-radius:50%;background:conic-gradient(#7a5cff ${f*360}deg,#3a3060 0);display:grid;place-items:center"><div style="width:3.3em;height:3.3em;border-radius:50%;background:#1a1533;display:grid;place-items:center;font:700 1.3em 'Share Tech Mono',monospace">${Math.ceil(q.T)}</div></div>
+    <h4 style="font-size:1.8em;margin:.1em 0">${fmtMoney(q.net)}</h4><p style="margin:0">te quedan · cobra ${fmtMoney(q.fare)}</p>
+    <p style="margin:.5em 0 0">${esc(q.pas.n)} ★${q.pas.st.toFixed(1)}</p><p style="margin:.2em 0">Recoger a ${(q.pick/1000).toFixed(1)} km · viaje de ${(q.len/1000).toFixed(1)} km</p></div>
+    <div style="display:flex;gap:.5em;padding:0 .6em"><button class="cel-b" data-yyno style="flex:1;padding:.9em">Rechazar</button><button class="cel-b" data-yyok style="flex:2;padding:.9em;background:#7a5cff;border-color:#7a5cff;color:#fff">Aceptar</button></div>`;
+   V.querySelector('[data-yyok]').onclick=()=>{yyAccept();render();};V.querySelector('[data-yyno]').onclick=()=>{yyReject(false);render();};return;}
   let h=hd('yiyi','YiYi').replace('#26324d','#6a4cf0')+`<div class="cel-card" style="text-align:center"><button class="cel-b${y.on?' on':''}" data-yyon style="width:100%;padding:.8em;font-size:1.15em;${y.on?'background:#2fae6a;border-color:#2fae6a;color:#fff':''}">${y.on?'● En línea':'○ Desconectado'}</button>
    <p style="margin:.5em 0 0">${y.on?(t?'Tienes un viaje en curso':'Esperando solicitudes…'):'Conéctate para recibir viajes'}${y.on&&!S.running?' · prende el motor':''}</p></div>
    <div class="cel-card" style="display:grid;grid-template-columns:1fr 1fr 1fr;text-align:center;gap:.3em"><div><b style="font-size:1.3em;color:#ffd45a">★ ${st.toFixed(2)}</b><p style="margin:0">${y.rat.length} calif.</p></div><div><b style="font-size:1.3em;color:${rt<60?'#ff8a80':'#7ff0c8'}">${rt}%</b><p style="margin:0">aceptación</p></div><div><b style="font-size:1.1em;color:#7ff0c8">${fmtMoney(y.tot)}</b><p style="margin:0">${y.n} viajes</p></div></div>`;
@@ -7552,7 +7559,7 @@ function applySkin(){if(!SKIN)return;const on=UP(S.model).skin==='deli';if(on)sk
     ${t.phase!=='drop'?'<button class="cel-b" data-yycan style="width:100%;margin-top:.4em">Cancelar viaje</button>':''}</div>`;}
   h+=`<div class="cel-card"><h4>Últimos viajes</h4>`+(y.hist.length?y.hist.slice(0,6).map(r=>`<p style="margin:.2em 0">${'★'.repeat(r.st)}${'☆'.repeat(5-r.st)} ${esc(r.n)} · ${r.km} km · <b style="color:#7ff0c8">${fmtMoney(r.net+(r.tip||0))}</b></p>`).join(''):'<p>Todavía no haces viajes.</p>')+`<p style="opacity:.7;margin-top:.4em">YiYi se queda con 20 % de cada viaje.</p></div>`;
   V.innerHTML=h;const on=V.querySelector('[data-yyon]');if(on)on.onclick=()=>{yyToggle();render();};const cn=V.querySelector('[data-yycan]');if(cn)cn.onclick=()=>{yyCancel();render();};}
- window.__yiyiApp=()=>{if(!open)openCel('yiyi');else go('yiyi');};window.__yyRefresh=()=>{if(open&&app==='yiyi')render();};
+ window.__celOk=()=>usable();window.__yiyiApp=()=>{if(!open)openCel('yiyi');else go('yiyi');};window.__yyRefresh=()=>{if(open&&app==='yiyi')render();};
  function go(a,s){jobsBack();app=a;sub=s||'';if(a!=='wasapen')chatWith=null;V.scrollTop=0;if(a==='home'){render();return;}
   // un celular más barato tarda más en abrir cada app
   loadT=P().load;LD.hidden=false;V.innerHTML='';snd('tap',.35);}
@@ -7765,7 +7772,7 @@ function applySkin(){if(!SKIN)return;const on=UP(S.model).skin==='deli';if(on)sk
    El modelo mide 2.050 entre ejes → escala 2.465/2.050 = 1.2024 (largo 4.45 m, llanta Ø 0.571 m).
    Motor EA82 1.8 L: 137 N·m a 2,800 rpm, 90 hp a 5,200 rpm. Caja estándar de 5: 3.545 · 2.111 · 1.448 · 1.088 · 0.871 · R 3.416, final 3.70.
    Solo corre si save.mode==='yiyi'; el modo camión (JaleYa) no usa nada de aquí. */
-var carArms,carNd,carG,carBody,carM,carEye,carWheels,carSW,carLever,carIntr,carMir,carMirCam,carMirRT,carClu,carCluTex,carF;   // sin valor inicial: carStart() corre antes de que el script llegue aquí
+var carPhone,carArms,carNd,carG,carBody,carM,carEye,carWheels,carSW,carLever,carIntr,carMir,carMirCam,carMirRT,carClu,carCluTex,carF;   // sin valor inicial: carStart() corre antes de que el script llegue aquí
 function carTorque(r){const c=CAR.curve;if(r<=0)return 0;for(let i=1;i<c.length;i++)if(r<=c[i][0]){const[a,ta]=c[i-1],[b,tb]=c[i];return ta+(tb-ta)*(r-a)/(b-a);}return c[c.length-1][1];}
 function carPhysics(dt){
   const md=MD(),ratio=S.gear===0?0:RATIO[S.gear]*md.final,engage=clamp((.8-S.ped.clutch)/.55,0,1),n=20,h=dt/n,v0=S.v,wet=env.rain;
@@ -7845,6 +7852,13 @@ function carArmTick(dt){const A=carArms;if(!A||!carLever)return;const sh=S.drag|
       _cM.makeBasis(lX,lY,lZ);_cQ2.setFromRotationMatrix(_cM);const Wl=knob.clone().addScaledVector(lU,.035).addScaledVector(lY,-.055);Wl.y+=Math.sin(Math.PI*A.hand)*.04;
       W.lerp(Wl,A.hand);_cQ.slerp(_cQ2,A.hand);}
     carSolve(P.out,P.sh,W);placeLimb(a.up,P.sh,_cE);placeLimb(a.fo,_cE,_cW);a.el.position.copy(_cE);a.h.position.copy(_cW);a.h.quaternion.copy(_cQ);}}
+function carPhoneTick(dt){const P=carPhone;if(!P)return;P.t-=dt;const q=YY&&YY.req;if(P.t>0)return;P.t=q?.25:.5;const g=P.g,W=96,H=192;g.setTransform(2,0,0,2,0,0);
+  if(q){g.fillStyle='#1a1533';g.fillRect(0,0,W,H);g.fillStyle='#b9a8ff';g.font='700 10px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('YIYI · SOLICITUD',W/2,16);
+    const f=clamp(q.T/15,0,1);g.lineWidth=6;g.strokeStyle='#3a3060';g.beginPath();g.arc(W/2,58,24,0,7);g.stroke();g.strokeStyle='#7a5cff';g.beginPath();g.arc(W/2,58,24,-Math.PI/2,-Math.PI/2+f*Math.PI*2);g.stroke();
+    g.fillStyle='#fff';g.font='700 18px "Share Tech Mono",monospace';g.fillText(String(Math.ceil(q.T)),W/2,59);g.font='700 17px sans-serif';g.fillText(fmtMoney(q.net),W/2,104);
+    g.fillStyle='#e4e0ff';g.font='500 10px sans-serif';g.fillText(q.pas.n+' ★'+q.pas.st.toFixed(1),W/2,124);g.fillText((q.pick/1000).toFixed(1)+' km · viaje '+(q.len/1000).toFixed(1)+' km',W/2,140);if(q.prisa){g.fillStyle='#ffd45a';g.fillText('⚡ con prisa',W/2,156);}
+    g.fillStyle='#7a5cff';g.fillRect(8,168,W-16,18);g.fillStyle='#fff';g.font='700 10px sans-serif';g.fillText('Acepta en el celular 📱',W/2,177);}
+  else if(window.__navDraw)window.__navDraw(g,W,H);P.tex.needsUpdate=true;}
 function carHit(sp){yyHit();const y=save.yiyi||(save.yiyi={});y.dmg=Math.min(100,(y.dmg||0)+Math.min(15,sp*1.2));persist();}
 /* ---- modelo 3D ---- */
 function carBuild(){if(carG)return;carWheels=[];carF=0;carG=new THREE.Group();scene.add(carG);carBody=new THREE.Group();carG.add(carBody);carM=new THREE.Group();carM.rotation.y=Math.PI;carBody.add(carM);
@@ -7904,6 +7918,16 @@ function carInterior(){const G=new THREE.Group();carIntr=G;carM.add(G);const o=c
   for(const o of[armL.u,armL.h,armR.u,armR.h])G.add(o);
   carArms={L:{a:armL,out:1,sh:new THREE.Vector3(CAR.eye.x+.19,CAR.eye.y-.25,CAR.eye.z-.08+o)},R:{a:armR,out:-1,sh:new THREE.Vector3(CAR.eye.x-.19,CAR.eye.y-.25,CAR.eye.z-.08+o)},
     C:new THREE.Vector3(D.sw.c[0],D.sw.c[1],D.sw.c[2]+o),n:new THREE.Vector3(...D.sw.axis).normalize(),hand:0};
+  /* celular en su soporte (v174), en la ventila al centro del tablero: x .02, y .76, z .66 (enfrente de la cara del tablero).
+     Visto desde el ojo pasa a 22.6 cm del centro del volante a la altura del aro (radio .19 + .016): no lo tapa el aro ni la mano derecha.
+     La pantalla mira al ojo (lookAt) y muestra el GPS como en el Chato; si llega una solicitud de YiYi, la muestra. */
+  {const blk=new THREE.MeshPhongMaterial({color:0x15171a,shininess:30}),pg=new THREE.Group();pg.position.set(.02,.76,.66+o);G.add(pg);
+   const m4=new THREE.Matrix4().lookAt(new THREE.Vector3(CAR.eye.x,CAR.eye.y,CAR.eye.z+o),pg.position,new THREE.Vector3(0,1,0));pg.quaternion.setFromRotationMatrix(m4);
+   const body=new THREE.Mesh(new THREE.BoxGeometry(.074,.152,.009),new THREE.MeshPhongMaterial({color:0x2a2b30,shininess:60}));pg.add(body);
+   const clip=new THREE.Mesh(new THREE.BoxGeometry(.09,.03,.03),blk);clip.position.set(0,-.085,-.012);pg.add(clip);const jaw=new THREE.Mesh(new THREE.BoxGeometry(.09,.012,.022),blk);jaw.position.set(0,.083,-.012);pg.add(jaw);
+   const arm=new THREE.Mesh(new THREE.BoxGeometry(.02,.02,.06),blk);arm.position.set(0,-.06,-.04);pg.add(arm);
+   const cv=document.createElement('canvas');cv.width=192;cv.height=384;const tex=new THREE.CanvasTexture(cv);const sc=new THREE.Mesh(new THREE.PlaneGeometry(.068,.144),new THREE.MeshBasicMaterial({map:tex}));sc.position.z=.0047;pg.add(sc);
+   carPhone={g:cv.getContext('2d'),tex,t:0};}
   // retrovisor interior con imagen de la cámara de atrás (se dibuja cada 4–6 cuadros), abajo del borde del parabrisas (y 1.283, z .296)
   const dk=new THREE.MeshLambertMaterial({color:0x1d1e21});carMirRT=new THREE.WebGLRenderTarget(256,80);carMirCam=new THREE.PerspectiveCamera(32,256/80,.3,300);carMirCam.position.set(0,1.20,.30+o);carM.add(carMirCam);
   const mf=new THREE.Mesh(new THREE.BoxGeometry(.24,.075,.03),dk);mf.position.set(0,1.215,.37+o);G.add(mf);
@@ -7918,7 +7942,7 @@ function carFrame(dt,delta){if(!carG)carBuild();try{yyTick(dt);}catch(e){showErr
   carBody.rotation.set(-(S.pitch||0)*.6,0,(S.roll||0));carBody.position.y=(S.running?Math.sin(S.t*2*Math.PI*Math.max(S.rpm,500)/60*2)*.00015:0);
   const spin=S.v/CAR.wheelR*dt;for(const w of carWheels){w.sp.rotation.x+=spin;if(w.front)w.piv.rotation.y=delta;}
   if(carSW)carSW.quaternion.setFromAxisAngle(carSW.userData.ax,-S.steer*Math.PI/180);   // gira sobre su columna (26.6° de inclinación)
-  if(S.view===0&&carF%3===0)carDrawClu();
+  if(S.view===0&&carF%3===0)carDrawClu();if(S.view===0)carPhoneTick(dt);
   if(carArms){const v0=S.view===0;for(const k of['L','R']){carArms[k].a.u.visible=v0;carArms[k].a.h.visible=v0;}if(v0)carArmTick(dt);}
   if(carLever){carLever.rotation.x=-S.ky*.28;carLever.rotation.z=S.kx*.2;}   // R/1/3/5 adelante, 2/4 atrás; columna izquierda inclina a la izquierda
   if(carNd&&S.view===0){const N=carNd;N.Needle_Speedometer.rotation.z=clamp(Math.abs(S.v)*3.6/180,0,1)*4.0;N.Needle_RPM.rotation.z=clamp(S.rpm/7000,0,1)*4.0;N.Needle_Fuel.rotation.z=clamp(S.fuel/tankCap(),0,1)*1.3;}}
@@ -7941,7 +7965,8 @@ function yyStars(){const r=yyS().rat;return r.length?r.reduce((a,b)=>a+b,0)/r.le
 function yyRate(){const a=yyS().acc;return a.length?a.filter(x=>x).length/a.length:1;}
 function yyPush(arr,v,n){arr.push(v);while(arr.length>n)arr.shift();}
 // punto en la banqueta de una calle de la ciudad (avenida o calle), a cierta distancia en línea recta
-function yyPoint(ox,oz,min,max){for(let k=0;k<80;k++){const e=edges[Math.floor(Math.random()*edges.length)];if(e.type!=='av'&&e.type!=='st'||e.L<40)continue;
+function yyPoint(ox,oz,min,max){const C=edges.filter(e=>(e.type==='av'||e.type==='st')&&e.L>=40&&Math.hypot((e.ax+e.bx)/2-ox,(e.az+e.bz)/2-oz)<max+e.L/2&&Math.hypot((e.ax+e.bx)/2-ox,(e.az+e.bz)/2-oz)>min-e.L/2);if(!C.length)return null;   // primero las calles que quedan a esa distancia
+  for(let k=0;k<60;k++){const e=C[Math.floor(Math.random()*C.length)];
   const t=.2+Math.random()*.6,x=e.ax+(e.bx-e.ax)*t,z=e.az+(e.bz-e.az)*t,d=Math.hypot(x-ox,z-oz);if(d<min||d>max)continue;
   const sd=Math.random()<.5?1:-1,nx=-e.uz*sd,nz=e.ux*sd,off=e.w/2+1.4,px=x+nx*off,pz=z+nz*off;
   if(EXCL.some(o=>inObb(o,px,pz)))continue;return{e,t,E:{x,z},zone:{x:px,z:pz},name:e.name,face:Math.atan2(-nx,-nz)};}return null;}
@@ -7956,7 +7981,7 @@ function yyOffer(){const P=yyPoint(S.x,S.z,150,800);if(!P){YY.next=10;return;}co
   const r=planRoute(P.E.x,P.E.z,Math.atan2(-P.e.ux,-P.e.uz),D,'dist'),toP=planRoute(S.x,S.z,S.h,P,'dist'),low=yyRate()<.6,prisa=Math.random()<.3;
   let fare=1500+r.len/1000*600;if(prisa)fare*=1.2;if(low)fare*=.85;fare=Math.round(clamp(fare,1500,3000)/10)*10;
   YY.req={P,D,len:r.len,eta:r.eta,pick:toP.len,fare,net:Math.round(fare*.8/10)*10,prisa,pas:{n:YYN[Math.floor(Math.random()*YYN.length)],st:+(4.2+Math.random()*.8).toFixed(1)},T:15};
-  yyTone();buzz([140,90,140]);yyReqUI();yyRefresh();}
+  yyTone();buzz([140,90,140]);if(window.__yiyiApp&&window.__celOk&&window.__celOk())window.__yiyiApp();yyReqUI();}
 function yyNext(){const low=yyRate()<.6;YY.next=(20+Math.random()*40)*(low?1.8:1);}
 function yyAccept(){const q=YY&&YY.req;if(!q)return;yyPush(yyS().acc,1,20);YY.req=null;yyReqUI();persist();
   YY.trip={...q,phase:'pickup',t0:S.t,hits:0,fines:0,gT:0};yyPasSpawn(q);yyDest(q.P);toast(`Aceptaste: ve por ${q.pas.n} (${(q.pick/1000).toFixed(1)} km)`,true);yyRefresh();}
@@ -7993,7 +8018,7 @@ function yyTick(dt){if(!YY)YY={next:12,req:null,trip:null,pas:null};const y=yyS(
   else if(!YY.trip&&y.on&&S.running){YY.next-=dt;if(YY.next<=0)yyOffer();}
   if(YY.trip)yyTripTick(dt);yyPasTick(dt);}
 /* ---- tarjeta de solicitud (arriba, como en las apps; se ve con o sin el celular abierto) ---- */
-function yyReqUI(){let c=document.getElementById('yyReq');const q=YY&&YY.req;
+function yyReqUI(){const q=YY&&YY.req,cel=window.__celOk&&window.__celOk();yyRefresh();let c=document.getElementById('yyReq');if(cel){if(c){c.hidden=true;c.style.display='none';}return;}   // v174: la solicitud sale en el celular (app YiYi); arriba solo si el celular está sin pila
   if(!c){c=document.createElement('div');c.id='yyReq';c.style.cssText='position:fixed;left:50%;top:max(10px,env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:70;width:min(360px,calc(100vw - 24px));background:#1a1533;border:2px solid #7a5cff;border-radius:16px;padding:10px 12px;color:#fff;font-family:var(--display,sans-serif);box-shadow:0 8px 24px rgba(0,0,0,.5)';document.body.appendChild(c);
     c.addEventListener('click',e=>{const b=e.target.closest('[data-yy]');if(!b)return;e.stopPropagation();if(b.dataset.yy==='ok')yyAccept();else yyReject(false);});}
   if(!q){c.hidden=true;c.style.display='none';return;}c.hidden=false;c.style.display='';const f=clamp(q.T/15,0,1);

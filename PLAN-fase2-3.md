@@ -151,6 +151,11 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - Estrellas: 5 menos 1 por cada choque o multa con el pasajero arriba. Cancelar: dos rechazos en la tasa y una calificación de 3.
 - Probado: viaje completo en simulación (solicitud → recoger → subir → destino → pago P$2,320, 5 estrellas) y capturas de la tarjeta y del pasajero.
 
+### Hecho en v174 (Juan)
+- La solicitud de YiYi ya no sale arriba: abre el celular en la app YiYi con la cuenta regresiva y botones Aceptar/Rechazar (arriba solo si el celular no tiene pila).
+- Celular en soporte en el carro, en la ventila al centro (x .02, y .76, z .66), mirando al ojo; muestra el GPS como en el Chato y la solicitud cuando llega. Calculado para que no lo tape el aro ni la mano derecha.
+- Búsqueda de puntos de recogida: primero las calles que quedan a la distancia pedida (antes fallaba seguido).
+
 ### Hecho en v164 · interior nuevo del Subaro (pedido de Juan)
 - Interior sacado del "Low-Poly Retro City Car 03" (CGTrader, gratis, Royalty Free): tablero con 3 carátulas y agujas que se mueven (velocímetro 0–180, tacómetro 0–7000, gasolina), volante, asientos, banca trasera, consola y vestiduras de puertas. 3,418 triángulos + volante 396.
 - Acomodado con medidas: ancho ×0.886 (vestidura .79→.70), alto ×0.906 (piso .38→.33 y base del parabrisas 1.02→.910), largo por tramos (base del medallón −1.815→−1.534, ojo −0.06→−0.02, base del parabrisas .729→1.021). Volante a Ø 38 cm con su inclinación de 26.6°. Pivotes de las agujas tomados del FBX.
