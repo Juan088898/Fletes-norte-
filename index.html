@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v174">
+<meta name="fn-version" content="v175">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -7900,7 +7900,7 @@ function carInterior(){const G=new THREE.Group();carIntr=G;carM.add(G);const o=c
      de los tacómetros (z .762), de y .85 a .88, y hasta la base del parabrisas (z 1.0). A los lados del tablero de tacómetros, una repisa plana
      a la altura donde terminó lo que se quitó (y .845–.851, z .70–.775) para que no se vea hueco. */
   {const dm=new THREE.MeshLambertMaterial({color:0x1d1e21}),bx=(x0,x1,y0,y1,z0,z1)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(x1-x0,y1-y0,z1-z0),dm);b.position.set((x0+x1)/2,(y0+y1)/2,(z0+z1)/2+o);G.add(b);};
-   bx(-.06,.74,.85,.88,.775,1.0);}   // v169 (Juan): una sola capa (sin repisas) y 4 cm hacia la izquierda (hacia la puerta del chofer)
+   bx(-.115,.74,.85,.88,.775,1.0);}   // v175: la orilla derecha llega a x −.115 (lo quitado empieza en −.106): ya no queda hueco junto al celular   // v169 (Juan): una sola capa (sin repisas) y 4 cm hacia la izquierda (hacia la puerta del chofer)
   carClu=document.createElement('canvas');carClu.width=600;carClu.height=260;carCluTex=new THREE.CanvasTexture(carClu);carCluTex.encoding=THREE.sRGBEncoding;carCluTex.anisotropy=4;
   const cp=new THREE.Mesh(new THREE.PlaneGeometry(.357,.155),new THREE.MeshBasicMaterial({map:carCluTex,transparent:true}));cp.position.set(.374,.821,.735+o);cp.rotation.set(.36,Math.PI,0);G.add(cp);carDrawClu();
   // palanca de carro (no de camión): varilla delgada cromada de 28 cm inclinada 8° hacia el chofer, perilla de bola negra Ø 5 cm con el patrón grabado y fuelle de hule.
@@ -7921,7 +7921,10 @@ function carInterior(){const G=new THREE.Group();carIntr=G;carM.add(G);const o=c
   /* celular en su soporte (v174), en la ventila al centro del tablero: x .02, y .76, z .66 (enfrente de la cara del tablero).
      Visto desde el ojo pasa a 22.6 cm del centro del volante a la altura del aro (radio .19 + .016): no lo tapa el aro ni la mano derecha.
      La pantalla mira al ojo (lookAt) y muestra el GPS como en el Chato; si llega una solicitud de YiYi, la muestra. */
-  {const blk=new THREE.MeshPhongMaterial({color:0x15171a,shininess:30}),pg=new THREE.Group();pg.position.set(.02,.76,.66+o);G.add(pg);
+  {const blk=new THREE.MeshPhongMaterial({color:0x15171a,shininess:30}),pg=new THREE.Group();pg.position.set(.02,.77,.66+o);
+   // v175: se mide dónde está la cara del tablero: rayo del ojo hacia la ventila; el celular queda 3.5 cm enfrente de lo que toca (antes se metía en el tablero)
+   {carM.updateMatrixWorld(true);const eW=carM.localToWorld(new THREE.Vector3(CAR.eye.x,CAR.eye.y,CAR.eye.z+o)),tW=carM.localToWorld(pg.position.clone()),rc=new THREE.Raycaster(eW,tW.clone().sub(eW).normalize(),0,2);
+    const hit=rc.intersectObject(im,false)[0];if(hit){const hp=carM.worldToLocal(hit.point.clone()),back=new THREE.Vector3(CAR.eye.x,CAR.eye.y,CAR.eye.z+o).sub(hp).normalize();pg.position.copy(hp.addScaledVector(back,.035));}}G.add(pg);
    const m4=new THREE.Matrix4().lookAt(new THREE.Vector3(CAR.eye.x,CAR.eye.y,CAR.eye.z+o),pg.position,new THREE.Vector3(0,1,0));pg.quaternion.setFromRotationMatrix(m4);
    const body=new THREE.Mesh(new THREE.BoxGeometry(.074,.152,.009),new THREE.MeshPhongMaterial({color:0x2a2b30,shininess:60}));pg.add(body);
    const clip=new THREE.Mesh(new THREE.BoxGeometry(.09,.03,.03),blk);clip.position.set(0,-.085,-.012);pg.add(clip);const jaw=new THREE.Mesh(new THREE.BoxGeometry(.09,.012,.022),blk);jaw.position.set(0,.083,-.012);pg.add(jaw);
