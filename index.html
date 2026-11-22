@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v158">
+<meta name="fn-version" content="v159">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -5767,16 +5767,16 @@ function updateRearCam(){const k=S.model,nt=NT(),par=nt?truck:trailer;par.add(re
 const REAL={},REALI={};
 // calibración de cada modelo (medida de sus llantas): escala, eje trasero, piso, hacia dónde ve el frente
 const REALCAL={
- cab:{el:'glbCab',mode:'fz',s:1,zR:-2.785,y0:.147,fZ:2.316,rearZ:[-.771,.471],rearX:.93,frontX:.746,glass:/^BSC_Windows$/,paintRx:/^Paint$/,inter:{wheel:[.763,2.324,2.589],paint:/^Paint$/},cy:-.02,cz:.2,cs:.8,noGps:1},
+ cab:{el:'glbCab',mode:'fz',s:1,zR:-2.785,y0:.147,fZ:2.316,rearZ:[-.771,.471],rearX:.93,frontX:.746,glass:/^BSC_Windows$/,paintRx:/^Paint$/,inter:{wheel:[.763,2.324,2.589],paint:/^Paint$/},cx:.054,cy:-.02,cz:.141,cs:.45,crx:-.41,noGps:1},
  amer:{el:'glbSemi',mode:'fz',s:1,zR:-3.815,y0:.01,fZ:1.78,rearZ:[-.55,.55],rearX:.97,frontX:.94,hideName:/^(Trailer$|Wheel_|SteeringWheel$)/,gpsDy:.24,glass:/^Window$/,inter:{wheel:[.69,1.81,.35],paint:/^Material$/},wS:.62,cz:.26,cs:.54,axle:/^Axle_/,cab:1,seat:0x5e564b,trim:[0x3a3e45,0x50555d],dash:[0x4a4e55,0x24272b],mir:{x:1.29,y:2.32,z:-4.378,sx:1,sy:1.25,ry:.4,ux:.61},mir2:{pts:[[-1.414,2.153,.474],[-1.348,2.136,.515],[-1.319,2.06,.54],[-1.353,1.983,.527],[-1.421,1.964,.488],[-1.474,2.014,.452],[-1.471,2.101,.445]]}}};
 let CAB_KEEP=null;
 // con interior real: el volante y el tablero son los del modelo; dejamos el retrovisor, el GPS, el rosario y el parabrisas estrellado
 function cabKeep(){if(CAB_KEEP)return CAB_KEEP;const K=new Set([RVM,INT.ros,GPSSCR.sc.parent,CRACKSLOT,RAING,leverPiv,pbLever,wheelBase,armL.u,armL.h,armR.u,armR.h,legL.sh,legL.f,legR.sh,legR.f]);for(const k in pedals3)K.add(pedals3[k].piv);cabin.children.forEach(o=>{if(o.position.distanceTo(new THREE.Vector3(-.04,2.12,-4.42))<.01)K.add(o);});CLUKEEP.forEach(o=>K.add(o));return CAB_KEEP=K;}
-function realVis(){const K=REALCAL[S.model],R0=REAL[S.model];if(GPSSCR.sc)GPSSCR.sc.parent.traverse(o=>{if(o!==GPSSCR.sc.parent)o.visible=false;});CLUKEEP.forEach(o=>{if(o.userData.p0){o.position.copy(o.userData.p0);o.scale.set(1,1,1);}});for(const k in REAL)REAL[k].visible=false;
+function realVis(){const K=REALCAL[S.model],R0=REAL[S.model];if(GPSSCR.sc)GPSSCR.sc.parent.traverse(o=>{if(o!==GPSSCR.sc.parent)o.visible=false;});CLUKEEP.forEach(o=>{if(o.userData.p0){o.position.copy(o.userData.p0);o.scale.set(1,1,1);if(o.userData.r0!=null)o.rotation.x=o.userData.r0;}});for(const k in REAL)REAL[k].visible=false;
   if(!R0){wheelBase.position.set(-.58,2.6,-4.47);wheelBase.scale.setScalar(1);cabin.visible=true;cabin.children.forEach(o=>o.visible=true);cabin.position.set(0,0,MODELS[S.model].dz);GPSSCR.sc.parent.position.y=2.83;if(EXT[S.model])EXT[S.model].visible=true;return;}
   const inter=!!REALI[S.model];R0.visible=inter||S.view!==0;
   if(K.box){EXT[S.model].visible=true;EXT[S.model].children.forEach(o=>{if(o.userData.cab)o.visible=false;});}else if(EXT[S.model])EXT[S.model].visible=!inter&&S.view===0;
-  if(inter){const keep=cabKeep();cabin.visible=true;cabin.children.forEach(o=>o.visible=keep.has(o));const c=REALI[S.model];cabin.position.set(c.x,c.y,c.z);CLUKEEP.forEach(o=>{const p=o.userData.p0||(o.userData.p0=o.position.clone());o.position.set(p.x,p.y+(K.cy||0),p.z+(K.cz||0));o.scale.set(K.cs||1,K.cs||1,1);});wheelBase.position.set(-.58+(K.wDx||0),2.6+(K.wDy||0),-4.47+(K.wDz||0));wheelBase.scale.setScalar(K.wS||1);GPSSCR.sc.parent.position.y=2.83+(K.gpsDy||0);if(K.noGps)GPSSCR.sc.parent.visible=false;}
+  if(inter){const keep=cabKeep();cabin.visible=true;cabin.children.forEach(o=>o.visible=keep.has(o));const c=REALI[S.model];cabin.position.set(c.x,c.y,c.z);CLUKEEP.forEach(o=>{const p=o.userData.p0||(o.userData.p0=o.position.clone());o.position.set(p.x+(K.cx||0),p.y+(K.cy||0),p.z+(K.cz||0));o.scale.set(K.cs||1,K.cs||1,1);if(o.userData.r0==null)o.userData.r0=o.rotation.x;if(K.crx!=null)o.rotation.x=K.crx;});wheelBase.position.set(-.58+(K.wDx||0),2.6+(K.wDy||0),-4.47+(K.wDz||0));wheelBase.scale.setScalar(K.wS||1);GPSSCR.sc.parent.position.y=2.83+(K.gpsDy||0);if(K.noGps)GPSSCR.sc.parent.visible=false;}
   else{cabin.visible=S.view===0;cabin.children.forEach(o=>o.visible=true);cabin.position.set(0,0,MODELS[S.model].dz);GPSSCR.sc.parent.position.y=2.83;wheelBase.position.set(-.58,2.6,-4.47);wheelBase.scale.setScalar(1);}}
 // v103: el modelo trae ~500 piezas sueltas, cada una con su material; las fijas se funden por tipo de material y se dibujan en unas pocas llamadas
 function mergeModel(root,paintCol){root.updateMatrixWorld(true);const inv=new THREE.Matrix4().copy(root.matrixWorld).invert(),G=new Map(),v=new THREE.Vector3(),M4=new THREE.Matrix4(),N3=new THREE.Matrix3();
@@ -5929,7 +5929,7 @@ function aGauge(g,cx,cy,r,val,min,max,step,lab,redFrom,fmt,needles){const a0=Mat
   (needles||[[val,'#d42a1e']]).forEach(([v,col])=>{const a=A(v);g.save();g.translate(cx,cy);g.rotate(a);g.beginPath();g.moveTo(-r*.16,-r*.035);g.lineTo(r*.88,0);g.lineTo(-r*.16,r*.035);g.closePath();g.fillStyle=col;g.shadowColor='rgba(0,0,0,.35)';g.shadowBlur=3;g.shadowOffsetY=2;g.fill();g.restore();});
   g.beginPath();g.arc(cx,cy,r*.11,0,7);g.fillStyle='#2a2a2a';g.fill();g.beginPath();g.arc(cx,cy,r*.05,0,7);g.fillStyle='#9aa0a6';g.fill();}
 function drawClusterCab(){const g=cluCtx;g.setTransform(2,0,0,2,0,0);g.clearRect(0,0,620,278);
-  const pn=g.createLinearGradient(0,0,0,278);pn.addColorStop(0,'#2b2622');pn.addColorStop(1,'#15120f');g.beginPath();g.moveTo(14,278);g.lineTo(14,60);g.quadraticCurveTo(14,14,70,14);g.lineTo(550,14);g.quadraticCurveTo(606,14,606,60);g.lineTo(606,278);g.closePath();g.fillStyle=pn;g.fill();g.lineWidth=5;g.strokeStyle='#8d9299';g.stroke();
+  const pn=g.createLinearGradient(0,0,0,278);pn.addColorStop(0,'#2b2622');pn.addColorStop(1,'#15120f');
   const run=!!S.running,rpm=S.rpm||0,air=(S.air??1)*125,et=S.et||0,fu=S.fuel/tankCap();
   aGauge(g,124,112,94,rpm/100,0,30,5,'x100 RPM',21,v=>v);
   aGauge(g,496,112,94,Math.abs(S.v)*3.6,0,120,20,'km/h',null,v=>v);
