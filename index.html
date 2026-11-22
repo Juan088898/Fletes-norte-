@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v172">
+<meta name="fn-version" content="v173">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -6427,7 +6427,7 @@ function trafficStep(dt){S.crashCD-=dt;const md=MD(),[fx,fz]=fwdOf(S.h),[hx,hz]=
     p=carPose(t);t.o.position.set(p.x,p.y,p.z);t.o.rotation.set(Math.atan(p.sl),Math.atan2(-p.fx,-p.fz),0);
     if(S.crashCD<=0){let hitT=false,hitR=false;for(const off of t.heavy?[-hl+2.2,0,hl-2.2]:[0]){const cx=p.x+p.fx*off,cz=p.z+p.fz*off,lx=(cx-S.x)*fx+(cz-S.z)*fz,lr=Math.abs((cx-S.x)*fz-(cz-S.z)*fx),mx=(cx-hx)*-tx+(cz-hz)*-tz,mr=Math.abs((cx-hx)*tz-(cz-hz)*tx);
       if(lr<2.2&&lx>-(md.rear||1.4)-2.1&&lx<md.front+2.1)hitT=true;if(!NT()&&mr<2.3&&mx>-3.3&&mx<14.5)hitR=true;}
-      if(hitT||hitR){S.crashCD=1.2;S.crashT=.35;const sp=Math.abs(S.v);if(sp>.8){damage(Math.min(20,sp*2));toast('¡Choque con un auto!');noise(.35,600,'lowpass',.5);}S.v*=.4;t.s=Math.max(0,t.s-5);t.cur=0;}}});}
+      if(hitT||hitR){S.crashCD=1.2;S.crashT=.35;const sp=Math.abs(S.v);if(sp>.8){damage(Math.min(20,sp*2));toast('¡Choque con un auto!');if(CARM)yyHit();noise(.35,600,'lowpass',.5);}S.v*=.4;t.s=Math.max(0,t.s-5);t.cur=0;}}});}
 
 /* ================= GPS ================= */
 function planRoute(x,z,h,dest,mode,pen){if(pen&&typeof pen.has!=='function')pen=new Set(Array.isArray(pen)?pen:[]);
@@ -6922,7 +6922,7 @@ function navTxt(p,N){const m10=x=>Math.round(x/10)*10;let acc=p.length>1?Math.hy
   let tgt=p[p.length-1],need=25,cx=S.x,cz=S.z;for(let q=1;q<p.length;q++){const sx=p[q][0]-cx,sz=p[q][1]-cz,l=Math.hypot(sx,sz);if(l>=need){tgt=[cx+sx/l*need,cz+sz/l*need];break;}need-=l;cx=p[q][0];cz=p[q][1];}
   return{txt,acc:m10(acc),ang:(Math.atan2(tgt[0]-S.x,-(tgt[1]-S.z))+S.h)*180/Math.PI};}
 let BRD=null,BRT=-99;
-function gpsInfo(){if(!mission&&!BRECHA_JOB&&gps.br)gps={pts:[],names:[],len:0};
+function gpsInfo(){if(CARM)return yyGps();if(!mission&&!BRECHA_JOB&&gps.br)gps={pts:[],names:[],len:0};
  if(!mission&&BRECHA_JOB){const bk=BRECHA_JOB.back,inZ=offMask(S.x,S.z)>0;
   // camino a la entrada del camino de tierra: ruta por calles con vueltas y voz
   if(!bk){if(inZ){if(!BRD||BRD.name!=='Pedrera El Norte'){const ne=nearestEdge(PEDRERA.road.x,PEDRERA.road.z);BRD={e:ne.e,t:ne.t,E:{x:ne.px,z:ne.pz},zone:{x:PEDRERA.x,z:PEDRERA.z},name:'Pedrera El Norte'};gps.br=false;}}else if(!BRD||BRD.name==='Pedrera El Norte'){const ne=nearestEdge(TRACK[2][0],TRACK[2][1]);BRD={e:ne.e,t:ne.t,E:{x:ne.px,z:ne.pz},zone:{x:TRACK[2][0],z:TRACK[2][1]},name:'Brecha del Ejido'};}
@@ -7541,10 +7541,22 @@ function applySkin(){if(!SKIN)return;const on=UP(S.model).skin==='deli';if(on)sk
  function skin(){const p=P();C.className=p.cls+(S.view!==0?' out':'');$('#celCrack').style.display=p.cls==='alc'?'':'none';}
  function status(){$('#celTime').textContent=hhmm();const c=CS(),b=$('#celBat'),v=Math.round(c.bat);b.querySelector('b').textContent=v+'%';b.querySelector('s').style.width=Math.max(4,v)+'%';b.classList.toggle('low',v<=15);b.classList.toggle('chg',!!S.running&&!open);}
  const hd=(a,title)=>`<div class="cel-hd" style="--ac:${APPS[a]?APPS[a].c:'#26324d'}"><button data-n="back" aria-label="Atrás">‹</button><img src="${CELA.logo[a]}" alt="">${esc(title||APPS[a].n)}</div>`;
+ // ---- YiYi (modo chofer de app): conectarse, estrellas, tasa, viaje actual e historial ----
+ function yiyi(){const y=yyS(),t=YY&&YY.trip,st=yyStars(),rt=Math.round(yyRate()*100);
+  let h=hd('yiyi','YiYi').replace('#26324d','#6a4cf0')+`<div class="cel-card" style="text-align:center"><button class="cel-b${y.on?' on':''}" data-yyon style="width:100%;padding:.8em;font-size:1.15em;${y.on?'background:#2fae6a;border-color:#2fae6a;color:#fff':''}">${y.on?'● En línea':'○ Desconectado'}</button>
+   <p style="margin:.5em 0 0">${y.on?(t?'Tienes un viaje en curso':'Esperando solicitudes…'):'Conéctate para recibir viajes'}${y.on&&!S.running?' · prende el motor':''}</p></div>
+   <div class="cel-card" style="display:grid;grid-template-columns:1fr 1fr 1fr;text-align:center;gap:.3em"><div><b style="font-size:1.3em;color:#ffd45a">★ ${st.toFixed(2)}</b><p style="margin:0">${y.rat.length} calif.</p></div><div><b style="font-size:1.3em;color:${rt<60?'#ff8a80':'#7ff0c8'}">${rt}%</b><p style="margin:0">aceptación</p></div><div><b style="font-size:1.1em;color:#7ff0c8">${fmtMoney(y.tot)}</b><p style="margin:0">${y.n} viajes</p></div></div>`;
+  if(rt<60)h+=`<p class="cel-card" style="color:#ff8a80">Rechazas mucho: te llegan menos solicitudes y pagan 15 % menos.</p>`;
+  if(t){const ph={pickup:`Ve por ${esc(t.pas.n)}`,board:`${esc(t.pas.n)} se está subiendo`,ride:`Lleva a ${esc(t.pas.n)} a ${esc(t.D.name)}`,drop:'Bajando…'}[t.phase];
+   h+=`<div class="cel-card"><h4>${ph}${t.prisa?' <span style="color:#ffd45a">⚡ con prisa</span>':''}</h4><p>${esc(t.pas.n)} ★${t.pas.st.toFixed(1)} · viaje de ${(t.len/1000).toFixed(1)} km</p><p>Cobra ${fmtMoney(t.fare)} · te quedan <b>${fmtMoney(t.net)}</b>${t.prisa?' (+10 % si llegas rápido)':''}</p>${t.phase==='ride'&&(t.hits||t.fines)?`<p style="color:#ff8a80">Golpes: ${t.hits} · multas: ${t.fines} (bajan estrellas)</p>`:''}
+    ${t.phase!=='drop'?'<button class="cel-b" data-yycan style="width:100%;margin-top:.4em">Cancelar viaje</button>':''}</div>`;}
+  h+=`<div class="cel-card"><h4>Últimos viajes</h4>`+(y.hist.length?y.hist.slice(0,6).map(r=>`<p style="margin:.2em 0">${'★'.repeat(r.st)}${'☆'.repeat(5-r.st)} ${esc(r.n)} · ${r.km} km · <b style="color:#7ff0c8">${fmtMoney(r.net+(r.tip||0))}</b></p>`).join(''):'<p>Todavía no haces viajes.</p>')+`<p style="opacity:.7;margin-top:.4em">YiYi se queda con 20 % de cada viaje.</p></div>`;
+  V.innerHTML=h;const on=V.querySelector('[data-yyon]');if(on)on.onclick=()=>{yyToggle();render();};const cn=V.querySelector('[data-yycan]');if(cn)cn.onclick=()=>{yyCancel();render();};}
+ window.__yiyiApp=()=>{if(!open)openCel('yiyi');else go('yiyi');};window.__yyRefresh=()=>{if(open&&app==='yiyi')render();};
  function go(a,s){jobsBack();app=a;sub=s||'';if(a!=='wasapen')chatWith=null;V.scrollTop=0;if(a==='home'){render();return;}
   // un celular más barato tarda más en abrir cada app
   loadT=P().load;LD.hidden=false;V.innerHTML='';snd('tap',.35);}
- function render(){status();if(loadT>0)return;LD.hidden=true;try{({home,jaleya,wasapen,fierrotas,rola,banco,config})[app]();}catch(e){V.innerHTML='<p class="cel-card">Algo falló en la app: '+esc(e.message)+'</p>';}}
+ function render(){status();if(loadT>0)return;LD.hidden=true;try{({home,jaleya,wasapen,fierrotas,rola,banco,config,yiyi})[app]();}catch(e){V.innerHTML='<p class="cel-card">Algo falló en la app: '+esc(e.message)+'</p>';}}
  // ---- Inicio ----
  function wx(){const r=env.rain||0,d=env.day??1,t=Math.round(18+10*Math.sin((env.tod-9)/24*Math.PI*2)-4*r);return (r>.3?'🌧':d<.4?'🌙':'☀')+' '+t+'°';}
  function home(){const c=CS(),un=a=>a==='wasapen'?Object.values(c.un).reduce((s,x)=>s+x,0):a==='jaleya'?(c.un._j||0):0;
@@ -7790,7 +7802,7 @@ function carPhysics(dt){
   const fr=md.front*.6,px=S.x+fx*fr,pz=S.z+fz*fr;let near=-1;
   for(const ni of LIGHTS){const nd=nodes[ni];if(Math.hypot(px-nd.x,pz-nd.z)<Math.max(11,(nd.jr||0)*.6)){near=ni;break;}}
   if(near>=0&&S.inNode!==near){S.inNode=near;const nd=nodes[near],st=lightState(nd,nd.groupOf(Math.atan2(-fz,-fx))),ap=Math.atan2(-fz,-fx),hasPost=(nd.post||[]).some(a=>Math.abs(Math.atan2(Math.sin(a-ap),Math.cos(a-ap)))<.6);
-    if(hasPost&&st==='r'&&Math.abs(S.v)>2.5){save.money-=1760;persist();toast('¡Te pasaste el rojo! Multa de P$1,760 (15 UMA)');noise(.5,1800,'bandpass',.25);}}
+    if(hasPost&&st==='r'&&Math.abs(S.v)>2.5){save.money-=1760;persist();toast('¡Te pasaste el rojo! Multa de P$1,760 (15 UMA)');noise(.5,1800,'bandpass',.25);yyFine();}}
   if(near<0&&S.inNode>=0&&Math.hypot(px-nodes[S.inNode].x,pz-nodes[S.inNode].z)>22)S.inNode=-1;
   return delta/(1+(S.v/30)*(S.v/30));}
 function carStart(){document.body.classList.add('carm');const y=save.yiyi||(save.yiyi={});S.fuel=y.fuel??40;S.air=1;S.hitched=false;carBuild();updateGateLabels();
@@ -7833,7 +7845,7 @@ function carArmTick(dt){const A=carArms;if(!A||!carLever)return;const sh=S.drag|
       _cM.makeBasis(lX,lY,lZ);_cQ2.setFromRotationMatrix(_cM);const Wl=knob.clone().addScaledVector(lU,.035).addScaledVector(lY,-.055);Wl.y+=Math.sin(Math.PI*A.hand)*.04;
       W.lerp(Wl,A.hand);_cQ.slerp(_cQ2,A.hand);}
     carSolve(P.out,P.sh,W);placeLimb(a.up,P.sh,_cE);placeLimb(a.fo,_cE,_cW);a.el.position.copy(_cE);a.h.position.copy(_cW);a.h.quaternion.copy(_cQ);}}
-function carHit(sp){const y=save.yiyi||(save.yiyi={});y.dmg=Math.min(100,(y.dmg||0)+Math.min(15,sp*1.2));persist();}
+function carHit(sp){yyHit();const y=save.yiyi||(save.yiyi={});y.dmg=Math.min(100,(y.dmg||0)+Math.min(15,sp*1.2));persist();}
 /* ---- modelo 3D ---- */
 function carBuild(){if(carG)return;carWheels=[];carF=0;carG=new THREE.Group();scene.add(carG);carBody=new THREE.Group();carG.add(carBody);carM=new THREE.Group();carM.rotation.y=Math.PI;carBody.add(carM);
   carEye=new THREE.Group();carEye.position.set(CAR.eye.x,CAR.eye.y,CAR.eye.z+carOff);carEye.rotation.y=Math.PI;carM.add(carEye);
@@ -7898,7 +7910,7 @@ function carInterior(){const G=new THREE.Group();carIntr=G;carM.add(G);const o=c
   carMir=new THREE.Mesh(new THREE.PlaneGeometry(.225,.064),new THREE.MeshBasicMaterial({map:carMirRT.texture}));carMir.position.set(0,1.215,.354+o);carMir.rotation.y=Math.PI;carMirRT.texture.repeat.x=-1;carMirRT.texture.offset.x=1;G.add(carMir);}
 
 /* ---- cada cuadro: pose del carro, llantas, volante y palanca ---- */
-function carFrame(dt,delta){if(!carG)carBuild();truck.visible=false;if(typeof trailer!=='undefined')trailer.visible=false;carF++;
+function carFrame(dt,delta){if(!carG)carBuild();try{yyTick(dt);}catch(e){showErr('yiyi',e);}truck.visible=false;if(typeof trailer!=='undefined')trailer.visible=false;carF++;
   // v170 (Juan: vibraba mucho): la suspensión del juego está hecha para el tráiler; con la distancia entre ejes corta del carro (2.465 m contra 5.6 m)
   // el mismo bache daba 2.3 veces más cabeceo. Se suaviza (filtro de ~0.2 s) y se escala a 45 %.
   S.ccp=(S.ccp??S.cp)+(S.cp-(S.ccp??S.cp))*lerpK(5,dt);S.ccr=(S.ccr??S.cr)+(S.cr-(S.ccr??S.cr))*lerpK(5,dt);
@@ -7917,7 +7929,85 @@ function carCabCam(dt){const kick=S.camKick||0;
   if(carMirRT&&carF%(HI()?4:6)===1){carMirCam.rotation.set(0,0,0);carMirCam.lookAt(carMirCam.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3().setFromMatrixColumn(carM.matrixWorld,2).multiplyScalar(-10)));
     carIntr.visible=false;renderer.setRenderTarget(carMirRT);renderer.render(scene,carMirCam);renderer.setRenderTarget(null);carIntr.visible=true;}}
 
-window.__S=S;window.__setMode=m=>{save.mode=m==='yiyi'?'yiyi':'jale';persist();};window.__mode=()=>CARM?'yiyi':'jale';window.__car=()=>({carWheels,carG,carM,carIntr});window.__carT=(dt,n)=>{let d=0;for(let i=0;i<(n||1);i++){S.ped.clutch=S.tgt.clutch;S.ped.gas=S.tgt.gas;S.ped.brake=S.tgt.brake;d=carPhysics(dt);S.t+=dt;}return d;};window.__dbg={get SPX(){return SPX},REALCAL:typeof REALCAL!=="undefined"?REALCAL:null,startLoad,LOAD,TRG,get LOADER(){return LOADER},restoreJob,MAPV,snapJob,renderer,scene,hash,OBST,inObb,hk,CELL,BB,REAL,DEPOTS,STATIONS,edges,nodes,LIGHTS,lows,highs,trees,lamps,applyModel,setView,env,save,physics,BUMPS,hitAt,bodyPoints,get mission(){return mission},PARK,LOAD,hinge,truckHit,planRoute,drawMap,drawCluster,drawGpsDev,persist,chunkTick,trafficStep,updMass,WEIGHS,get MASS(){return MASS},grossLim,makeJobs,traffic,snapJob,revPath,pathPos,get job(){return save.job},fwdOf,startMission,CARGO,loadTick,TRG,camera,scene,renderer,CHUNKS};
+/* ===== v173 · Fase 5 etapa 3: viajes de YiYi =====
+   Decisiones de Juan: solicitudes una por una cada 20–60 s con tono propio y vibración; 15 s para aceptar o rechazar;
+   P$1,500–3,000 por viaje (YiYi cobra 20 %); pasajeros visibles que suben y bajan; las estrellas solo bajan por choques y multas;
+   botón En línea en la app; cancelar un viaje aceptado baja la tasa y las estrellas. Rechazar mucho = menos solicitudes y peor pagadas. */
+var YY;
+const YYN=['Carmen','Luis','Daniela','Jorge','Ana','Ricardo','Sofía','Miguel','Lupita','Héctor','Fernanda','Raúl','Paty','Toño','Valeria','Beto','Mariana','Chuy','Rocío','Iván'];
+const YYSH=[0xd94f4f,0x3f7fd0,0x47a86b,0xe0a83a,0x8a5cc9,0xf2f2f2,0x2b2b30,0xe07a3a];
+function yyS(){const y=save.yiyi||(save.yiyi={});if(!Array.isArray(y.rat))y.rat=[];if(!Array.isArray(y.acc))y.acc=[];if(!Array.isArray(y.hist))y.hist=[];if(y.tot==null)y.tot=0;if(y.n==null)y.n=0;return y;}
+function yyStars(){const r=yyS().rat;return r.length?r.reduce((a,b)=>a+b,0)/r.length:5;}
+function yyRate(){const a=yyS().acc;return a.length?a.filter(x=>x).length/a.length:1;}
+function yyPush(arr,v,n){arr.push(v);while(arr.length>n)arr.shift();}
+// punto en la banqueta de una calle de la ciudad (avenida o calle), a cierta distancia en línea recta
+function yyPoint(ox,oz,min,max){for(let k=0;k<80;k++){const e=edges[Math.floor(Math.random()*edges.length)];if(e.type!=='av'&&e.type!=='st'||e.L<40)continue;
+  const t=.2+Math.random()*.6,x=e.ax+(e.bx-e.ax)*t,z=e.az+(e.bz-e.az)*t,d=Math.hypot(x-ox,z-oz);if(d<min||d>max)continue;
+  const sd=Math.random()<.5?1:-1,nx=-e.uz*sd,nz=e.ux*sd,off=e.w/2+1.4,px=x+nx*off,pz=z+nz*off;
+  if(EXCL.some(o=>inObb(o,px,pz)))continue;return{e,t,E:{x,z},zone:{x:px,z:pz},name:e.name,face:Math.atan2(-nx,-nz)};}return null;}
+function yyTone(){try{audioInit();if(!AC)return;const t0=AC.currentTime,v=.16*(SET().vol??1);for(const rep of[0,.55])[[659,0],[784,.11],[1047,.22]].forEach(([f,dt])=>{const o=AC.createOscillator(),o2=AC.createOscillator(),g=AC.createGain();
+    o.type='sine';o2.type='triangle';o.frequency.value=f;o2.frequency.value=f*2;g.gain.setValueAtTime(0,t0+rep+dt);g.gain.linearRampToValueAtTime(v,t0+rep+dt+.012);g.gain.exponentialRampToValueAtTime(.001,t0+rep+dt+.3);
+    o.connect(g);o2.connect(g);g.connect(AC.destination);o.start(t0+rep+dt);o2.start(t0+rep+dt);o.stop(t0+rep+dt+.32);o2.stop(t0+rep+dt+.32);});}catch(e){}}
+function yyChime(up){try{audioInit();if(!AC)return;const t0=AC.currentTime,v=.12*(SET().vol??1);(up?[784,1047]:[523,659]).forEach((f,i)=>{const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(v,t0+i*.13);g.gain.exponentialRampToValueAtTime(.001,t0+i*.13+.35);o.connect(g);g.connect(AC.destination);o.start(t0+i*.13);o.stop(t0+i*.13+.4);});}catch(e){}}
+function yyRefresh(){if(window.__yyRefresh)window.__yyRefresh();}
+function yyToggle(){const y=yyS();y.on=!y.on;persist();if(!YY)YY={next:8,req:null,trip:null,pas:null};YY.next=Math.min(YY.next,8+Math.random()*10);toast(y.on?'YiYi: estás en línea. Te van a llegar solicitudes':'YiYi: te desconectaste',true);yyRefresh();}
+/* ---- solicitud ---- */
+function yyOffer(){const P=yyPoint(S.x,S.z,150,800);if(!P){YY.next=10;return;}const D=yyPoint(P.zone.x,P.zone.z,700,2600);if(!D){YY.next=10;return;}
+  const r=planRoute(P.E.x,P.E.z,Math.atan2(-P.e.ux,-P.e.uz),D,'dist'),toP=planRoute(S.x,S.z,S.h,P,'dist'),low=yyRate()<.6,prisa=Math.random()<.3;
+  let fare=1500+r.len/1000*600;if(prisa)fare*=1.2;if(low)fare*=.85;fare=Math.round(clamp(fare,1500,3000)/10)*10;
+  YY.req={P,D,len:r.len,eta:r.eta,pick:toP.len,fare,net:Math.round(fare*.8/10)*10,prisa,pas:{n:YYN[Math.floor(Math.random()*YYN.length)],st:+(4.2+Math.random()*.8).toFixed(1)},T:15};
+  yyTone();buzz([140,90,140]);yyReqUI();yyRefresh();}
+function yyNext(){const low=yyRate()<.6;YY.next=(20+Math.random()*40)*(low?1.8:1);}
+function yyAccept(){const q=YY&&YY.req;if(!q)return;yyPush(yyS().acc,1,20);YY.req=null;yyReqUI();persist();
+  YY.trip={...q,phase:'pickup',t0:S.t,hits:0,fines:0,gT:0};yyPasSpawn(q);yyDest(q.P);toast(`Aceptaste: ve por ${q.pas.n} (${(q.pick/1000).toFixed(1)} km)`,true);yyRefresh();}
+function yyReject(timeout){if(!YY||!YY.req)return;yyPush(yyS().acc,0,20);YY.req=null;yyReqUI();persist();yyNext();if(timeout)toast('Se te fue la solicitud de YiYi');yyRefresh();}
+function yyCancel(){const t=YY&&YY.trip;if(!t)return;const y=yyS();yyPush(y.acc,0,20);yyPush(y.acc,0,20);yyPush(y.rat,3,40);persist();yyPasHide();yyEnd();toast('Cancelaste el viaje: baja tu tasa de aceptación y tus estrellas',true);yyRefresh();}
+function yyEnd(){YY.trip=null;gps={pts:[],names:[],len:0};beacon.visible=false;yyNext();}
+function yyDest(P){YY.dest={e:P.e,t:P.t,E:P.E,zone:P.zone,name:P.name};gps=planRoute(S.x,S.z,S.h,YY.dest,'dist');YY.trip.gT=.7;beacon.position.set(P.zone.x,H(P.zone.x,P.zone.z)+100,P.zone.z);beaconMat.color.setHex(0x7a5cff);beacon.visible=true;}
+/* ---- pasajero (mismo muñeco de los mecánicos y oficiales) ---- */
+function yyPasSpawn(q){if(!YY.pm){YY.pm=mkMech(0xd94f4f,0x2a1d16);}const R=YY.pm;R.traverse(o=>{if(o.isMesh&&o.material&&o.material.color&&o.parent===R.userData.body&&o.geometry.parameters&&o.geometry.parameters.height===.56)o.material=o.material.clone(),o.material.color.setHex(YYSH[Math.floor(Math.random()*YYSH.length)]);});
+  R.position.set(q.P.zone.x,H(q.P.zone.x,q.P.zone.z),q.P.zone.z);R.rotation.y=q.P.face;R.visible=true;YY.pas={R,mode:'wait',to:null,t:0};}
+function yyPasHide(){if(YY&&YY.pas){YY.pas.R.visible=false;YY.pas=null;}}
+function yyDoor(){const[fx,fz]=fwdOf(S.h),[rx,rz]=rightOf(S.h);return{x:S.x+fx*.95+rx*1.25,z:S.z+fz*.95+rz*1.25};}   // puerta trasera derecha: 95 cm adelante del eje trasero, 1.25 m al lado (banqueta)
+function yyPasTick(dt){const p=YY.pas;if(!p)return;const R=p.R;p.t+=dt;
+  if(p.mode==='wait'){pose(R,'stand',p.t);return;}if(p.mode==='in')return;   // va adentro del carro
+  const tx=p.mode==='board'?yyDoor():p.to,dx=tx.x-R.position.x,dz=tx.z-R.position.z,d=Math.hypot(dx,dz);
+  if(d<.25){if(p.mode==='board'){R.visible=false;p.mode='in';yyBoarded();}else if(p.mode==='leave'){yyPasHide();}return;}
+  const st=Math.min(d,1.35*dt);R.position.x+=dx/d*st;R.position.z+=dz/d*st;R.position.y=H(R.position.x,R.position.z);R.rotation.y=Math.atan2(dx,dz);pose(R,'walk',p.t);}
+function yyBoarded(){const t=YY.trip;t.phase='ride';t.t1=S.t;yyChime(true);yyDest(t.D);toast(`Subió ${t.pas.n}${t.prisa?' (¡va con prisa!)':''}. Llévalo a ${t.D.name}`,true);yyRefresh();}
+/* ---- viaje ---- */
+function yyTripTick(dt){const t=YY.trip;t.gT-=dt;if(t.gT<=0&&YY.dest){gps=planRoute(S.x,S.z,S.h,YY.dest,'dist');t.gT=.7;}
+  const sp=Math.abs(S.v);
+  if(t.phase==='pickup'){const d=Math.hypot(S.x-t.P.zone.x,S.z-t.P.zone.z);if(d<13&&sp<.6){t.phase='board';YY.pas.mode='board';toast(`${t.pas.n} se está subiendo…`);}}
+  else if(t.phase==='board'){if(sp>1.2||Math.hypot(S.x-t.P.zone.x,S.z-t.P.zone.z)>18){t.phase='pickup';YY.pas.mode='wait';const R=YY.pas.R;R.position.set(t.P.zone.x,H(t.P.zone.x,t.P.zone.z),t.P.zone.z);R.rotation.y=t.P.face;toast('Espera a que se suba: frena junto a la banqueta');}}
+  else if(t.phase==='ride'){const d=Math.hypot(S.x-t.D.zone.x,S.z-t.D.zone.z);if(d<14&&sp<.6){t.phase='drop';const dr=yyDoor(),R=YY.pas.R;R.position.set(dr.x,H(dr.x,dr.z),dr.z);R.visible=true;YY.pas.mode='leave';YY.pas.to={x:t.D.zone.x,z:t.D.zone.z};yyPay();}}}
+function yyPay(){const t=YY.trip,y=yyS(),st=Math.max(1,5-t.hits-t.fines),fast=t.prisa&&(S.t-t.t1)<=t.eta*1.25,tip=fast?Math.round(t.fare*.1/10)*10:0,tot=t.net+tip;
+  save.money+=tot;yyPush(y.rat,st,40);y.tot+=tot;y.n++;y.hist.unshift({n:t.pas.n,km:+(t.len/1000).toFixed(1),fare:t.fare,net:t.net,tip,st,h:Math.round(env.tod*100)/100});if(y.hist.length>15)y.hist.length=15;
+  if(window.__bankTx)window.__bankTx(t.net,`YiYi · viaje con ${t.pas.n} (${fmtMoney(t.fare)} − 20 % YiYi)`);if(tip&&window.__bankTx)window.__bankTx(tip,`Propina YiYi · ${t.pas.n}`);persist();
+  yyChime(true);toast(`${'★'.repeat(st)}${'☆'.repeat(5-st)} ${t.pas.n} te calificó con ${st}. Ganaste ${fmtMoney(tot)}${tip?' (con propina por llegar rápido)':''}`,true);
+  YY.trip=null;gps={pts:[],names:[],len:0};beacon.visible=false;yyNext();yyRefresh();}
+function yyHit(){if(YY&&YY.trip&&YY.trip.phase==='ride'){YY.trip.hits++;toast(`${YY.trip.pas.n}: "¡Aguas, compa!"`);}}
+function yyFine(){if(YY&&YY.trip&&YY.trip.phase==='ride')YY.trip.fines++;}
+function yyTick(dt){if(!YY)YY={next:12,req:null,trip:null,pas:null};const y=yyS();
+  if(YY.req){YY.req.T-=dt;if(YY.req.T<=0)yyReject(true);else if(Math.floor(YY.req.T*4)!==YY.req.lt){YY.req.lt=Math.floor(YY.req.T*4);yyReqUI();}}
+  else if(!YY.trip&&y.on&&S.running){YY.next-=dt;if(YY.next<=0)yyOffer();}
+  if(YY.trip)yyTripTick(dt);yyPasTick(dt);}
+/* ---- tarjeta de solicitud (arriba, como en las apps; se ve con o sin el celular abierto) ---- */
+function yyReqUI(){let c=document.getElementById('yyReq');const q=YY&&YY.req;
+  if(!c){c=document.createElement('div');c.id='yyReq';c.style.cssText='position:fixed;left:50%;top:max(10px,env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:70;width:min(360px,calc(100vw - 24px));background:#1a1533;border:2px solid #7a5cff;border-radius:16px;padding:10px 12px;color:#fff;font-family:var(--display,sans-serif);box-shadow:0 8px 24px rgba(0,0,0,.5)';document.body.appendChild(c);
+    c.addEventListener('click',e=>{const b=e.target.closest('[data-yy]');if(!b)return;e.stopPropagation();if(b.dataset.yy==='ok')yyAccept();else yyReject(false);});}
+  if(!q){c.hidden=true;c.style.display='none';return;}c.hidden=false;c.style.display='';const f=clamp(q.T/15,0,1);
+  c.innerHTML=`<div style="display:flex;align-items:center;gap:10px"><div style="width:46px;height:46px;border-radius:50%;flex:none;background:conic-gradient(#7a5cff ${f*360}deg,#3a3060 0);display:grid;place-items:center"><div style="width:36px;height:36px;border-radius:50%;background:#1a1533;display:grid;place-items:center;font:700 16px 'Share Tech Mono',monospace">${Math.ceil(q.T)}</div></div>
+   <div style="flex:1;min-width:0"><div style="font:700 13px sans-serif;color:#b9a8ff;letter-spacing:.06em">YIYI · NUEVA SOLICITUD${q.prisa?' <span style="color:#ffd45a">⚡ CON PRISA</span>':''}</div>
+   <div style="font:700 22px sans-serif">${fmtMoney(q.net)} <span style="font:500 12px sans-serif;color:#cfc6ff">te quedan (cobra ${fmtMoney(q.fare)})</span></div>
+   <div style="font:500 13px sans-serif;color:#e4e0ff">${q.pas.n} ★${q.pas.st.toFixed(1)} · recoger a ${(q.pick/1000).toFixed(1)} km · viaje de ${(q.len/1000).toFixed(1)} km</div></div></div>
+   <div style="display:flex;gap:8px;margin-top:8px"><button data-yy="no" style="flex:1;padding:10px;border-radius:10px;border:1px solid #5a4d99;background:#2a2350;color:#fff;font:700 15px sans-serif">Rechazar</button><button data-yy="ok" style="flex:2;padding:10px;border-radius:10px;border:0;background:#7a5cff;color:#fff;font:700 15px sans-serif">Aceptar</button></div>`;}
+/* ---- GPS para YiYi ---- */
+function yyGps(){const y=yyS(),t=YY&&YY.trip;if(!t||gps.pts.length<2)return{txt:y.on?'YiYi · en línea, esperando viaje':'YiYi · desconectado (abre la app)',sub:'—',ang:0};
+  const nv=navTxt(gps.pts,gps.names),Z=t.phase==='ride'||t.phase==='drop'?t.D.zone:t.P.zone,left=Math.hypot(S.x-Z.x,S.z-Z.z);
+  return{txt:left<40?(t.phase==='ride'?`Llegaste: déjalo en la banqueta`:`Ahí está ${t.pas.n}: párate junto a la banqueta`):(nv.txt||`Sigue ${nv.acc} m por ${gps.names[0]||'la calle'}`),sub:(gps.len/1000).toFixed(1)+(t.phase==='ride'?' km al destino':' km a '+t.pas.n),ang:nv.ang};}
+
+window.__S=S;window.__yy=()=>({YY,yyS,yyToggle,yyOffer,yyAccept,yyReject,yyCancel,yyTick,yyGps});window.__setMode=m=>{save.mode=m==='yiyi'?'yiyi':'jale';persist();};window.__mode=()=>CARM?'yiyi':'jale';window.__car=()=>({carWheels,carG,carM,carIntr});window.__carT=(dt,n)=>{let d=0;for(let i=0;i<(n||1);i++){S.ped.clutch=S.tgt.clutch;S.ped.gas=S.tgt.gas;S.ped.brake=S.tgt.brake;d=carPhysics(dt);S.t+=dt;}return d;};window.__dbg={get SPX(){return SPX},REALCAL:typeof REALCAL!=="undefined"?REALCAL:null,startLoad,LOAD,TRG,get LOADER(){return LOADER},restoreJob,MAPV,snapJob,renderer,scene,hash,OBST,inObb,hk,CELL,BB,REAL,DEPOTS,STATIONS,edges,nodes,LIGHTS,lows,highs,trees,lamps,applyModel,setView,env,save,physics,BUMPS,hitAt,bodyPoints,get mission(){return mission},PARK,LOAD,hinge,truckHit,planRoute,drawMap,drawCluster,drawGpsDev,persist,chunkTick,trafficStep,updMass,WEIGHS,get MASS(){return MASS},grossLim,makeJobs,traffic,snapJob,revPath,pathPos,get job(){return save.job},fwdOf,startMission,CARGO,loadTick,TRG,camera,scene,renderer,CHUNKS};
 Object.assign(window.__dbg,{RETENES,WEIGHS,UMA,rtOpen:()=>RT_OPEN});
 })();
 </script>

@@ -143,6 +143,14 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - Manejo de carro propio (no toca la física del camión): motor 1.8 L (137 N·m a 2,800 rpm, ralentí 780, corte 6,000), caja 3.545/2.111/1.448/1.088/0.871, R 3.416, final 3.70; clutch de fricción, se apaga si sueltas mal; frenos sin ABS (se bloquean); tracción delantera; giro 34.6° (radio 3.6 m en el eje trasero); subviraje y derrape por agarre; gasolina 50 L aparte del diésel. Probado: 0→30 km/h en 1ª ~3 s, 85 km/h en 3ª.
 - Cámaras: cabina a la altura de los ojos (y 1.12 m, 36 cm a la izquierda del centro), tablero con velocímetro/tacómetro/gasolina, volante Ø 38 cm, palanca, retrovisor con imagen; atrás, arriba y llantas ajustadas al tamaño del carro. Faros movidos al carro.
 - Celular: YiYi encendida y JaleYa apagada en modo chofer; sin fletes ni bienvenida de JaleYa.
+### Hecho en v173 · Fase 5, etapa 3 (viajes de YiYi)
+- App YiYi en el celular: botón En línea / Desconectado, estrellas (promedio de las últimas 40), tasa de aceptación (últimas 20), ganado y viajes; viaje en curso con botón Cancelar; últimos viajes.
+- Solicitudes una por una cada 20–60 s (×1.8 si la tasa baja de 60 %) solo en línea y con el motor prendido; tono propio de YiYi (mi–sol–do dos veces, no el de DiDi) y vibración; tarjeta arriba con cuenta de 15 s, pago que te queda, pasajero y estrellas, distancia a recoger y del viaje, ⚡ con prisa.
+- Pago = P$1,500 + P$600 por km de ruta (+20 % con prisa, −15 % con tasa baja), entre P$1,500 y P$3,000; YiYi se queda con 20 %. Propina de 10 % si el de prisa llega en menos de 1.25× el tiempo estimado. Depósito en brebreuvaA.
+- Recoger: punto en la banqueta de una avenida o calle a 150–800 m; GPS y faro morado. Te paras a menos de 13 m y el pasajero (muñeco de los mecánicos, camisa de color al azar) camina a la puerta trasera derecha y se sube. Destino a 0.7–2.6 km; al llegar baja y camina a la banqueta.
+- Estrellas: 5 menos 1 por cada choque o multa con el pasajero arriba. Cancelar: dos rechazos en la tasa y una calificación de 3.
+- Probado: viaje completo en simulación (solicitud → recoger → subir → destino → pago P$2,320, 5 estrellas) y capturas de la tarjeta y del pasajero.
+
 ### Hecho en v164 · interior nuevo del Subaro (pedido de Juan)
 - Interior sacado del "Low-Poly Retro City Car 03" (CGTrader, gratis, Royalty Free): tablero con 3 carátulas y agujas que se mueven (velocímetro 0–180, tacómetro 0–7000, gasolina), volante, asientos, banca trasera, consola y vestiduras de puertas. 3,418 triángulos + volante 396.
 - Acomodado con medidas: ancho ×0.886 (vestidura .79→.70), alto ×0.906 (piso .38→.33 y base del parabrisas 1.02→.910), largo por tramos (base del medallón −1.815→−1.534, ojo −0.06→−0.02, base del parabrisas .729→1.021). Volante a Ø 38 cm con su inclinación de 26.6°. Pivotes de las agujas tomados del FBX.
@@ -160,7 +168,7 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - v171 (Juan): brazos y manos del chofer en el carro: hombros 25 cm abajo y 8 cm atrás del ojo, brazo 30 cm y antebrazo 28 cm con codo (IK de dos huesos); manos con dedos y pulgar en el aro a las 10 y 2 que giran con el volante (hasta ±72°); la derecha va a la perilla al cambiar y regresa.
 - v169 (Juan): una sola capa: se quitaron las repisas y la tapa se recorrió 4 cm hacia la izquierda (x −.06 a .74).
 - Palanca de carro: varilla cromada de 28 cm, perilla de bola con el patrón grabado, fuelle de hule y aro; se mueve con cada cambio. Al cambiar, la cámara voltea hacia la palanca y regresa.
-- Pendiente: etapa 3 (app YiYi, solicitudes, pasajeros, estrellas y pago), Lada Vesta con crédito, sonido de motor de gasolina (hoy usa el sintetizador del diésel con 4 cilindros).
+- Pendiente: Lada Vesta con crédito (etapa 4), sonido de motor de gasolina (hoy usa el sintetizador del diésel con 4 cilindros).
 
 ## Apps del celular (iconos en `apps-celular.svg`)
 - Logos individuales estilo YiYi: `jaleya-logo.svg`, `wasapen-logo.svg`, `tallerya-logo.svg` (TallerYa = estado del camión, turquesa), `rola-logo.svg` (Rola = música, rosa), `config-logo.svg` (Config = ajustes, verde, interruptores). `fierrotas-logo.svg` (Fierrotas = estado del camión, amarillo mostaza, frente de troca con llaves cruzadas) (reemplazan a `apps-celular.svg`).
