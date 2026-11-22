@@ -134,6 +134,7 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - Tarifa YiYi: P$1,500–3,000 por viaje (misma escala que los fletes).
 - Solicitudes como en las apps reales: llegan una por una cada 20–60 s con tono propio de YiYi (no el de DiDi) y vibración; tarjeta con distancia al pasajero, distancia del viaje, pago, estrellas del pasajero y si va con prisa; 15 s para Aceptar/Rechazar. Rechazar mucho baja la tasa de aceptación y te llegan menos y peores.
 - Pasajeros visibles: esperan en la banqueta, suben atrás y bajan en el destino.
+- (22 nov) YiYi cobra 20 % de comisión por viaje (de P$1,500–3,000 te quedan P$1,200–2,400). Las estrellas solo bajan por choques y multas. Te conectas con un botón En línea / Desconectado en la app YiYi. Cancelar un viaje aceptado baja la tasa y las estrellas, sin multa en dinero.
 - Al final (después de YiYi): quitar el panel "Elige tu viaje"; las cargas solo en la app JaleYa, el Taller pasa a una app **TallerYa** y "Entrega completada" se vuelve aviso + recibo en el celular (desglose en JaleYa › Historial, depósito en brebreuvaA). Los demás paneles (retén, báscula, guardar) se quedan.
 
 ### Hecho en v163 · Fase 5, etapas 1 y 2
