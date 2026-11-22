@@ -152,6 +152,7 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - Probado: viaje completo en simulación (solicitud → recoger → subir → destino → pago P$2,320, 5 estrellas) y capturas de la tarjeta y del pasajero.
 
 - v178 (Juan): el selector P-R-N-D es una palanquita que se desliza por un riel (perilla redonda), más chica; al soltar cae en la posición más cercana; también se puede tocar la letra.
+- v179 (Juan): sonido de gasolina 4 cil. (2 explosiones por vuelta, brillo con el acelerador, admisión y zumbido de la CVT); la palanca del túnel la lleva la mano (12 cm de P a D); botones de faros, limpiaparabrisas (apagado/lento 45/min/rápido 69/min, barrido 78°) e intermitentes; calaveras, luz de freno, tercera luz, reversa y direccionales con las piezas del modelo; testigos en el tablero.
 
 ### v177 · Versa corregido (bugs del video de Juan)
 - Llantas que se salían/volaban: el pivote nuevo no tenía su posición al acomodar las piezas y las piezas compartidas entre llantas quedaban con la misma etiqueta. Ahora cada llanta lleva su copia y se actualiza todo el carro antes de moverlas. Probado manejando, girando a los dos lados y desde fuera.
