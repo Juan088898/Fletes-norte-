@@ -81,6 +81,19 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - Caja seca con cinta reflejante roja/blanca, defensa trasera y loderas.
 - Pendiente de la etapa 5: casas abandonadas, Nature Kit, canal con textura, calidad de gráficos.
 
+### Hecho en v156–v159 · Fase 4, camión nuevo
+- **Chato Dormitorio** (cabover "Big Sleeper Cabover", CGTrader Royalty Free), P$520,000 en el Taller. Interior real del modelo, tablero clásico analógico (carátulas crema, aguja roja: tacómetro, velocímetro, aire doble aguja, agua, aceite, diésel, volts), sin marco, asentado en el panel del modelo (medidas calculadas: panel 58×24 cm, inclinado 23.5°). En este camión el GPS es el celular del soporte.
+- Los camiones comprados ya se guardan (antes se reiniciaban).
+- Pendiente: probarlo manejando con remolque; pintura sale blanca lisa (la textura con franjas no se exportó).
+
+## Fase 4 · Confirmado por Juan (21 nov 2026), falta hacer
+1. **Clima y temporadas:** calor de verano, frío, lluvias.
+2. **Retenes y básculas en carretera.** En el retén, si te encuentran algo (sobrepeso, papeles, carga irregular, etc.), hay opción de **sobornar** (“mordida”), como en México; también pagar la multa normal (en UMA, P$117.31). Definir riesgo de que el soborno salga mal.
+3. **Más camiones para comprar** además del Chato.
+
+## Regla de trabajo (Juan)
+- Todo acomodo o ajuste (posiciones, tamaños, alineación, cámaras, tableros) se hace con **cálculos y medidas reales del modelo**, no a ojo; luego se comprueba con captura.
+
 ## Pendientes de la fase 1 (v139–v140)
 - Esquinas redondeadas en las banquetas (por ahora solo se cortan antes del cruce).
 - Confirmar en el Redmi que las llantas ya no se ven hundidas en la terracería y que el GPS funciona en la brecha.
