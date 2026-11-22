@@ -151,6 +151,12 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - Estrellas: 5 menos 1 por cada choque o multa con el pasajero arriba. Cancelar: dos rechazos en la tasa y una calificación de 3.
 - Probado: viaje completo en simulación (solicitud → recoger → subir → destino → pago P$2,320, 5 estrellas) y capturas de la tarjeta y del pasajero.
 
+### v177 · Versa corregido (bugs del video de Juan)
+- Llantas que se salían/volaban: el pivote nuevo no tenía su posición al acomodar las piezas y las piezas compartidas entre llantas quedaban con la misma etiqueta. Ahora cada llanta lleva su copia y se actualiza todo el carro antes de moverlas. Probado manejando, girando a los dos lados y desde fuera.
+- Volante quieto: el cargador renombraba las piezas (SW_1, SW_2) y solo giraba una. Arreglado; las manos giran pegadas al aro y cada 90° se vuelven a agarrar (mano sobre mano).
+- Automático (decisión de Juan): selector P-R-N-D en lugar de la palanca H, sin clutch; CVT 4.006–0.55 con final 3.882, convertidor de par con amarre arriba de 22 km/h, se arrastra en D, en P se frena; para quitar P hay que pisar el freno; R y P solo parado; arranca en P o N. La mano derecha va a la palanca del túnel al cambiar.
+- Calidad alta (Juan): ~120 mil triángulos, liso (normales del modelo), colores planos, interior gris carbón.
+
 ### v176 · PRUEBA: carro nuevo con el estilo del juego (pedido de Juan)
 - Juan descartó el Subaro y el Lada (no van con la estética). Los modelos deben venir de Sketchfab (de ahí salieron el volante y las llantas del camión; la carrocería del camión es de itch.io, Craig Snedeker).
 - Prueba: Nizzan Versito = "2015 Nissan Versa Sedan 1.6" (Ddiaz Design, Sketchfab, CC BY-NC-SA 4.0) estilizado: sin emblemas, sin texturas (colores planos, sombreado facetado), 840,742 → ~48 mil triángulos, 37 piezas; con su interior; volante, perilla y llantas sueltas para animar. Física: 1.6 L 109 hp, caja 3.727/2.048/1.393/1.097/.892, ABS.
