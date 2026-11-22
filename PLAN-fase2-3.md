@@ -152,6 +152,7 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - Se quitó solo la cubierta de arriba de los tacómetros (lado del chofer y centro).
 - Tablero propio del carro (no el del Chato): carátulas negras, números blancos, aguja naranja, aro plateado; velocímetro 0–180, tacómetro 0–7 con zona roja desde 6,000, gasolina, temperatura, testigos y odómetro. Medidas: llena la ventana que deja el volante (rayos del ojo por el cubo y el aro → 35.7 × 15.5 cm, centro y .821, inclinado 20.6° hacia el ojo).
 - v166: se tapó el hueco que dejó la cubierta: tapa de y .845 a .895 de z .765 al parabrisas y rellenos a los lados del tablero.
+- v167: la tapa ahora es redondeada (orillas con bisel de 1.2 cm), sigue la forma del tablero en arco alrededor de los tacómetros y lleva una ceja en media luna que sobresale 10 cm hacia el chofer (y .895–.945), calculada para no tapar las carátulas desde el ojo.
 - Palanca de carro: varilla cromada de 28 cm, perilla de bola con el patrón grabado, fuelle de hule y aro; se mueve con cada cambio. Al cambiar, la cámara voltea hacia la palanca y regresa.
 - Pendiente: etapa 3 (app YiYi, solicitudes, pasajeros, estrellas y pago), Lada Vesta con crédito, sonido de motor de gasolina (hoy usa el sintetizador del diésel con 4 cilindros).
 

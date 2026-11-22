@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v166">
+<meta name="fn-version" content="v167">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -7851,10 +7851,17 @@ function carInterior(){const G=new THREE.Group();carIntr=G;carM.add(G);const o=c
      ojo E=(.374,1.109,−.02); volante centro (.374,.785,.531), aro interior .175, inclinado 26.6°.
      Rayos del ojo por la orilla del cubo (+.055) y del aro (+.17) cortan el plano z=.735 en y .744 y .899 → ventana de 15.5 cm.
      El tablero llena la ventana: 35.7 × 15.5 cm (misma proporción 600×260), centro y .821, y mira al ojo: inclinado atan(.288/.765)=20.6° (.36 rad). */
-  // tapa del hueco que dejó quitar la cubierta (lo quitado empieza en y .851): cara de atrás del tablero detrás del borde de arriba (z .765)
-  // y rellenos a los lados del tablero (x .552–.71 hacia la puerta y −.11–.196 al centro), del borde del tablero (y .845) al de la cubierta (y .895)
-  {const dm=new THREE.MeshLambertMaterial({color:0x1d1e21}),bx=(x0,x1,y0,y1,z0,z1)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(x1-x0,y1-y0,z1-z0),dm);b.position.set((x0+x1)/2,(y0+y1)/2,(z0+z1)/2+o);G.add(b);};
-   bx(-.11,.71,.845,.895,.765,1.015);bx(.552,.71,.845,.895,.70,.765);bx(-.11,.196,.845,.895,.70,.765);}
+  /* tapa redondeada del tablero (pedido de Juan: más hacia el chofer y que siga la forma del tablero).
+     Vista desde arriba (x,z): orilla de enfrente en z .70 a los lados y en arco alrededor de los tacómetros; atrás llega a la base del parabrisas (z 1.015).
+     Ceja sobre los tacómetros: sobresale 10 cm (z .66) a y .945. Límite: el rayo del ojo al borde de arriba del tablero (y .894, z .762)
+     pasa a y .922 en z .66, así que la ceja (abajo en .895, sale en arco) no tapa las carátulas; el parabrisas en z .66 va a y 1.096. */
+  {const dm=new THREE.MeshLambertMaterial({color:0x1d1e21}),ext=(pts,y0,h,bev)=>{const sh=new THREE.Shape();pts.forEach(([x,z],k)=>k?sh.lineTo(x,-z):sh.moveTo(x,-z));
+     const g=new THREE.ExtrudeGeometry(sh,{depth:h,bevelEnabled:true,bevelThickness:bev,bevelSize:bev,bevelSegments:4,curveSegments:16});g.rotateX(-Math.PI/2);const m=new THREE.Mesh(g,dm);m.position.set(0,y0,o);G.add(m);return m;};
+   const arc=(cx,z0,zc,x0,x1,n)=>{const P=[];for(let k=0;k<=n;k++){const t=k/n,x=x0+(x1-x0)*t;P.push([x,z0-(z0-zc)*Math.sin(Math.PI*t)]);}return P;};
+   // tapa: frente recto a los lados (z .70) y en arco detrás del tablero de tacómetros (z .765 en x .196–.552)
+   ext([[-.10,.70],[.19,.70],...arc(.374,.70,.765,.19,.558,10).slice(1,-1).map(([x,z])=>[x,Math.max(z,.70)]),[.558,.70],[.70,.70],[.70,1.0],[-.10,1.0]],.85,.03,.012);
+   // ceja: media luna sobre los tacómetros, sobresale hacia el chofer
+   const fr=arc(.374,.775,.66,.15,.598,14),bk=arc(.374,.80,.775,.15,.598,14).reverse();ext([...fr,...bk],.895,.03,.012);}
   carClu=document.createElement('canvas');carClu.width=600;carClu.height=260;carCluTex=new THREE.CanvasTexture(carClu);carCluTex.encoding=THREE.sRGBEncoding;carCluTex.anisotropy=4;
   const cp=new THREE.Mesh(new THREE.PlaneGeometry(.357,.155),new THREE.MeshBasicMaterial({map:carCluTex,transparent:true}));cp.position.set(.374,.821,.735+o);cp.rotation.set(.36,Math.PI,0);G.add(cp);carDrawClu();
   // palanca de carro (no de camión): varilla delgada cromada de 28 cm inclinada 8° hacia el chofer, perilla de bola negra Ø 5 cm con el patrón grabado y fuelle de hule.
