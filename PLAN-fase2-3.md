@@ -147,6 +147,11 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - Acomodado con medidas: ancho ×0.886 (vestidura .79→.70), alto ×0.906 (piso .38→.33 y base del parabrisas 1.02→.910), largo por tramos (base del medallón −1.815→−1.534, ojo −0.06→−0.02, base del parabrisas .729→1.021). Volante a Ø 38 cm con su inclinación de 26.6°. Pivotes de las agujas tomados del FBX.
 - Se quitaron los postes y el marco del parabrisas del otro carro (el Subaro trae los suyos más inclinados) y todo lo que se asomaba arriba del cofre.
 - Ojo del chofer: x .374, y 1.109, z −0.02 (justo atrás del poste B).
+
+### Hecho en v165 · tablero y palanca del Subaro (pedido de Juan)
+- Se quitó solo la cubierta de arriba de los tacómetros (lado del chofer y centro).
+- Tablero propio del carro (no el del Chato): carátulas negras, números blancos, aguja naranja, aro plateado; velocímetro 0–180, tacómetro 0–7 con zona roja desde 6,000, gasolina, temperatura, testigos y odómetro. Medidas: llena la ventana que deja el volante (rayos del ojo por el cubo y el aro → 35.7 × 15.5 cm, centro y .821, inclinado 20.6° hacia el ojo).
+- Palanca de carro: varilla cromada de 28 cm, perilla de bola con el patrón grabado, fuelle de hule y aro; se mueve con cada cambio. Al cambiar, la cámara voltea hacia la palanca y regresa.
 - Pendiente: etapa 3 (app YiYi, solicitudes, pasajeros, estrellas y pago), Lada Vesta con crédito, sonido de motor de gasolina (hoy usa el sintetizador del diésel con 4 cilindros).
 
 ## Apps del celular (iconos en `apps-celular.svg`)
