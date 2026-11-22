@@ -107,6 +107,11 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 3. **Más camiones para comprar** además del Chato.
 4. **Reajustar cargas:** cargas frágiles (daño y castigo), deslizamiento/oleaje de la carga y otros detalles de cómo se comporta la carga (Juan dará detalles; preguntarle qué se siente mal antes de cambiar).
 
+## Pendientes después de v162
+- Fase 4: etapa 2 (clima y temporadas) y etapa 3 (más camiones).
+- Subir el pago de los choferes de la empresa (fórmula vieja).
+- Bug visto en el Redmi (21 nov): edificios que se ven encima del carril en una calle de 50 km/h. La revisión por medidas (2,460 edificios contra todas las calles) no encontró cruces; falta ubicar el lugar (código de partida o calle) para verlo. Juan lo dejó así por ahora.
+
 ## Regla de trabajo (Juan)
 - Todo acomodo o ajuste (posiciones, tamaños, alineación, cámaras, tableros) se hace con **cálculos y medidas reales del modelo**, no a ojo; luego se comprueba con captura.
 
