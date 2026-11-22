@@ -142,6 +142,11 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - Manejo de carro propio (no toca la física del camión): motor 1.8 L (137 N·m a 2,800 rpm, ralentí 780, corte 6,000), caja 3.545/2.111/1.448/1.088/0.871, R 3.416, final 3.70; clutch de fricción, se apaga si sueltas mal; frenos sin ABS (se bloquean); tracción delantera; giro 34.6° (radio 3.6 m en el eje trasero); subviraje y derrape por agarre; gasolina 50 L aparte del diésel. Probado: 0→30 km/h en 1ª ~3 s, 85 km/h en 3ª.
 - Cámaras: cabina a la altura de los ojos (y 1.12 m, 36 cm a la izquierda del centro), tablero con velocímetro/tacómetro/gasolina, volante Ø 38 cm, palanca, retrovisor con imagen; atrás, arriba y llantas ajustadas al tamaño del carro. Faros movidos al carro.
 - Celular: YiYi encendida y JaleYa apagada en modo chofer; sin fletes ni bienvenida de JaleYa.
+### Hecho en v164 · interior nuevo del Subaro (pedido de Juan)
+- Interior sacado del "Low-Poly Retro City Car 03" (CGTrader, gratis, Royalty Free): tablero con 3 carátulas y agujas que se mueven (velocímetro 0–180, tacómetro 0–7000, gasolina), volante, asientos, banca trasera, consola y vestiduras de puertas. 3,418 triángulos + volante 396.
+- Acomodado con medidas: ancho ×0.886 (vestidura .79→.70), alto ×0.906 (piso .38→.33 y base del parabrisas 1.02→.910), largo por tramos (base del medallón −1.815→−1.534, ojo −0.06→−0.02, base del parabrisas .729→1.021). Volante a Ø 38 cm con su inclinación de 26.6°. Pivotes de las agujas tomados del FBX.
+- Se quitaron los postes y el marco del parabrisas del otro carro (el Subaro trae los suyos más inclinados) y todo lo que se asomaba arriba del cofre.
+- Ojo del chofer: x .374, y 1.109, z −0.02 (justo atrás del poste B).
 - Pendiente: etapa 3 (app YiYi, solicitudes, pasajeros, estrellas y pago), Lada Vesta con crédito, sonido de motor de gasolina (hoy usa el sintetizador del diésel con 4 cilindros).
 
 ## Apps del celular (iconos en `apps-celular.svg`)
