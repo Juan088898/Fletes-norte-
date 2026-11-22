@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="1080" height="1080">
+ <!-- zona segura del ícono adaptable: círculo de 66 dp al centro -->
+ <g transform="translate(54 56)">
+  <!-- tráiler -->
+  <rect x="-30" y="-17" width="34" height="19" rx="1.6" fill="#f2f4f7"/>
+  <text x="-13" y="-3.2" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900" font-size="12.5" fill="#1b2a4a">FN</text>
+  <rect x="-30" y="2" width="34" height="2.2" fill="#9aa3ae"/>
+  <!-- cabina -->
+  <path d="M5 -9 h12 l6 8 v7.2 h-18 z" fill="#ffb53d"/>
+  <path d="M8.5 -6.5 h7 l4 5.3 h-11 z" fill="#1b2a4a"/>
+  <rect x="5" y="4.4" width="20" height="1.8" fill="#e08a12"/>
+  <rect x="2.5" y="-14" width="1.6" height="16" rx=".8" fill="#9aa3ae"/>
+  <!-- llantas -->
+  <g fill="#14161a" stroke="#c9ced6" stroke-width="1.1">
+   <circle cx="-24" cy="6.8" r="3.6"/><circle cx="-16" cy="6.8" r="3.6"/><circle cx="2" cy="6.8" r="3.6"/><circle cx="18" cy="6.8" r="3.6"/>
+  </g>
+  <!-- carretera -->
+  <g fill="#ffb53d"><rect x="-31" y="13" width="9" height="1.8" rx=".9"/><rect x="-16" y="13" width="9" height="1.8" rx=".9"/><rect x="-1" y="13" width="9" height="1.8" rx=".9"/><rect x="14" y="13" width="9" height="1.8" rx=".9"/></g>
+ </g>
+</svg>

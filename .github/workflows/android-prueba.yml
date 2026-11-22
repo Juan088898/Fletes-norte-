@@ -1,0 +1,86 @@
+name: APK de prueba (rama etapa2-mapa-nuevo)
+# APK con el juego ADENTRO (no carga de GitHub Pages), para probar la rama sin tocar main.
+# Se instala aparte del APK normal ("Fletes Prueba", otro id) y siempre con la misma firma: las siguientes se instalan encima sin perder la partida.
+on:
+  workflow_dispatch:
+  push:
+    branches: [etapa2-mapa-nuevo]
+    paths: [index.html, version.json, apk/**, .github/workflows/android-prueba.yml]
+permissions:
+  contents: write
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 21 }
+      - name: Verificar que version.json coincide con index.html
+        run: |
+          a=$(grep -o 'fn-version" content="[^"]*' index.html | sed 's/.*content="//'); b=$(python3 -c "import json;print(json.load(open('version.json'))['v'])")
+          echo "index=$a version.json=$b"; [ "$a" = "$b" ]; echo "VER=$a" >> $GITHUB_ENV
+      - name: Configuración de prueba (juego adentro, otro id y nombre)
+        run: |
+          python3 - <<'PY'
+          import json
+          c=json.load(open('capacitor.config.json'))
+          c.pop('server',None); c['appId']='com.juan.fletesdelnorte.prueba'; c['appName']='Fletes Prueba'
+          json.dump(c,open('capacitor.config.json','w'),indent=2)
+          PY
+          cat capacitor.config.json
+      - name: Instalar Capacitor
+        run: npm install
+      - name: Copiar el juego a www
+        run: mkdir -p www && cp index.html version.json sw.js www/
+      - name: Crear proyecto Android
+        run: npx cap add android && npx cap sync android
+      - name: Pantalla completa (modo inmersivo) y pantalla siempre encendida
+        run: |
+          f=$(find android/app/src/main/java -name MainActivity.java)
+          pkg=$(sed -n 's/^package \(.*\);/\1/p' "$f")
+          cat > "$f" <<JAVA
+          package $pkg;
+
+          import android.os.Build;
+          import android.os.Bundle;
+          import android.view.WindowManager;
+          import androidx.core.view.WindowCompat;
+          import androidx.core.view.WindowInsetsCompat;
+          import androidx.core.view.WindowInsetsControllerCompat;
+          import com.getcapacitor.BridgeActivity;
+
+          public class MainActivity extends BridgeActivity {
+            @Override public void onCreate(Bundle b) { super.onCreate(b); getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); immersive(); }
+            @Override public void onResume() { super.onResume(); immersive(); }
+            @Override public void onWindowFocusChanged(boolean f) { super.onWindowFocusChanged(f); if (f) immersive(); }
+            private void immersive() {
+              WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+              if (Build.VERSION.SDK_INT >= 28) getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+              WindowInsetsControllerCompat c = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+              c.hide(WindowInsetsCompat.Type.systemBars());
+              c.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+            }
+          }
+          JAVA
+          sed -i 's/^          //' "$f"; head -3 "$f"
+      - name: Forzar horizontal
+        run: sed -i '0,/<activity/s//<activity android:screenOrientation="sensorLandscape"/' android/app/src/main/AndroidManifest.xml
+      - name: Ícono
+        run: |
+          cp -r apk/res/. android/app/src/main/res/
+          rm -f android/app/src/main/res/mipmap-*/ic_launcher_foreground.webp android/app/src/main/res/mipmap-*/ic_launcher*.webp
+          ls android/app/src/main/res/mipmap-xxxhdpi
+      - name: Firma fija (para instalar encima)
+        run: mkdir -p ~/.android && cp apk/debug.keystore ~/.android/debug.keystore
+      - name: Compilar APK
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon
+      - name: Publicar APK de prueba en Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk FletesPrueba-$VER.apk
+          gh release delete apk-prueba --yes --cleanup-tag || true
+          gh release create apk-prueba FletesPrueba-$VER.apk --prerelease --title "Fletes del Norte · prueba $VER" --notes "APK de prueba de la rama etapa2-mapa-nuevo ($VER). Trae el juego adentro y se instala aparte del APK normal." --target etapa2-mapa-nuevo
