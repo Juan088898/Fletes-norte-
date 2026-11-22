@@ -205,3 +205,11 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - Se compran en la tienda (app JaleYa o en gasolinera): **Rojomi Nota 14 Pro 5G+ Máx** ~$8,000 · **Samsón Galaxio S26 Ultra** ~$22,000 · **Chaifon 17 Pro Máx** ~$30,000 (precios a balancear).
 - Mejor celular = abre más rápido, más batería, vista previa de mensajes, GPS con tráfico y mejores propinas por contestar rápido. Puedes quedarte en Android o pasarte a Chaifon.
 - v180: arreglado el aviso "Nueva versión… actualizando" que recargaba cada pocos minutos (el version.json publicado decía v162 y el juego otra versión → bucle). Ahora solo actualiza si la del servidor es más nueva, una vez por versión y solo en la pantalla de inicio, nunca a media partida.
+- v181 (bugs del mapa, raíz encontrada midiendo lo que SE DIBUJA, no la línea del mapa):
+  1. Cruces en ángulo agudo: la calle se corta hasta 70 m antes del cruce y la placa de asfalto unía esas puntas → triángulos de asfalto sobre el pasto con edificios encima (p. ej. Camino a Dulces Nombres). Ahora la placa solo llega a 0.9× el ancho mayor y de ahí sale un tramo liso del ancho de la calle. Ya no se unen cruces cercanos en una sola placa.
+  2. Calles curvas: se dibujan suavizadas y en la curva se meten hasta varios metros hacia adentro; la revisión usaba la línea recta. Ahora también se revisa contra la calle dibujada: 38 edificios industriales que pisaban calle o banqueta en curvas se quitan (Blvd. Parque Industrial Monterrey, Camino Santo Domingo, etc.).
+  3. Puentes del canal: los pretiles eran una barda recta de hasta 84 m sobre la línea del mapa y quedaban sobre el carril (13 puentes, 7 mal puestos). Ahora siguen la calle dibujada, miden lo que mide el canal ahí y no se ponen sobre otra calle o cruce.
+  4. Pisos de concreto que quedaban encima de un cruce: se quitan.
+  - La ciudad se genera igual que antes (mismo acomodo), solo salen los edificios que estaban sobre la calle.
+  - Medido en todo el mapa con el asfalto dibujado: edificios sobre asfalto 14 → 0; pedazos de pretil sobre asfalto 7 de 26 → 0 de 792; triángulo de placa más grande 2,201 m² → 599 m².
+  - El letrero de versión del inicio decía "v111" fijo; ahora muestra la versión real.

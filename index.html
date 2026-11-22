@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v180">
+<meta name="fn-version" content="v181">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -635,7 +635,7 @@ body.cine .quick{display:none}
           <button class="st-opt" id="startSet">Ajustes <small>Manejo y sonido</small></button>
           <button class="st-opt" id="startTut">Tutorial <small>Aprende a manejarlo</small></button>
         </div>
-        <div class="st-foot"><span>v111 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
+        <div class="st-foot"><span id="stVer">v181 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
       </div>
       <div class="st-garage" id="startGarage" hidden>
         <h3>TU CAMIÓN</h3><div class="n">Semi Lowpoly</div>
@@ -4782,6 +4782,7 @@ function strip(pts,w,y0,mat){const n=pts.length,pos=new Float32Array(n*6),uv=new
 for(const e of edges){if(e.type!=='ring')continue;strip([nodes[e.a],nodes[e.b]].map(n=>({x:n.x-e.ux*2,y:n.y,z:n.z-e.uz*2})).map((q,i)=>i?{x:q.x+e.ux*4,y:q.y,z:q.z+e.uz*4}:q),e.w,.065,roadMatOf.ring);}
 const asph=M(0x555a66);ROADMATS.push(asph);ROADMATS.forEach(m=>{if(m.userData.keep)return;m.polygonOffset=true;m.polygonOffsetFactor=-1;m.polygonOffsetUnits=-2;});asph.userData.keep=1;asph.polygonOffsetFactor=asph.polygonOffsetUnits=-1;;
 // v137 · banquetas estilo Kenney en las calles de la ciudad (gris claro, 3 m, un poco arriba del pavimento)
+var RCL=[],PARAOBB=[],JHULL=[],inJHull=(x,z)=>JHULL.some(h=>{let sg=0;for(let i=0;i<h.length;i++){const a=h[i],b=h[(i+1)%h.length],c=(b[0]-a[0])*(z-a[1])-(b[1]-a[1])*(x-a[0]);if(c!==0){if(sg&&Math.sign(c)!==sg)return false;sg=Math.sign(c);}}return true;});   /* v181: calles y cruces tal como se dibujan, para acomodar edificios y puentes sobre lo que se ve */
 const SWW=3,SWH=.18,SWT={st:1,av:1,hwy:1},SWMAT=M(0xcfccc4).clone(),CURBM=new THREE.MeshLambertMaterial({color:0xa9a59c,side:THREE.DoubleSide}),SHMAT=M(0x8f8676).clone();SHMAT.polygonOffset=true;SHMAT.polygonOffsetFactor=SHMAT.polygonOffsetUnits=-1;SHMAT.userData.keep=1;
 // cara vertical de la guarnición (de y0 a y1 sobre el piso)
 function curb(P,y0,y1){const n=P.length;if(n<2)return;const pos=new Float32Array(n*6),idx=[];for(let k=0;k<n;k++){pos.set([P[k].x,P[k].y+y0,P[k].z,P[k].x,P[k].y+y1,P[k].z],k*6);if(k<n-1)idx.push(k*2,k*2+2,k*2+1,k*2+1,k*2+2,k*2+3);}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();const m=new THREE.Mesh(g,CURBM);m.receiveShadow=true;scene.add(m);}SWMAT.userData.keep=1;SWMAT.polygonOffset=true;SWMAT.polygonOffsetFactor=SWMAT.polygonOffsetUnits=-3;
@@ -4795,13 +4796,18 @@ function swAt(x,z){const i=Math.floor(x/EGC),j=Math.floor(z/EGC);for(let a=-1;a<
    if(E.length===2)continue;
    r=0;for(let a=0;a<E.length;a++){let d=3,ac=0;for(let b=0;b<E.length;b++){if(a===b)continue;const th=Math.abs(Math.atan2(Math.sin(D[a]-D[b]),Math.cos(D[a]-D[b])));if(th>2.75)continue;const sn=Math.max(Math.sin(th),.5);d=Math.max(d,(E[b].w/2)/sn+(E[a].w/2)*Math.abs(Math.cos(th))/sn+1);if(th<.6)ac=Math.max(ac,Math.min(70,((E[a].w+E[b].w)/2)/(2*Math.sin(Math.max(th,.08)/2))+2));}
      d=Math.max(Math.min(d,mw*1.0),ac);CUT.set(ni+'_'+E[a].i,d);r=Math.max(r,d);}
-   n.jr=r;R0.set(ni,r);HUL.set(ni,[]);}
+   n.jr=r;n.jmw=mw;R0.set(ni,r);HUL.set(ni,[]);}
   const cut=(P,d0,d1)=>{const L=[0];for(let i=1;i<P.length;i++)L.push(L[i-1]+Math.hypot(P[i].x-P[i-1].x,P[i].z-P[i-1].z));const T=L[L.length-1];if(T-d0-d1<8)return null;
     const at=q=>{let i=1;while(i<P.length-1&&L[i]<q)i++;const t=Math.max(0,Math.min(1,(q-L[i-1])/((L[i]-L[i-1])||1)));return{x:P[i-1].x+(P[i].x-P[i-1].x)*t,y:P[i-1].y+(P[i].y-P[i-1].y)*t,z:P[i-1].z+(P[i].z-P[i-1].z)*t};};
     const o=[at(d0)];for(let i=0;i<P.length;i++)if(L[i]>d0+3&&L[i]<T-d1-3)o.push(P[i]);o.push(at(T-d1));return o;};
   const dens=P=>{const o=[];for(let i=0;i<P.length;i++){const a=P[i];if(i>0){const b=P[i-1],l=Math.hypot(a.x-b.x,a.z-b.z),mh=H((a.x+b.x)/2,(a.z+b.z)/2);if(l>8&&(mh!==0||H(a.x,a.z)!==0||H(b.x,b.z)!==0)){const n=Math.floor(l/7);for(let k=1;k<=n;k++){const t=k/(n+1),x=b.x+(a.x-b.x)*t,z=b.z+(a.z-b.z)*t;o.push({x,y:H(x,z),z});}}}o.push({x:a.x,y:H(a.x,a.z),z:a.z});}return o;};
   const smooth=P=>{let Q=P;for(let it=0;it<2&&Q.length>2;it++){const o=[Q[0]];for(let i=0;i<Q.length-1;i++){const a=Q[i],b=Q[i+1];if(i>0)o.push({x:a.x*.75+b.x*.25,y:a.y*.75+b.y*.25,z:a.z*.75+b.z*.25});if(i<Q.length-2)o.push({x:a.x*.25+b.x*.75,y:a.y*.25+b.y*.75,z:a.z*.25+b.z*.75});}o.push(Q[Q.length-1]);Q=o;}return Q;};
-  const endC=(ni,p,q,w)=>{const h=HUL.get(ni);if(!h)return;let dx=q.x-p.x,dz=q.z-p.z;const l=Math.hypot(dx,dz)||1;dx/=l;dz/=l;h.push([p.x-dz*w/2,p.z+dx*w/2],[p.x+dz*w/2,p.z-dx*w/2]);};
+  const endC=(ni,p,q,w)=>{const h=HUL.get(ni);if(!h)return;let dx=q.x-p.x,dz=q.z-p.z;const l=Math.hypot(dx,dz)||1;dx/=l;dz/=l;
+   /* v181: en cruces en ángulo agudo la calle se corta hasta 70 m antes; la placa del cruce solo llega a ~0.9 del ancho mayor y de ahí a la punta va un tramo liso del ancho de la calle.
+      Antes la placa unía las puntas lejanas y rellenaba de asfalto el triángulo de pasto entre las dos calles (ahí salían edificios "en la calle") */
+   const n=nodes[ni],d=Math.hypot(p.x-n.x,p.z-n.z),rc=Math.min(d,(n.jmw||w)*.9);let c=p;
+   if(d>rc+.5){c={x:p.x-dx*(d-rc),y:n.y,z:p.z-dz*(d-rc)};const nx=-dz*w/2,nz=dx*w/2,bs=QP.length/3;QP.push(c.x+nx,c.y+.07,c.z+nz,c.x-nx,c.y+.07,c.z-nz,p.x+dx*.3+nx,p.y+.07,p.z+dz*.3+nz,p.x+dx*.3-nx,p.y+.07,p.z+dz*.3-nz);QU.push(0,0,1,0,0,1,1,1);QI.push(bs,bs+2,bs+1,bs+1,bs+2,bs+3);}
+   h.push([c.x-dz*w/2,c.z+dx*w/2],[c.x+dz*w/2,c.z-dx*w/2]);};
   const pc=document.createElement('canvas');pc.width=pc.height=128;{const g=pc.getContext('2d');g.fillStyle='#555a66';g.fillRect(0,0,128,128);for(let i=0;i<700;i++){const v=56+Math.random()*34|0;g.fillStyle=`rgba(${v},${v},${v+4},.55)`;g.fillRect(Math.random()*128,Math.random()*128,2,2);}}
   const ptx=new THREE.CanvasTexture(pc);ASPH_CB.push(()=>{pc.getContext('2d').drawImage(ASPH_IMG,0,0,128,128);ptx.needsUpdate=true;});ptx.wrapS=ptx.wrapT=THREE.RepeatWrapping;const tm=new THREE.MeshLambertMaterial({map:ptx});tm.userData.keep=1;tm.side=THREE.DoubleSide;tm.polygonOffset=true;tm.polygonOffsetFactor=tm.polygonOffsetUnits=-20;ROADMATS.push(tm);
   const J2=new Map(),QP=[],QU=[],QI=[];const RMX={},UF=new Map(),GS=new Map();const uf=x=>{while(UF.has(x)&&UF.get(x)!==x)x=UF.get(x);return x;};for(const k of R0.keys())UF.set(k,k);
@@ -4812,21 +4818,21 @@ function swAt(x,z){const i=Math.floor(x/EGC),j=Math.floor(z/EGC);for(let a=-1;a<
     if(!C){{const pl=P.reduce((a2,q,k2)=>k2?a2+Math.hypot(q.x-P[k2-1].x,q.z-P[k2-1].z):0,0);if(R0.has(f)&&R0.has(l)&&pl<45){const rf=uf(f),rl=uf(l);if(rf!==rl&&(GS.get(rf)||1)+(GS.get(rl)||1)<=3){UF.set(rf,rl);GS.set(rl,(GS.get(rf)||1)+(GS.get(rl)||1));}}}
       for(let k=0;k<P.length-1;k++){const a=P[k],b=P[k+1];let dx=b.x-a.x,dz=b.z-a.z;const ll=Math.hypot(dx,dz);if(ll<.2)continue;dx/=ll;dz/=ll;const ex=dx*w*.25,ez=dz*w*.25,nx=-dz*w/2,nz=dx*w/2,y=a.y+.07,bs=QP.length/3;
       QP.push(a.x-ex+nx,y,a.z-ez+nz,a.x-ex-nx,y,a.z-ez-nz,b.x+ex+nx,y,b.z+ez+nz,b.x+ex-nx,y,b.z+ez-nz);QU.push(0,0,1,0,0,1,1,1);QI.push(bs,bs+2,bs+1,bs+1,bs+2,bs+3);}
-      if(P.length>=2){const cs=[];for(const[pa,pb]of[[P[0],P[1]],[P[P.length-1],P[P.length-2]]]){let dx=pb.x-pa.x,dz=pb.z-pa.z;const ll=Math.hypot(dx,dz)||1;dx/=ll;dz/=ll;cs.push([pa.x-dz*w/2,pa.z+dx*w/2],[pa.x+dz*w/2,pa.z-dx*w/2]);}for(const nn of[f,l])if(HUL.has(nn))HUL.get(nn).push(...cs);}continue;}
-    C=dens(smooth(C));{const Q=[C[0]];for(let k=1;k<C.length;k++)if(Math.hypot(C[k].x-Q[Q.length-1].x,C[k].z-Q[Q.length-1].z)>1||k===C.length-1)Q.push(C[k]);if(Q.length>2&&Math.hypot(Q[Q.length-1].x-Q[Q.length-2].x,Q[Q.length-1].z-Q[Q.length-2].z)<1)Q.splice(Q.length-2,1);C=Q;}strip(C,w,.03+rk*.006+(subs[0].orig%5)*.0015,RMX[key]);if(SWT[subs[0].type]&&urban(C[C.length>>1].x,C[C.length>>1].z).d>.25)for(const sd of[1,-1])for(const R of swRuns(offPts(C,sd*(w/2+SWW/2)),subs)){strip(R,SWW,SWH,SWMAT);curb(offPts(R,-sd*(SWW/2-.02)),.02,SWH+.005);curb(offPts(R,sd*(SWW/2-.02)),-.3,SWH+.005);}
+      if(P.length>=2){const cs=[];for(const[pa,pb]of[[P[0],P[1]],[P[P.length-1],P[P.length-2]]]){let dx=pb.x-pa.x,dz=pb.z-pa.z;const ll=Math.hypot(dx,dz)||1;dx/=ll;dz/=ll;cs.push([pa.x-dz*w/2,pa.z+dx*w/2],[pa.x+dz*w/2,pa.z-dx*w/2]);}if(HUL.has(f))HUL.get(f).push(cs[0],cs[1]);if(HUL.has(l))HUL.get(l).push(cs[2],cs[3]);}continue;}
+    C=dens(smooth(C));{const Q=[C[0]];for(let k=1;k<C.length;k++)if(Math.hypot(C[k].x-Q[Q.length-1].x,C[k].z-Q[Q.length-1].z)>1||k===C.length-1)Q.push(C[k]);if(Q.length>2&&Math.hypot(Q[Q.length-1].x-Q[Q.length-2].x,Q[Q.length-1].z-Q[Q.length-2].z)<1)Q.splice(Q.length-2,1);C=Q;}RCL.push({C,w,sw:!!SWT[subs[0].type],own:new Set(subs.map(e=>e.i))});strip(C,w,.03+rk*.006+(subs[0].orig%5)*.0015,RMX[key]);if(SWT[subs[0].type]&&urban(C[C.length>>1].x,C[C.length>>1].z).d>.25)for(const sd of[1,-1])for(const R of swRuns(offPts(C,sd*(w/2+SWW/2)),subs)){strip(R,SWW,SWH,SWMAT);curb(offPts(R,-sd*(SWW/2-.02)),.02,SWH+.005);curb(offPts(R,sd*(SWW/2-.02)),-.3,SWH+.005);}
     else if(subs[0].type==='mtn'||subs[0].type==='hwy')for(const sd of[1,-1])strip(offPts(C,sd*(w/2+.9)),1.8,.025,SHMAT);
     if(R0.has(f))endC(f,C[0],C[1],w);if(R0.has(l))endC(l,C[C.length-1],C[C.length-2],w);
     for(const [ni,a,b] of [[f,C[0],C[1]],[l,C[C.length-1],C[C.length-2]]]){if(R0.has(ni)||nodes[ni].kind==='shape'||nodes[ni].edges.length!==2)continue;if(!J2.has(ni))J2.set(ni,[]);let dx=b.x-a.x,dz=b.z-a.z;const ll=Math.hypot(dx,dz)||1;dx/=ll;dz/=ll;J2.get(ni).push([a.x-dz*w/2,a.z+dx*w/2],[a.x+dz*w/2,a.z-dx*w/2]);}}});
-  const pos=[],idx=[],uvs=[],GR=new Map();for(const [ni,pts] of HUL){const r=uf(ni);if(!GR.has(r))GR.set(r,[]);GR.get(r).push(...pts);}
+  const pos=[],idx=[],uvs=[],GR=new Map();for(const [ni,pts] of HUL)GR.set(ni,pts);   /* v181: una placa por cruce; antes los cruces a <45 m se unían en un solo polígono que tapaba esquinas y edificios */
   for(const [ni,pts] of GR){const n=nodes[ni];if(pts.length<3)continue;pts.sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
    const cr=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);const lo=[],up=[];
    for(const p of pts){while(lo.length>=2&&cr(lo[lo.length-2],lo[lo.length-1],p)<=0)lo.pop();lo.push(p);}
    for(let i=pts.length-1;i>=0;i--){const p=pts[i];while(up.length>=2&&cr(up[up.length-2],up[up.length-1],p)<=0)up.pop();up.push(p);}
-   const hull=lo.slice(0,-1).concat(up.slice(0,-1));if(hull.length<3)continue;const base=pos.length/3;
+   const hull=lo.slice(0,-1).concat(up.slice(0,-1));if(hull.length<3)continue;JHULL.push(hull);const base=pos.length/3;
    for(const q of hull){pos.push(q[0],n.y+.07,q[1]);uvs.push(q[0]/12,q[1]/12);}for(let k=1;k<hull.length-1;k++)idx.push(base,base+k+1,base+k);}
   {const lp=[],li=[],lu=[];for(const [ni,pts] of J2){if(pts.length<4)continue;const n=nodes[ni];pts.push([n.x,n.z]);pts.sort((a,b)=>a[0]-b[0]||a[1]-b[1]);const cr=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);const lo=[],up=[];
     for(const p of pts){while(lo.length>=2&&cr(lo[lo.length-2],lo[lo.length-1],p)<=0)lo.pop();lo.push(p);}for(let i=pts.length-1;i>=0;i--){const p=pts[i];while(up.length>=2&&cr(up[up.length-2],up[up.length-1],p)<=0)up.pop();up.push(p);}
-    const h=lo.slice(0,-1).concat(up.slice(0,-1));if(h.length<3)continue;const base=lp.length/3;lp.push(n.x,n.y+.02,n.z);lu.push(n.x/12,n.z/12);for(const q of h){lp.push(q[0],n.y+.02,q[1]);lu.push(q[0]/12,q[1]/12);}for(let k=0;k<h.length;k++)li.push(base,base+1+((k+1)%h.length),base+1+k);}
+    const h=lo.slice(0,-1).concat(up.slice(0,-1));if(h.length<3)continue;JHULL.push(h);const base=lp.length/3;lp.push(n.x,n.y+.02,n.z);lu.push(n.x/12,n.z/12);for(const q of h){lp.push(q[0],n.y+.02,q[1]);lu.push(q[0]/12,q[1]/12);}for(let k=0;k<h.length;k++)li.push(base,base+1+((k+1)%h.length),base+1+k);}
    const lm=tm.clone();lm.polygonOffsetFactor=lm.polygonOffsetUnits=-1;lm.userData.keep=1;ROADMATS.push(lm);const lg=new THREE.BufferGeometry();lg.setAttribute('position',new THREE.Float32BufferAttribute(lp,3));lg.setAttribute('uv',new THREE.Float32BufferAttribute(lu,2));lg.setIndex(li);lg.computeVertexNormals();{const nn=lg.attributes.normal;for(let i=0;i<nn.count;i++)nn.setXYZ(i,0,1,0);}const lmm=new THREE.Mesh(lg,lm);lmm.receiveShadow=true;scene.add(lmm);}
   {const qg=new THREE.BufferGeometry();qg.setAttribute('position',new THREE.Float32BufferAttribute(QP,3));qg.setAttribute('uv',new THREE.Float32BufferAttribute(QU,2));qg.setIndex(QI);qg.computeVertexNormals();const nn=qg.attributes.normal;for(let i=0;i<nn.count;i++)nn.setXYZ(i,0,1,0);const qm=new THREE.Mesh(qg,tm);qm.receiveShadow=true;scene.add(qm);}
   const tg=new THREE.BufferGeometry();tg.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));tg.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));tg.setIndex(idx);tg.computeVertexNormals();
@@ -4976,11 +4982,22 @@ terrainLOD(DEPOTS[0].E,99);
 /* Canal del Norte: agua en el fondo y puentes con pretil donde lo cruza una calle */
 {const wm=new THREE.MeshLambertMaterial({color:0x4d7684});wm.userData.keep=1;const P=CANAL.map(p=>({x:p[0],y:0,z:p[1]}));const w=strip(P,CANAL_B*2+3,CANAL_WY,wm);w.receiveShadow=false;w.userData.keep=true;
  const pm=M(0xcfcac0);let nb=0;
- for(let s=1;s<CANAL.length;s++){const a=CANAL[s-1],b=CANAL[s];for(const e of edgesNear((a[0]+b[0])/2,(a[1]+b[1])/2,1)){
+ /* v181 · pretiles sobre la calle TAL COMO SE DIBUJA (suavizada), no sobre la línea recta del mapa: siguen la curva, miden lo que mide el canal ahí
+    y no se ponen encima de otra calle o cruce (antes quedaban sobre el carril cuando la calle curveaba o cruzaba en diagonal) */
+ for(let s=1;s<CANAL.length;s++){const a=CANAL[s-1],b=CANAL[s];for(const e of edgesNear((a[0]+b[0])/2,(a[1]+b[1])/2,1)){   /* reserva del puente con la medida de antes: así la ciudad sale igual que siempre */
    const r=b[0]-a[0],q=b[1]-a[1],ex=e.bx-e.ax,ez=e.bz-e.az,den=r*ez-q*ex;if(Math.abs(den)<1e-6)continue;const t=((e.ax-a[0])*ez-(e.az-a[1])*ex)/den,u=((e.ax-a[0])*q-(e.az-a[1])*r)/den;if(t<0||t>1||u<0||u>1)continue;
-   const cx=e.ax+ex*u,cz=e.az+ez*u,y=H(cx,cz),cl=Math.hypot(r,q),sn=Math.max(.35,Math.abs((r*e.uz-q*e.ux)/cl)),L=(CANAL_W*2)/sn;
-   for(const sd of[1,-1]){const ox=-e.uz*sd*(e.w/2+.6),oz=e.ux*sd*(e.w/2+.6),m=box(scene,.5,1.1,L,pm,cx+ox,y+.55,cz+oz);m.rotation.y=Math.atan2(e.ux,e.uz);m.castShadow=true;
-     PROPOBB.push({cx:cx+ox,cz:cz+oz,ux:-e.uz,uz:e.ux,hw:.35,hd:L/2});}nb++;}}
+   const cx=e.ax+ex*u,cz=e.az+ez*u,cl=Math.hypot(r,q),sn=Math.max(.35,Math.abs((r*e.uz-q*e.ux)/cl)),L=(CANAL_W*2)/sn;
+   for(const sd of[1,-1])PROPOBB.push({cx:cx-e.uz*sd*(e.w/2+.6),cz:cz+e.ux*sd*(e.w/2+.6),ux:-e.uz,uz:e.ux,hw:.35,hd:L/2,res:1});}}
+ const PP=[],inHull=inJHull;
+ const onOther=(x,z,own)=>{for(const e of edgesNear(x,z,1)){if(own.has(e.i)||e.type==='ring')continue;if(segDist(x,z,e).d<e.w/2+.3)return true;}return inHull(x,z);};
+ for(const R of RCL){const C=R.C,D=[];for(let k=0;k<C.length;k++){if(k){const a=C[k-1],b=C[k],l=Math.hypot(b.x-a.x,b.z-a.z),n=Math.ceil(l/2);for(let q=1;q<n;q++){const t=q/n;D.push({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t,z:a.z+(b.z-a.z)*t});}}D.push(C[k]);}
+   const inC=D.map(p=>canalDF(p.x,p.z)<CANAL_W);if(!inC.some(Boolean))continue;
+   for(const sd of[1,-1]){const O=offPts(D,sd*(R.w/2+.6));let run=[];
+     const flush=()=>{if(run.length>1){for(let k=1;k<run.length;k++){const a=run[k-1],b=run[k];PP.push({a,b});}if(sd===1)nb++;}run=[];};
+     for(let k=0;k<D.length;k++){const ok=(inC[k]||inC[k-1]||inC[k+1])&&!onOther(O[k].x,O[k].z,R.own);if(ok)run.push({x:O[k].x,y:D[k].y,z:O[k].z});else flush();}flush();}}
+ {const g=new THREE.BoxGeometry(.5,1.1,1),im=new THREE.InstancedMesh(g,pm,Math.max(1,PP.length));im.count=PP.length;im.castShadow=true;im.receiveShadow=true;im.frustumCulled=false;
+  PP.forEach(({a,b},q)=>{const dx=b.x-a.x,dz=b.z-a.z,l=Math.hypot(dx,dz)||1,cx=(a.x+b.x)/2,cz=(a.z+b.z)/2,y=Math.max(H(cx,cz),(a.y+b.y)/2)+.55;
+    qt.setFromAxisAngle(UPV,Math.atan2(dx,dz));m4.compose(v3.set(cx,y,cz),qt,sc3.set(1,1,l+.08));im.setMatrixAt(q,m4);PARAOBB.push({cx,cz,ux:-dz/l,uz:dx/l,hw:.35,hd:l/2});});scene.add(im);}
  // el canal no se construye encima
  for(let s=1;s<CANAL.length;s++){const a=CANAL[s-1],b=CANAL[s],l=Math.hypot(b[0]-a[0],b[1]-a[1]);if(l<1)continue;PARKS_EXCL.push({cx:(a[0]+b[0])/2,cz:(a[1]+b[1])/2,ux:(b[0]-a[0])/l,uz:(b[1]-a[1])/l,hw:l/2+4,hd:CANAL_W+4});}
  CANAL.bridges=nb;}
@@ -5117,17 +5134,21 @@ const HIGHMATS=[0,1,2].map(st=>new THREE.MeshLambertMaterial({color:0xffffff,map
  const corners=b=>[[-1,-1],[1,-1],[1,1],[-1,1]].map(([a,c])=>[b.cx+b.ux*b.hw*a-b.uz*b.hd*c,b.cz+b.uz*b.hw*a+b.ux*b.hd*c]);
  const sat=(A,B)=>{const ca=corners(A),cb=corners(B);for(const[nx,nz]of[[A.ux,A.uz],[-A.uz,A.ux],[B.ux,B.uz],[-B.uz,B.ux]]){let a0=1e9,a1=-1e9,b0=1e9,b1=-1e9;for(const[x,z]of ca){const d=x*nx+z*nz;if(d<a0)a0=d;if(d>a1)a1=d;}for(const[x,z]of cb){const d=x*nx+z*nz;if(d<b0)b0=d;if(d>b1)b1=d;}if(a1<=b0+.08||b1<=a0+.08)return false;}return true;};
  const badSpot=b=>{const n=Math.max(2,Math.ceil(b.hw/2.5)),m=Math.max(2,Math.ceil(b.hd/2.5));for(let i=0;i<=n;i++)for(let j=0;j<=m;j++){const a=-1+2*i/n,c=-1+2*j/m,x=b.cx+b.ux*b.hw*a-b.uz*b.hd*c,z=b.cz+b.uz*b.hw*a+b.ux*b.hd*c;
-   for(const e of edgesNear(x,z,1)){if(e.type==='ring')continue;if(segDist(x,z,e).d<e.w/2+(SWT[e.type]?SWW:0)+.3)return 'calle';}
+   for(const e of edgesNear(x,z,1)){if(e.type==='ring')continue;if(segDist(x,z,e).d<e.w/2+(SWT[e.type]?SWW:0)+.3)return 'calle';}if(inJHull(x,z))return 'cruce';if(rclNear(x,z))return 'curva';
    if(EXCL.some(o=>inObb(o,x,z)))return 'patio';if(typeof canalDF==='function'&&canalDF(x,z)<CANAL_W+2)return 'canal';for(const st of SITES)if(Math.hypot(x-st.x,z-st.z)<st.r*.8)return 'patio';}return '';};
+ /* v181: la calle se dibuja suavizada (en las curvas se mete hacia adentro) y los cruces llevan placa; se revisa contra eso, no solo contra la línea recta */
+ const RG=new Map(),RGC=60;for(const R of RCL){const m=R.w/2+(R.sw?SWW:0)+.3;for(let k=1;k<R.C.length;k++){const a=R.C[k-1],b=R.C[k];for(let i=Math.floor((Math.min(a.x,b.x)-m)/RGC);i<=Math.floor((Math.max(a.x,b.x)+m)/RGC);i++)for(let j=Math.floor((Math.min(a.z,b.z)-m)/RGC);j<=Math.floor((Math.max(a.z,b.z)+m)/RGC);j++){const kk=i+','+j;(RG.get(kk)||RG.set(kk,[]).get(kk)).push([a.x,a.z,b.x,b.z,m]);}}}
+ function rclNear(x,z){for(const[ax,az,bx,bz,m]of RG.get(Math.floor(x/RGC)+','+Math.floor(z/RGC))||[]){const dx=bx-ax,dz=bz-az,l2=dx*dx+dz*dz||1,t=Math.max(0,Math.min(1,((x-ax)*dx+(z-az)*dz)/l2));if(Math.hypot(x-ax-dx*t,z-az-dz*t)<m)return true;}return false;}
  const keep=[],G=new Map(),gk=(i,j)=>i+','+j,CS=50,why={};
  for(const b of ALL){const r=badSpot(b);if(r){why[r]=(why[r]||0)+1;b.gone=1;continue;}const R0=Math.hypot(b.hw,b.hd),i0=Math.floor((b.cx-R0)/CS),i1=Math.floor((b.cx+R0)/CS),j0=Math.floor((b.cz-R0)/CS),j1=Math.floor((b.cz+R0)/CS);let hit=false;
    for(let i=i0;i<=i1&&!hit;i++)for(let j=j0;j<=j1&&!hit;j++){for(const o of(G.get(gk(i,j))||[]))if(Math.hypot(o.cx-b.cx,o.cz-b.cz)<R0+Math.hypot(o.hw,o.hd)&&sat(o,b)){hit=true;break;}}
    if(hit){why.encimado=(why.encimado||0)+1;b.gone=1;continue;}keep.push(b);for(let i=i0;i<=i1;i++)for(let j=j0;j<=j1;j++){const k=gk(i,j);if(!G.has(k))G.set(k,[]);G.get(k).push(b);}}
  // los que se quitan también salen de los choques
- for(const arr of hash.values())for(let q=arr.length-1;q>=0;q--)if(arr[q].gone)arr.splice(q,1);
+ for(const arr of hash.values())for(let q=arr.length-1;q>=0;q--)if(arr[q].gone||arr[q].res)arr.splice(q,1);PARAOBB.forEach(addObb);   /* v181: la reserva sale y entran los pretiles reales */
  for(const L of[lows,highs])for(let q=L.length-1;q>=0;q--)if(L[q].gone)L.splice(q,1);
  // árboles de la ciudad que quedaron dentro de un edificio
  for(let q=trees.length-1;q>=0;q--){const t=trees[q];const arr=hash.get(hk(Math.floor(t.x/CELL),Math.floor(t.z/CELL)));if(arr&&arr.some(o=>inObb(o,t.x,t.z)))trees.splice(q,1);}
+ for(let q=PADS.length-1;q>=0;q--)if(inJHull(PADS[q].cx,PADS[q].cz))PADS.splice(q,1);   /* v181: sin pisos de concreto encima de un cruce */
  window.__mapFix=why;for(const b of keep){KL.push(b._k);if(b.deco)KL.push(...b.deco);}kPlace(KL);}
 // v138 · piso de concreto bajo los edificios de la ciudad (frente, patio y entre casas): ya no quedan sueltos en el pasto
 {const pm=M(0xd3cfc4).clone();pm.polygonOffset=true;pm.polygonOffsetFactor=pm.polygonOffsetUnits=-1.5;const g=new THREE.PlaneGeometry(1,1);g.rotateX(-Math.PI/2);const im=new THREE.InstancedMesh(g,pm,Math.max(1,PADS.length));im.count=PADS.length;im.frustumCulled=false;im.receiveShadow=true;
@@ -8242,6 +8263,6 @@ const check=async()=>{if(busy)return;try{const r=await fetch('version.json?'+Dat
  if(localStorage.getItem('fnUpdV')===j.v)return;const st=document.getElementById('start');if(!st||st.hidden||getComputedStyle(st).display==='none')return;
  localStorage.setItem('fnUpdV',j.v);busy=true;banner('Nueva versión '+j.v+' disponible · actualizando…');
  setTimeout(()=>location.reload(),1500);}catch(e){}};
-setTimeout(check,4000);setInterval(check,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check();});})();
+{const sv=document.getElementById('stVer');if(sv)sv.textContent=V+' · Apodaca';}setTimeout(check,4000);setInterval(check,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check();});})();
 </script>
 </body></html>
