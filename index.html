@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v183">
+<meta name="fn-version" content="v184">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -635,7 +635,7 @@ body.cine .quick{display:none}
           <button class="st-opt" id="startSet">Ajustes <small>Manejo y sonido</small></button>
           <button class="st-opt" id="startTut">Tutorial <small>Aprende a manejarlo</small></button>
         </div>
-        <div class="st-foot"><span id="stVer">v183 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
+        <div class="st-foot"><span id="stVer">v184 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
       </div>
       <div class="st-garage" id="startGarage" hidden>
         <h3>TU CAMIÓN</h3><div class="n">Semi Lowpoly</div>
@@ -4404,9 +4404,9 @@ const CARMD={name:'Subaro Leal 1992',kind:'Sedán 4 puertas · estándar de 5',r
 var CAR={s:1.2024,rearZ:-0.9515,mass:1130,cd:.46,rr:.012,brakeA:8.2,hw:.9,
   curve:[[0,0],[700,88],[1500,116],[2800,137],[4000,133],[5200,123],[6000,104],[6600,80]],
   eye:{x:.374,y:1.109,z:-.020},wheelR:.2876};   // ojo del chofer: el del interior nuevo pasado por el mismo mapa
-if(CARK==='versa'){Object.assign(CARMD,{name:'Nizzan Versito',kind:'Sedán 4 puertas · automático CVT · ABS',lw:2.577,front:3.42,rear:1.02,lock:.56,final:3.882,torque:145});   // Versa real: entre ejes 2.600 m, voladizos ~.85/1.0, círculo de giro 10.4 m
+if(CARK==='versa'){Object.assign(CARMD,{name:'Nizzan Versito',kind:'Sedán 4 puertas · automático de 4 · ABS',lw:2.577,front:3.42,rear:1.02,lock:.56,final:4.072,torque:145});   // Versa real: entre ejes 2.600 m, voladizos ~.85/1.0, círculo de giro 10.4 m
   Object.assign(CAR,{s:1,rearZ:0,mass:1060,cd:.40,brakeA:8.8,hw:.86,abs:1,bsfc:.27,curve:[[0,0],[700,92],[1500,118],[3000,135],[4400,145],[5800,130],[6300,108],[6800,85]],eye:{x:.341,y:1.18,z:1.275},wheelR:.302,auto:1,cvt:[.55,4.006]});}   // CVT Xtronic: relación 4.006 a 0.55, final 3.882   // HR16DE 1.6 L 109 hp, 145 N·m a 4,400
-var carOff=-CAR.rearZ*CAR.s;   // 1.144 m: el eje trasero queda en el origen (S.x,S.z es el eje trasero, como el camión)
+var carOff=-CAR.rearZ*CAR.s;var AT4=[2.861,1.562,1.000,.697];   // 1.144 m: el eje trasero queda en el origen (S.x,S.z es el eje trasero, como el camión)
 save.owned=save.owned.filter(k=>MODELS[k]);if(!save.owned.includes('amer'))save.owned.unshift('amer');if(!MODELS[save.sel]||!save.owned.includes(save.sel))save.sel='amer';   // v156: se guardan los camiones comprados
 const UPG=[{k:'motor',name:'Motor reprogramado',lv:[18000,35000],desc:'+15% de fuerza por nivel'},{k:'frenos',name:'Frenos reforzados',lv:[22000],desc:'Frena 20% más fuerte'},
   {k:'tanque',name:'Tanque grande',lv:[28000],desc:'600 L en lugar de 400 L'},{k:'box10',name:'Caja de 10 velocidades',lv:[95000],desc:'Palanca con rango alta y baja'},
@@ -7182,7 +7182,9 @@ let vadoAcc=0,gravAcc=0;
 function fxTick(dt){pMat.uniforms.uK.value=renderer.domElement.height*.55;
   {const wv=+clamp(((S.gw||0)-.05)*2.2,0,.62).toFixed(2);if(VADOS.mat&&VADOS.mat.opacity!==wv){VADOS.mat.opacity=wv;for(const m of VADOS)m.visible=wv>.02;}}
   // humo: más negro al pisar fuerte con el motor bajo de vueltas, frío o cargado
-  if(S.running){const g=S.ped.gas,lug=clamp((1300-S.rpm)/600,0,1),dark=clamp(g*(.4+lug*.8)+(S.jud||0)*.6-.2,0,1),rate=3.2+g*10+(S.jud||0)*8;smokeAcc+=dt*rate;
+  if(CARM){if(S.running){S.cst=S.cst??S.t;const g=S.ped.gas,cold=clamp(1-(S.t-S.cst)/90,0,1),hard=g>.75&&S.rpm>2500?1:0;smokeAcc+=dt*(cold*2.5+hard*2);
+      while(smokeAcc>1){smokeAcc-=1;pv3.set(-.45,.26,-1.02);carM.localToWorld(pv3);const[fx,fz]=fwdOf(S.h);emit(pv3.x,pv3.y,pv3.z,-fx*.6+(Math.random()-.5)*.2,.35,-fz*.6+(Math.random()-.5)*.2,1.3,.13,.12,.8,.86,.86,.88);}}else S.cst=null;}   /* v184: escape del Versa abajo de la defensa, lado derecho (x −.45, y .26, 1.02 m detrás del eje trasero) */
+  else if(S.running){const g=S.ped.gas,lug=clamp((1300-S.rpm)/600,0,1),dark=clamp(g*(.4+lug*.8)+(S.jud||0)*.6-.2,0,1),rate=3.2+g*10+(S.jud||0)*8;smokeAcc+=dt*rate;
     while(smokeAcc>1){smokeAcc-=1;for(const st of (REAL[S.model]&&STACKS[S.model+'R'])||STACKS[S.model]||[]){pv3.set(st[0],st[1],st[2]);truck.localToWorld(pv3);const idle=g<.1,c=(idle?.46:.58)-.48*dark;
       emit(pv3.x,pv3.y,pv3.z,(Math.random()-.5)*.5+(S.gust||0)*.6,1.6+g*1.4,(Math.random()-.5)*.5,(idle?2.4:1.8)+dark*1.6,(idle?.5:.24)+.5*dark,.45,(idle?2.2:2.4)+dark*2.6,c,c,c*1.02);}}}
   // polvo en la tierra y agua con lluvia, desde las llantas de atrás (y del remolque)
@@ -7820,9 +7822,12 @@ var carPhone,carArms,carNd,carG,carBody,carM,carEye,carWheels,carSW,carLever,car
 function carTorque(r){const c=CAR.curve;if(r<=0)return 0;for(let i=1;i<c.length;i++)if(r<=c[i][0]){const[a,ta]=c[i-1],[b,tb]=c[i];return ta+(tb-ta)*(r-a)/(b-a);}return c[c.length-1][1];}
 function carPhysics(dt){
   const md=MD(),AU=!!CAR.auto;if(AU){const sel=S.autoSel||'P';S.gear=sel==='D'?1:sel==='R'?-1:0;
-    // CVT: busca que el motor vaya a ~1,600 rpm acelerando poco y a ~5,600 a fondo; la relación cambia suave (0.3 s)
-    const rT=IDLE+S.ped.gas*S.ped.gas*4800+S.ped.gas*350,want=clamp(rT*2*Math.PI*RW/(60*Math.max(Math.abs(S.v),.4))/md.final,CAR.cvt[0],CAR.cvt[1]);S.cvt=(S.cvt||CAR.cvt[1])+(want-(S.cvt||CAR.cvt[1]))*lerpK(3.3,dt);}
-  const ratio=S.gear===0?0:AU?(S.gear>0?S.cvt*md.final:-2.6*md.final):RATIO[S.gear]*md.final,engage=AU?1:clamp((.8-S.ped.clutch)/.55,0,1),n=20,h=dt/n,v0=S.v,wet=env.rain;
+    /* v184 (Juan): automático de 4 (Versa 1.6 4AT, caja RE4F03B: 2.861 / 1.562 / 1.000 / 0.697, reversa 2.310, final 4.072).
+       Sube de cambio a 2,100 rpm acelerando poco y hasta 5,900 a fondo; baja a 1,100–2,700; a fondo baja uno si cabe (kickdown). Mínimo 0.9 s entre cambios */
+    const AR=AT4,g=S.ag||1,wr=Math.abs(S.v)/RW*60/(2*Math.PI)*md.final,gas=S.ped.gas,up=Math.min(5900,2100+3800*Math.pow(gas,1.4)),dn=1100+1600*gas;S.agT=(S.agT||0)+dt;
+    if(S.gear<=0)S.ag=1;else if(S.agT>.9){if(g<4&&wr*AR[g-1]>up){S.ag=g+1;S.agT=0;}else if(g>1&&(wr*AR[g-1]<dn||(gas>.85&&wr*AR[g-2]<5500&&wr*AR[g-1]<4200))){S.ag=g-1;S.agT=0;}}
+    S.cvt=AR[(S.ag||1)-1];}
+  const ratio=S.gear===0?0:AU?(S.gear>0?S.cvt*md.final:-2.31*md.final):RATIO[S.gear]*md.final,engage=AU?1:clamp((.8-S.ped.clutch)/.55,0,1),n=20,h=dt/n,v0=S.v,wet=env.rain;
   const mu=SF().mu*(1-.35*wet),rr=CAR.rr+Math.max(0,SF().rr-.008),M=CAR.mass,pB=Math.max(S.ped.brake,0);
   {const[fx,fz]=fwdOf(S.h),hr=H(S.x,S.z),hf=H(S.x+fx*md.lw,S.z+fz*md.lw);S.grade=(hf-hr)/md.lw;S.gsin=S.grade/Math.sqrt(1+S.grade*S.grade);}
   // frenos: sin ABS (1992). Si pisas a fondo con poco agarre se bloquean las llantas y no da vuelta
@@ -7830,7 +7835,7 @@ function carPhysics(dt){
   for(let i=0;i<n;i++){const r=S.rpm;let T=0;
     if(S.running){T=S.ped.gas*carTorque(r);if(r<IDLE)T+=Math.min((IDLE-r)*.6,95);if(r>REDLINE+150)T=Math.min(T,0)-(r-REDLINE-150)*.2;}
     T-=r>1?(9+r*.0035+(S.ped.gas<.05&&S.running?r*.0045:0)):0;   // fricción y freno de motor al soltar el acelerador
-    let Tc=0;if(ratio!==0&&engage>0){const linked=S.v/(2*Math.PI*RW)*60*ratio;if(AU){const lock=S.gear>0&&Math.abs(S.v)>6;Tc=lock?clamp((r-linked)*1.6,-260,260):16*(r/1000)*(r/1000)*clamp((r-linked)/Math.max(r,300)*2.2,-1,1);}   // convertidor de par; arriba de 22 km/h se amarra (lockup)
+    let Tc=0;if(ratio!==0&&engage>0){const linked=S.v/(2*Math.PI*RW)*60*ratio;if(AU){const lock=S.gear>0&&(S.ag||1)>=3&&Math.abs(S.v)>12&&S.agT>.6;Tc=lock?clamp((r-linked)*1.6,-260,260):16*(r/1000)*(r/1000)*clamp((r-linked)/Math.max(r,300)*2.2,-1,1);}   // convertidor de par; arriba de 22 km/h se amarra (lockup)
     else{const cap=280*Math.pow(engage,1.5);Tc=cap*clamp((r-linked)/120,-1,1);}if(i===0)S.mis=r-linked;}
     S.rpm=Math.max(0,r+(T-Tc)/IE*9.549*h);
     let a=ratio!==0?Tc*ratio/RW*.9/(M+4.2/(RW*RW)):0;   // 4 llantas con rin: ~1 kg·m² cada una
@@ -8102,6 +8107,16 @@ function yyGps(){const y=yyS(),t=YY&&YY.trip;if(!t||gps.pts.length<2)return{txt:
    Volante: centro (.341,.949,.571) → (.341,.949,1.775), Ø .382, alto .346 → inclinado 25° (eje 0,.423,−.906).
    Perilla (.017,.627,.574) → (.017,.627,1.779). Ojo: 50 cm detrás del volante a y 1.18 (techo interior 1.40), x .341. */
 const VER={ax:1.2045};
+/* v184: el modelo viene unido por material; para mover o quitar una pieza se cortan sus triángulos por medidas (centro del triángulo dentro de la caja, en el marco del carro) */
+function carCut(root,test,par){carG.updateMatrixWorld(true);const inv=carM.matrixWorld.clone().invert(),v=[0,1,2].map(()=>new THREE.Vector3()),out=new Map();const ms=[];root.traverse(o=>{if(o.isMesh)ms.push(o);});
+  for(const o of ms){const g=o.geometry,p=g.attributes.position,nr=g.attributes.normal,ix=g.index;if(!ix)continue;const M=inv.clone().multiply(o.matrixWorld),grp=g.groups.length?g.groups:[{start:0,count:ix.count,materialIndex:0}];let ch=false;
+    for(const gr of grp){const mat=Array.isArray(o.material)?o.material[gr.materialIndex]:o.material;for(let k=gr.start;k<gr.start+gr.count;k+=3){for(let q=0;q<3;q++)v[q].fromBufferAttribute(p,ix.getX(k+q)).applyMatrix4(M);
+      if(!test((v[0].x+v[1].x+v[2].x)/3,(v[0].y+v[1].y+v[2].y)/3,(v[0].z+v[1].z+v[2].z)/3,mat.name||''))continue;
+      if(par){let L=out.get(mat);if(!L)out.set(mat,L={P:[],N:[]});const W=o.matrixWorld,NM=new THREE.Matrix3().getNormalMatrix(W);for(let q=0;q<3;q++){const i=ix.getX(k+q),w=new THREE.Vector3().fromBufferAttribute(p,i).applyMatrix4(W);L.P.push(w);L.N.push(nr?new THREE.Vector3().fromBufferAttribute(nr,i).applyMatrix3(NM).normalize():new THREE.Vector3(0,1,0));}}
+      const a=ix.getX(k);ix.setX(k+1,a);ix.setX(k+2,a);ch=true;}}
+    if(ch)ix.needsUpdate=true;}
+  if(par){par.updateMatrixWorld(true);const pi=par.matrixWorld.clone().invert(),NI=new THREE.Matrix3().getNormalMatrix(pi);for(const[mat,L]of out){const g=new THREE.BufferGeometry(),P=new Float32Array(L.P.length*3),N=new Float32Array(L.P.length*3);
+    L.P.forEach((w,i)=>{w.applyMatrix4(pi);P.set([w.x,w.y,w.z],i*3);const n=L.N[i].applyMatrix3(NI).normalize();N.set([n.x,n.y,n.z],i*3);});g.setAttribute('position',new THREE.BufferAttribute(P,3));g.setAttribute('normal',new THREE.BufferAttribute(N,3));const m=new THREE.Mesh(g,mat);m.castShadow=true;par.add(m);}}}
 function verBuild(root){root.position.z=VER.ax;carM.add(root);carG.updateMatrixWorld(true);   // v177 (bug del video): antes se medía con la posición vieja del carro y las llantas quedaban girando alrededor de otro punto
   const col=0xf2f2f0,all=[];root.traverse(o=>{if(o.isMesh)all.push(o);});
   for(const o of all){const conv=m=>{const n=(m.name||'').replace(/^Nissan_Versa__Mk2f___B17__sedan_Sense_HQinterior_2015/,''),glass=/glass/i.test(n),c=/carpaint/.test(n)?col:/windowglass/.test(n)?0xbfd0dc:/^white/.test(n)?0x8e939a:m.color.getHex();   // vidrios claros para ver afuera; plásticos 'white' del modelo a gris
@@ -8120,14 +8135,20 @@ function verBuild(root){root.position.z=VER.ax;carM.add(root);carG.updateMatrixW
   const C=new THREE.Vector3(.341,.949,1.775),ax=new THREE.Vector3(0,.423,-.906).normalize(),pv=new THREE.Group();pv.position.copy(C);carIntr.add(pv);const sw=new THREE.Group();pv.add(sw);sw.updateMatrixWorld(true);
   const sws=[];root.traverse(o=>{if(o.isMesh&&(/^SW(_\d+)?$/.test(o.name)||(o.parent&&/^SW(_\d+)?$/.test(o.parent.name))))sws.push(o);/* v177: el cargador renombra las piezas repetidas (SW_1, SW_2): antes solo se movía una y el volante se veía quieto */});sws.forEach(o=>grab(o,sw));carSW=sw;carSW.userData.ax=ax.clone();
   // palanca: pivote 16 cm abajo de la perilla
+  /* v184 (Juan): la palanca no hacía su recorrido. Medido en el modelo: perilla y 13 cm abajo, tallo negro x −0.003…0.038, y .525….659, z 1.751…1.806;
+     letras P-R-N-D encendidas a un lado de la ranura de z 1.765 (P) a 1.679 (D) = 8.6 cm. Ahora perilla + tallo se deslizan juntos por la ranura esos 8.6 cm */
   {const K=new THREE.Vector3(.017,.627,1.779),lp=new THREE.Group();lp.position.set(K.x,K.y-.16,K.z);carIntr.add(lp);lp.updateMatrixWorld(true);const ks=[];root.traverse(o=>{if(o.isMesh&&(/^KNOB(_\d+)?$/.test(o.name)||(o.parent&&/^KNOB(_\d+)?$/.test(o.parent.name))))ks.push(o);});ks.forEach(o=>grab(o,lp));
-   const mk=new THREE.Object3D();mk.position.set(0,.16,0);lp.add(mk);carLever=lp;carLever.userData.knob=mk;}
+   carCut(root,(x,y,z,n)=>/black1/.test(n)&&x>-.006&&x<.041&&y>.52&&y<.662&&z>1.748&&z<1.81,lp);
+   const mk=new THREE.Object3D();mk.position.set(0,.16,0);lp.add(mk);carLever=lp;carLever.userData.knob=mk;carLever.userData.z0=lp.position.z;carLever.userData.trav=.086;}
   carM.updateMatrixWorld(true);const E=new THREE.Vector3(CAR.eye.x,CAR.eye.y,CAR.eye.z+carOff);
   const rayTo=(t,back)=>{const eW=carM.localToWorld(E.clone()),tW=carM.localToWorld(t.clone()),h=new THREE.Raycaster(eW,tW.clone().sub(eW).normalize(),0,2).intersectObject(root,true).find(q=>!/glass/i.test(q.object.material.name||''));
     if(!h)return t.clone();const hp=carM.worldToLocal(h.point.clone());return hp.addScaledVector(E.clone().sub(hp).normalize(),back);};
   // tablero animado: en la ventana que deja el volante (rayos por el cubo y el aro: y .958 a 1.093 en z 1.92), pegado 1 cm enfrente de la cara del tablero
   carClu=document.createElement('canvas');carClu.width=600;carClu.height=260;carCluTex=new THREE.CanvasTexture(carClu);carCluTex.encoding=THREE.sRGBEncoding;
-  {const P=rayTo(new THREE.Vector3(.341,1.025,1.95),.01),cp=new THREE.Mesh(new THREE.PlaneGeometry(.30,.13),new THREE.MeshBasicMaterial({map:carCluTex,transparent:true}));cp.position.copy(P);cp.rotation.set(.236,Math.PI,0);carIntr.add(cp);carDrawClu();}
+  /* v184 (Juan): fuera las carátulas fijas del modelo. Medido: caras blancas c (.312,.959,2.042) 26×7.5 cm, aros cromados c (.343,.973,1.991) 28×10 cm,
+     vidrio a z 2.03, todo inclinado 30° (normal 0,.5,−.87). Se borran esas piezas (blanco, rojo, lcd, cromo y vidrio) y el tablero animado va 1.5 cm delante de la cara negra, del tamaño de los aros */
+  carCut(root,(x,y,z,n)=>/white1|red1|lcd|chrome1|clearglass1/.test(n)&&x>.14&&x<.54&&y>.925&&y<1.012&&z>1.94&&z<2.08);
+  {const n=new THREE.Vector3(0,.5,-.87).normalize(),P=new THREE.Vector3(.343,.966,2.04).addScaledVector(n,.015),cp=new THREE.Mesh(new THREE.PlaneGeometry(.285,.1235),new THREE.MeshBasicMaterial({map:carCluTex,transparent:true}));cp.position.copy(P);cp.rotation.set(Math.atan2(n.y,-n.z),Math.PI,0);carIntr.add(cp);carDrawClu();}
   // retrovisor con imagen
   carMirRT=new THREE.WebGLRenderTarget(256,80);carMirCam=new THREE.PerspectiveCamera(32,256/80,.3,300);carMirCam.position.set(0,1.27,1.58);carM.add(carMirCam);
   {const dk=new THREE.MeshLambertMaterial({color:0x1d1e21}),mf=new THREE.Mesh(new THREE.BoxGeometry(.24,.075,.03),dk);mf.position.set(0,1.29,1.66);carIntr.add(mf);
@@ -8149,7 +8170,7 @@ function carLvBusy(){return !!(CAR.auto&&carLever&&S.lvK!=null&&Math.abs(S.lvK-c
 // palanca: la mano llega a la perilla y la lleva; 23.5° a cada lado con pivote 16 cm abajo = 12 cm de recorrido de P a D (2·0.16·sin 22°)
 function carLvTick(dt){if(!carLever)return;let ky,kx=CAR.auto?0:S.kx;
   if(CAR.auto){const tg=carLvT();if(S.lvK==null)S.lvK=tg;const ready=S.view!==0||!carArms||carArms.hand>.75;if(ready)S.lvK+=clamp(tg-S.lvK,-dt*4.5,dt*4.5);ky=S.lvK;}else ky=S.ky;
-  carLever.rotation.x=-ky*(CAR.auto?.385:.28);carLever.rotation.z=kx*.2;}
+  if(CAR.auto&&carLever.userData.trav){carLever.rotation.x=0;carLever.position.z=carLever.userData.z0-(ky+1)/2*carLever.userData.trav;}else{carLever.rotation.x=-ky*.28;carLever.rotation.z=kx*.2;}}
 function carLampsBuild(root){const re=/^(HEAD|TURNF|TURNR|TAIL|STOP3|REV|WIPER)(_\d+)?$/,G={};root.traverse(o=>{if(!o.isMesh)return;const m=re.exec(o.name)||(o.parent&&re.exec(o.parent.name));if(m)(G[m[1]]||(G[m[1]]=[])).push(o);});
   carG.updateMatrixWorld(true);const inv=new THREE.Matrix4().copy(carM.matrixWorld).invert(),v=new THREE.Vector3(),loc=o=>new THREE.Matrix4().multiplyMatrices(inv,o.matrixWorld);   // de la pieza al marco del carro (+X izquierda, +Z al frente)
   const LC={HEAD:[0xdfe6ee,0xfff2d6],TURNF:[0xc77a1c,0xffa424],TURNR:[0xc77a1c,0xffa424],TAIL:[0x7a1210,0xff2414],STOP3:[0x7a1210,0xff2414],REV:[0xdde3ea,0xffffff]};
