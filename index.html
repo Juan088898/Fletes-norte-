@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v177">
+<meta name="fn-version" content="v178">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -270,7 +270,11 @@ body.carm #btnJobsOpen,body.carm #btnShop,body.carm #btnCancel,body.carm #btnBag
 #start .st-opt.st-mode:not(.cur){opacity:.82}#start .st-opt.st-mode.cur{box-shadow:0 0 0 calc(var(--u)*.4) #fff6}
 /* v177 · automático: selector P-R-N-D en lugar de la palanca H y sin clutch */
 body.carauto #gate,body.carauto .p-clutch,body.carauto #btnRange,body.carauto #btnSplit{display:none!important}
-#autoSel{display:grid;gap:6px;width:72%;margin:6% auto 0}body.carauto #autoSel{display:grid!important}#autoSel button{font:800 22px var(--display,sans-serif);padding:8px 0;border-radius:10px;border:2px solid #4a5566;background:rgba(14,19,25,.7);color:#dfe6ee}#autoSel button.on{background:#ffb53d;border-color:#ffb53d;color:#1a1205}
+#autoSel{position:relative;width:58%;height:min(30vh,128px);margin:4% auto 0;touch-action:none}body.carauto #autoSel{display:block!important}
+#autoSel .as-rail{position:absolute;left:30%;top:8%;bottom:8%;width:12px;margin-left:-6px;border-radius:6px;background:#0c0f13;box-shadow:inset 0 2px 4px #000,0 0 0 2px #39424e}
+#autoSel span{position:absolute;left:62%;transform:translateY(-50%);font:800 15px var(--display,sans-serif);color:#8b95a3;cursor:pointer}#autoSel span.on{color:#ffb53d}
+#autoSel .as-knob{position:absolute;left:30%;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffd28a,#ffb53d 45%,#b57412);box-shadow:0 3px 6px rgba(0,0,0,.55);pointer-events:none}
+#autoSel .as-knob i{position:absolute;left:8px;right:8px;top:13px;height:4px;border-radius:2px;background:rgba(60,35,5,.55)}
 /* v92 · accesos rápidos y menú ☰ reordenado */
 .quick{position:fixed;z-index:13;display:flex;gap:6px;left:max(16px,env(safe-area-inset-left,0px));top:calc(max(8px,env(safe-area-inset-top,0px)) + min(22vh,84px) + 12px)}
 body.cab .quick{top:max(6px,env(safe-area-inset-top,0px))}
@@ -579,7 +583,7 @@ body.cine .quick{display:none}
     <div class="pad-box" id="shifterCtl">
       
       <button id="btnRange" hidden>BAJA</button><button id="btnSplit" hidden>½ B</button>
-      <div id="autoSel" hidden><button data-as="P">P</button><button data-as="R">R</button><button data-as="N">N</button><button data-as="D">D</button></div>
+      <div id="autoSel" hidden><div class="as-rail"></div><span data-as="P" style="top:12%">P</span><span data-as="R" style="top:37.3%">R</span><span data-as="N" style="top:62.6%">N</span><span data-as="D" style="top:88%">D</span><div class="as-knob" id="asKnob"><i></i></div></div>
       <div class="gate" id="gate">
         <svg class="gate-svg" viewBox="-1.5 -1.5 3 3" aria-hidden="true">
           <path class="slot-o" d="M-1.2 -1V0M-.4 -1V1M.4 -1V1M1.2 -1V1M-1.2 0H1.2"/>
@@ -7824,7 +7828,7 @@ function carPhysics(dt){
     if(hasPost&&st==='r'&&Math.abs(S.v)>2.5){save.money-=1760;persist();toast('¡Te pasaste el rojo! Multa de P$1,760 (15 UMA)');noise(.5,1800,'bandpass',.25);yyFine();}}
   if(near<0&&S.inNode>=0&&Math.hypot(px-nodes[S.inNode].x,pz-nodes[S.inNode].z)>22)S.inNode=-1;
   return delta/(1+(S.v/30)*(S.v/30));}
-function carStart(){document.body.classList.add('carm');if(CAR.auto){document.body.classList.add('carauto');S.autoSel=S.autoSel||'P';S.gear=0;S.ky=-1;S.kx=0;carSelUI();document.querySelectorAll('#autoSel [data-as]').forEach(b=>b.addEventListener('pointerdown',e=>{e.stopPropagation();audioInit();carSel(b.dataset.as);}));}const y=save.yiyi||(save.yiyi={});S.fuel=y.fuel??40;S.air=1;S.hitched=false;carBuild();updateGateLabels();
+function carStart(){document.body.classList.add('carm');if(CAR.auto){document.body.classList.add('carauto');S.autoSel=S.autoSel||'P';S.gear=0;S.ky=-1;S.kx=0;carSelUI();carSelBind();}const y=save.yiyi||(save.yiyi={});S.fuel=y.fuel??40;S.air=1;S.hitched=false;carBuild();updateGateLabels();
   setTimeout(()=>{try{toast(CAR.auto?'YiYi · tu '+CARMD.name+' es automático: llave, pisa el freno y mete D':'YiYi · tu Subaro Leal 1992 es estándar de 5: llave, clutch y 1ª',true);}catch(e){}},1500);}
 function cGauge(g,cx,cy,r,val,min,max,step,lab,redFrom,fmt){const a0=Math.PI*.8,a1=Math.PI*2.2,A=v=>a0+(clamp(v,min,max)-min)/(max-min)*(a1-a0);
   g.beginPath();g.arc(cx,cy,r+4,0,7);g.fillStyle='#8d939a';g.fill();g.beginPath();g.arc(cx,cy,r,0,7);const fc=g.createRadialGradient(cx,cy,r*.2,cx,cy,r);fc.addColorStop(0,'#1b1d20');fc.addColorStop(1,'#08090a');g.fillStyle=fc;g.fill();
@@ -7875,7 +7879,13 @@ function carSel(x){if(!CAR.auto)return;const cur=S.autoSel||'P';if(x===cur)retur
   if(cur==='P'&&S.ped.brake<.3&&S.running){toast('Pisa el freno para quitar P');buzz(60);return;}
   if((x==='P'||x==='R'||(x==='D'&&cur==='R'))&&sp>1.5){toast('Frena por completo antes de meter '+x);buzz(60);return;}
   S.autoSel=x;S.lastShift=S.t;S.kx=0;S.ky={P:-1,R:-.33,N:.33,D:1}[x];clunk();carSelUI();}
-function carSelUI(){document.querySelectorAll('#autoSel [data-as]').forEach(b=>b.classList.toggle('on',b.dataset.as===(S.autoSel||'P')));}
+var ASP={P:.12,R:.373,N:.626,D:.88};
+function carSelUI(f){if(!ASP)ASP={P:.12,R:.373,N:.626,D:.88};const k=document.getElementById('asKnob');if(k)k.style.top=((f!=null?f:ASP[S.autoSel||'P'])*100)+'%';document.querySelectorAll('#autoSel [data-as]').forEach(b=>b.classList.toggle('on',b.dataset.as===(S.autoSel||'P')));}
+// palanca que se desliza: se arrastra por el riel y al soltar cae en la posición más cercana (si no se puede, regresa)
+function carSelBind(){const el=document.getElementById('autoSel');if(!el)return;let drag=false;const fy=e=>{const r=el.getBoundingClientRect();return clamp((e.clientY-r.top)/r.height,.12,.88);};
+  el.addEventListener('pointerdown',e=>{e.stopPropagation();audioInit();const t=e.target.closest('[data-as]');if(t){carSel(t.dataset.as);carSelUI();return;}drag=true;try{el.setPointerCapture(e.pointerId);}catch(_){}carSelUI(fy(e));});
+  el.addEventListener('pointermove',e=>{if(drag)carSelUI(fy(e));});
+  ['pointerup','pointercancel'].forEach(ev=>el.addEventListener(ev,e=>{if(!drag)return;drag=false;const f=fy(e);let best='P';for(const k in ASP)if(Math.abs(ASP[k]-f)<Math.abs(ASP[best]-f))best=k;carSel(best);carSelUI();}));}
 function carHit(sp){yyHit();const y=save.yiyi||(save.yiyi={});y.dmg=Math.min(100,(y.dmg||0)+Math.min(15,sp*1.2));persist();}
 /* ---- modelo 3D ---- */
 function carBuild(){if(carG)return;carWheels=[];carF=0;carG=new THREE.Group();scene.add(carG);carBody=new THREE.Group();carG.add(carBody);carM=new THREE.Group();carM.rotation.y=Math.PI;carBody.add(carM);
