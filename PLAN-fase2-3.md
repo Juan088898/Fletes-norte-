@@ -74,6 +74,13 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - v153: cambio de llanta animado (~58 s, se puede saltar): conos, refacción de abajo del chasis, gato que levanta la esquina, 10 birlos, ponchada fuera, refacción montada. Auxilio: llega una pickup de Llantas 3V con su mecánico (Kenney Car Kit truck-flat).
 - Llanta de refacción incluida. Se repone en gasolinera o Taller (3V · P$3,800). Sin refacción: Auxilio Vial 3V por Wasapen (P$5,300, llega en ~30 s).
 
+### Hecho en v154–v155 · bugs del mapa y Fase 3 etapa 5 (barrios)
+- Revisión automática de todo el mapa al generarlo: se quitan edificios encimados (SAT entre rectángulos) y los que pisan calle, banqueta, patio, canal o lugar especial. Antes: 56 pares encimados; ahora 0. También se quitan de los choques y se borran árboles dentro de edificios.
+- Piso de banqueta/patio a la altura del terreno (antes quedaba enterrado y las casas se veían en el pasto). Lluvia en vistas altas sin rayas largas.
+- Barrios con City Kit Suburban: 12 tipos de casa en una sola fila con banqueta, jardín al frente, cochera, cercas a los lados y árbol. Pueblo de Pesquería con casas. Casa del rancho en el Ejido. Letrero de Planta Láctea del Norte en el Parque Industrial Este.
+- Caja seca con cinta reflejante roja/blanca, defensa trasera y loderas.
+- Pendiente de la etapa 5: casas abandonadas, Nature Kit, canal con textura, calidad de gráficos.
+
 ## Pendientes de la fase 1 (v139–v140)
 - Esquinas redondeadas en las banquetas (por ahora solo se cortan antes del cruce).
 - Confirmar en el Redmi que las llantas ya no se ven hundidas en la terracería y que el GPS funciona en la brecha.
