@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v159">
+<meta name="fn-version" content="v160">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -680,6 +680,15 @@ body.cine .quick{display:none}
         <div>Total en la cuenta <b id="dMoney">P$0</b></div>
       </div>
       <button class="btn go" id="btnNext">Ver cargas</button>
+    </div>
+  </div>
+  <div class="modal" id="reten" hidden>
+    <div class="card">
+      <div class="eyebrow" id="rtE">RETÉN</div>
+      <h2 id="rtT">Revisión de rutina</h2>
+      <div class="rows" id="rtRows"></div>
+      <p id="rtP"></p>
+      <div class="rrow" id="rtBtns"></div>
     </div>
   </div>
   <div class="modal" id="saveBox" hidden>
@@ -4693,6 +4702,14 @@ const MIRADOR=(()=>{const pl=MAPA.places.find(p=>p[3]==='m'),ne=nearestEdge(pl[1
   for(const sd of[1,-1]){const nx=-e.uz*sd,nz=e.ux*sd,x=ne.px+nx*(e.w/2+16),z=ne.pz+nz*(e.w/2+16),v=natural(x+nx*40,z+nz*40);if(!best||v<best.v)best={x,z,v,nx,nz};}
   const y=H(ne.px,ne.pz);flattenDisk(best.x,best.z,16,y,18);return{x:best.x,z:best.z,r:15,y,nx:best.nx,nz:best.nz,name:pl[0]};})();
 FLATS.push(MIRADOR);
+// v160 · fase 4 etapa 1: básculas y retenes. Sitios medidos en tramos rectos y planos: rumbo ±3.4° y desnivel <1.2 m en ±70 m, a >140 m de cruces y >300 m de patios y gasolineras
+function roadAtS(name,s){const run=origSubs.find(r=>r[0].name===name);if(!run)return null;let acc=0;for(const e of run){if(s<=acc+e.L){const t=(s-acc)/e.L,x=e.ax+e.ux*e.L*t,z=e.az+e.uz*e.L*t;return{e,t,x,z,y:H(x,z)};}acc+=e.L;}return null;}
+const WGH=[['Libramiento Sur',1285,'Báscula Libramiento Sur'],['Carretera a Pesquería',1670,'Báscula Pesquería']];
+const WGH_SITES=WGH.map(([n,s,name])=>{const q=roadAtS(n,s);if(!q)return null;const st=sitePlace(q.e,q.t,30),c=st.L(0,13);flattenOBB(c.x,c.z,q.e.ux,q.e.uz,40,12,q.y,24);FLATS.push({x:c.x,z:c.z,r:40,y:q.y});return{q,st,name};}).filter(Boolean);
+// retenes: [carretera, metro del tramo, corporación, tipo]. gn = Guardia Nacional (federal, más estricta); pe = estatal
+const RTN=[['Libramiento Sur',4370,'Guardia Nacional','gn'],['Carretera a Pesquería',3160,'Policía Estatal','pe'],['Carretera a la Sierra',360,'Tránsito Estatal','pe']];
+const RETENES=RTN.map(([n,s,corp,k],i)=>{const q=roadAtS(n,s);if(!q)return null;const e=q.e;return{i,road:n,s,corp,k,P:{x:q.x,z:q.z},y:q.y,e,ux:e.ux,uz:e.uz,
+  excl:{cx:q.x,cz:q.z,ux:e.ux,uz:e.uz,hw:45,hd:e.w/2+12}};}).filter(Boolean);
 // altura final de nodos y tramos: todo sale del mismo piso
 nodes.forEach(n=>n.y=H(n.x,n.z));edges.forEach(e=>{e.ay=nodes[e.a].y;e.by=nodes[e.b].y;});
 const SIER_E=edges.filter(e=>e.name==='Carretera a la Sierra');SIER_E.forEach(e=>{e.bx0=Math.min(e.ax,e.bx)-70;e.bx1=Math.max(e.ax,e.bx)+70;e.bz0=Math.min(e.az,e.bz)-70;e.bz1=Math.max(e.az,e.bz)+70;
@@ -4959,13 +4976,11 @@ function railAt(x,z){const q=sierraNear(x,z);if(!q||!q.e.rail)return false;const
 function hitAt(x,z){if(x<BB.x0||x>BB.x1||z<BB.z0||z>BB.z1)return true;if(railAt(x,z))return true;
   for(const m of MOUNTS)if(Math.hypot(x-m.x,z-m.z)<m.r*.8)return true;for(const o of OBST)if(Math.hypot(x-o.x,z-o.z)<o.r)return true;
   const arr=hash.get(hk(Math.floor(x/CELL),Math.floor(z/CELL)));if(!arr)return false;for(const o of arr)if(inObb(o,x,z))return true;return false;}
-const WGH=[];
-const WEIGHS=WGH.map(([a,b,t,name],i)=>{const {e,t:tt}=posOnOrig(a,b,t),s=sitePlace(e,tt,30),rot=Math.atan2(s.nx,s.nz),rp=Math.atan2(e.ux,e.uz);
-  flatRect(s.L(0,13),78,22,rot,0xb5b2a8,.052);const pl=s.L(0,13);const g=flatRect(pl,4.4,26,rp,0x2b2d30,.07);
-  for(const sd of[-1,1]){const q=s.L(0,13+sd*2.3);flatRect(q,.25,26,rp,0xf2c21b,.075);}
-  const bo=s.L(0,21);const bx=box(scene,4,3.2,3,0xe6e2d6,bo.x,1.6,bo.z);bx.rotation.y=rot;const bw=box(scene,4.2,.3,3.2,0x1f4f8a,bo.x,3.3,bo.z);bw.rotation.y=rot;
-  const sp=s.L(-34,3);box(scene,.4,7,.4,0x8e9399,sp.x,3.5,sp.z);signAt('BÁSCULA · CARGA PESADA',sp.x-s.nx*.3,sp.z-s.nz*.3,Math.atan2(-s.nx,-s.nz),7.4,10,'#1f4f8a','#ffffff');
-  const sp2=s.L(34,3);box(scene,.4,7,.4,0x8e9399,sp2.x,3.5,sp2.z);signAt('BÁSCULA · CARGA PESADA',sp2.x-s.nx*.3,sp2.z-s.nz*.3,Math.atan2(-s.nx,-s.nz),7.4,10,'#1f4f8a','#ffffff');
+const WEIGHS=WGH_SITES.map(({q,st:s,name},i)=>{const e=q.e,y0=q.y,rot=Math.atan2(s.nx,s.nz),rp=Math.atan2(e.ux,e.uz);
+  flatRect(s.L(0,13),78,22,rot,0xb5b2a8,y0+.052);const pl=s.L(0,13);const g=flatRect(pl,4.4,26,rp,0x2b2d30,y0+.07);
+  for(const sd of[-1,1]){const q2=s.L(0,13+sd*2.3);flatRect(q2,.25,26,rp,0xf2c21b,y0+.075);}
+  const bo=s.L(0,21);const bx=box(scene,4,3.2,3,0xe6e2d6,bo.x,y0+1.6,bo.z);bx.rotation.y=rot;const bw=box(scene,4.2,.3,3.2,0x1f4f8a,bo.x,y0+3.3,bo.z);bw.rotation.y=rot;
+  for(const a2 of[-34,34]){const sp=s.L(a2,3);box(scene,.4,7,.4,0x8e9399,sp.x,y0+3.5,sp.z);signAt('BÁSCULA · CARGA PESADA',sp.x-s.nx*.3,sp.z-s.nz*.3,Math.atan2(-s.nx,-s.nz),y0+7.4,10,'#1f4f8a','#ffffff');}
   const ex=s.L(0,14);return{i,name,P:s.P,plate:{cx:pl.x,cz:pl.z,ux:e.ux,uz:e.uz,hw:14,hd:3.2},area:{cx:pl.x,cz:pl.z,ux:e.ux,uz:e.uz,hw:38,hd:11},excl:{cx:ex.x,cz:ex.z,ux:e.ux,uz:e.uz,hw:44,hd:18}};});
 /* casetas de cobro en las carreteras */
 const TOLL_DEF=[];
@@ -4979,7 +4994,7 @@ const tollFee=()=>MD().rigid?210:420;
 function tollOnRoute(t,pts){for(let i=1;i<pts.length;i++){const[ax,az]=pts[i-1],[bx,bz]=pts[i],dx=bx-ax,dz=bz-az,L2=dx*dx+dz*dz||1,u=clamp(((t.P.x-ax)*dx+(t.P.z-az)*dz)/L2,0,1);if(Math.hypot(ax+dx*u-t.P.x,az+dz*u-t.P.z)<14)return true;}return false;}
 function tollTick(){for(const t of TOLLS){if(Math.hypot(S.x-t.P.x,S.z-t.P.z)<9&&S.t-t.paid>45){t.paid=S.t;const f=tollFee();save.money-=f;persist();noise(.15,600,'lowpass',.2);toast(`${t.name}: ${fmtMoney(f)} (${MD().rigid?'3':'5'} ejes)`,true);}}}
 const LANDMARKS=[];
-const EXCL=[...DEPOTS.map(d=>d.excl),...STATIONS.map(s=>s.excl),...WEIGHS.map(w=>w.excl),...TOLLS.map(t=>t.excl),...LANDMARKS.map(l=>l.excl),...PARKS_EXCL];
+const EXCL=[...DEPOTS.map(d=>d.excl),...STATIONS.map(s=>s.excl),...WEIGHS.map(w=>w.excl),...RETENES.map(r=>r.excl),...TOLLS.map(t=>t.excl),...LANDMARKS.map(l=>l.excl),...PARKS_EXCL];
 function freeSpot(o){const pts=[[o.cx,o.cz]];for(const sa of [-1,1])for(const sb of [-1,1])pts.push([o.cx+o.ux*o.hw*sa-o.uz*o.hd*sb,o.cz+o.uz*o.hw*sa+o.ux*o.hd*sb]);
   for(const[x,z]of pts){if(!roadClear(x,z,3)||Math.abs(H(x,z))>.3)return false;if(x>CU.x0-8&&x<CU.x1+8&&z>CU.z0-8&&z<CU.z1+8)return false;
     for(const d of EXCL)if(inObb(d,x,z))return false;for(const m of MOUNTS)if(Math.hypot(x-m.x,z-m.z)<m.r)return false;}
@@ -6451,14 +6466,14 @@ function makeJobs(){const md=MD(),lv=LVL(),cargos=CARGO.filter(c=>(md.rigid?(c[2
   while(out.length<4&&tries<60){tries++;let P=Math.floor(Math.random()*DEPOTS.length);let D=Math.floor(Math.random()*DEPOTS.length);if(P===D||out.some(o=>o.from===P&&o.to===D))continue;
     const c=cargos[Math.floor(Math.random()*cargos.length)],RU=CRULE[c[0]];if(RU){const one=v=>Array.isArray(v)?v[Math.floor(Math.random()*v.length)]:v,fn=one(RU.f),tn=one(RU.t),fi=fn?DEPOTS.findIndex(d=>d.name===fn):-1,ti=tn?DEPOTS.findIndex(d=>d.name===tn):-1;if((RU.f&&fi<0)||(RU.t&&ti<0))continue;if(fi>=0)P=fi;if(ti>=0)D=ti;if(!RU.t&&SP_TO.has(DEPOTS[D].name))continue;if(!RU.f&&SP_FROM.has(DEPOTS[P].name))continue;if(P===D||out.some(o=>o.from===P&&o.to===D))continue;}else if(SP_FROM.has(DEPOTS[P].name)||SP_TO.has(DEPOTS[D].name))continue;
     const dp=DEPOTS[P],r=planRoute(dp.E.x,dp.E.z,Math.atan2(-dp.e.ux,-dp.e.uz),DEPOTS[D],'dist'),toP=planRoute(S.x,S.z,S.h,DEPOTS[P],'dist');
-    const j={from:P,to:D,cargo:c[0],t:c[1],tt:c[2],col:c[3],len:r.len,toP:toP.len};if(FRAGILE.includes(c[0]))j.fragile=true;if(lv>=2&&Math.random()<.22)j.urgent=true;if(Math.random()<.22&&c[2]!=='tanque'&&!j.fragile){j.over=true;j.t=Math.round(grossLim()-emptyT(c[2])+rr(2,4));}out.push(j);}
+    const j={from:P,to:D,cargo:c[0],t:c[1],tt:c[2],col:c[3],len:r.len,toP:toP.len};if(FRAGILE.includes(c[0]))j.fragile=true;if(lv>=2&&Math.random()<.22)j.urgent=true;if(Math.random()<.22&&c[2]!=='tanque'&&!j.fragile){j.over=true;j.t=Math.round(grossLim()-emptyT(c[2])+rr(2,4));}if(!j.over&&!j.urgent&&Math.random()<.12)j.papers=true;out.push(j);}
   return out.sort((a,b)=>a.len-b.len);}
 function openJobs(){if(window.__auJobsBack)window.__auJobsBack();$('#jFrom').textContent='BOLSA DE FLETES';$('#jTitle').textContent='Elige tu flete';jobs=makeJobs();
   const list=$('#jobList');list.innerHTML='';list.hidden=false;$('#routeList').hidden=true;$('#btnBack').hidden=true;const md=MD();
-  jobs.forEach((j,k)=>{const last=k===jobs.length-1,tg=k===0?['CORTA','']:last?['LARGA','l']:['MEDIA','m'];j.pay=payFor(j.len,j.t)+Math.round(j.toP/1000*4*21/50)*50+(last?500:0);if(j.over)j.pay=Math.round(j.pay*1.3/50)*50;if(j.cargo==='Ganado'||j.cargo==='Leche')j.pay=Math.round(j.pay*1.2/50)*50;else if(j.fragile)j.pay=Math.round(j.pay*1.35/50)*50;if([j.from,j.to].some(i=>/Brecha/.test((DEPOTS[i].e&&DEPOTS[i].e.name)||'')))j.pay=Math.round(j.pay*1.25/50)*50;if(j.urgent)j.pay=Math.round(j.pay*1.5/50)*50;j.pay=Math.round(j.pay*(1+.05*(LVL()-1))/50)*50;j.pay=Math.round(j.pay*repMul(DEPOTS[j.to].name)/50)*50;
+  jobs.forEach((j,k)=>{const last=k===jobs.length-1,tg=k===0?['CORTA','']:last?['LARGA','l']:['MEDIA','m'];j.pay=payFor(j.len,j.t)+Math.round(j.toP/1000*4*21/50)*50+(last?500:0);if(j.over)j.pay=Math.round(j.pay*1.3/50)*50;if(j.papers)j.pay=Math.round(j.pay*1.25/50)*50;if(j.cargo==='Ganado'||j.cargo==='Leche')j.pay=Math.round(j.pay*1.2/50)*50;else if(j.fragile)j.pay=Math.round(j.pay*1.35/50)*50;if([j.from,j.to].some(i=>/Brecha/.test((DEPOTS[i].e&&DEPOTS[i].e.name)||'')))j.pay=Math.round(j.pay*1.25/50)*50;if(j.urgent)j.pay=Math.round(j.pay*1.5/50)*50;j.pay=Math.round(j.pay*(1+.05*(LVL()-1))/50)*50;j.pay=Math.round(j.pay*repMul(DEPOTS[j.to].name)/50)*50;
     if(j.urgent)tg[0]='URGENTE '+tg[0];else if(j.fragile)tg[0]='FRÁGIL · '+tg[0];const b=document.createElement('button');b.className='opt';b.innerHTML=`<em class="tag ${tg[1]}">${tg[0]}</em><b></b><span></span><span></span><span class="rep"></span><span class="pay"></span>`;
     b.querySelector('b').textContent=`${j.cargo} · ${j.t} t`;const sp=b.querySelectorAll('span');sp[0].textContent=`Recoge en ${DEPOTS[j.from].name} → entrega en ${DEPOTS[j.to].name}`;
-    sp[1].textContent=`${md.rigid?'En tu torton':TTYPE[j.tt]} · ${(j.len/1000).toFixed(1)} km de viaje · ${(j.toP/1000).toFixed(1)} km para llegar`+(j.over?' · ⚠ SOBREPESO: paga más, pero si te pesan en báscula hay multa':'')+(j.fragile?' · FRÁGIL: se daña con baches y frenazos':'')+(j.urgent?' · URGENTE: paga doble, tiempo justo':'');
+    sp[1].textContent=`${md.rigid?'En tu torton':TTYPE[j.tt]} · ${(j.len/1000).toFixed(1)} km de viaje · ${(j.toP/1000).toFixed(1)} km para llegar`+(j.over?' · ⚠ SOBREPESO: paga más, pero si te pesan en báscula hay multa':'')+(j.papers?' · ⚠ SIN CARTA PORTE: paga más, pero en un retén te pueden multar':'')+(j.fragile?' · FRÁGIL: se daña con baches y frenazos':'')+(j.urgent?' · URGENTE: paga doble, tiempo justo':'');
     {const cn=DEPOTS[j.to].name,rn=repN(cn);sp[2].textContent=repStars(cn)+(rn?` +${rn*4}%`:' cliente nuevo');}sp[3].textContent=fmtMoney(j.pay);b.addEventListener('click',()=>chooseRoute(j));list.appendChild(b);});
   if(md.rigid){const p=document.createElement('p');p.textContent='Con el torton solo salen cargas ligeras en caja. Compra un tractocamión en el Taller para remolques de plataforma y pipa.';p.style.gridColumn='1/-1';list.appendChild(p);}
   $('#jobs').hidden=false;}
@@ -7008,8 +7023,63 @@ function weighTick(dt){if(!mission||mission.phase!=='deliver'){return;}mission.w
   for(const w of WEIGHS){const st=mission.wz[w.i]||(mission.wz[w.i]={s:0});if(st.s===2)continue;const d=Math.hypot(S.x-w.P.x,S.z-w.P.z);
     if(st.s===0&&d<160){st.s=1;toast(`${w.name} a ${Math.round(d)} m: entra a pesarte y detente sobre la placa`,true);}
     if(st.s===1){if(inObb(w.plate,S.x,S.z)&&Math.abs(S.v)<.5){weighT+=dt;els.park.hidden=false;els.park.textContent=`Pesando… ${Math.max(0,3-weighT).toFixed(1)} s`;
-        if(weighT>=3){weighT=0;st.s=2;els.park.hidden=true;if(over){const f=4000+Math.round((gross-grossLim())*600/50)*50;save.money-=f;persist();toast(`Báscula: ${gross.toFixed(1)} t (límite ${grossLim().toFixed(1)} t). Multa por sobrepeso: ${fmtMoney(f)}`,true);}else toast(`Báscula: ${gross.toFixed(1)} t · en regla, sigue tu camino`,true);}}
+        if(weighT>=3){weighT=0;st.s=2;els.park.hidden=true;if(over){const f=4000+Math.round((gross-grossLim())*600/50)*50;mission.overPaid=1;save.money-=f;persist();toast(`Báscula: ${gross.toFixed(1)} t (límite ${grossLim().toFixed(1)} t). Multa por sobrepeso: ${fmtMoney(f)}`,true);}else toast(`Báscula: ${gross.toFixed(1)} t · en regla, sigue tu camino`,true);}}
       else{if(inObb(w.plate,S.x,S.z))weighT=0;if(d>220){st.s=2;save.money-=2346;persist();toast(`¡Te saltaste la ${w.name}! Multa de P$2,346 (20 UMA)`,true);}}}}}
+/* ===== v160 · retenes: revisión de peso, carta porte y carga; multa en UMA o mordida con riesgo ===== */
+const rtRnd=()=>window.__rtRnd!=null?window.__rtRnd:Math.random(),UMA=117.31,umas=n=>Math.round(n*UMA);
+const RTU={m:$('#reten'),e:$('#rtE'),t:$('#rtT'),rows:$('#rtRows'),p:$('#rtP'),b:$('#rtBtns')};let RT_OPEN=null;
+// escenografía (medidas reales): oficial por sentido sobre la raya central a 6 m del centro, patrullas en los acotamientos a ±12 m,
+// carpa de 4×4 m, conos cada 4 m en ±24 m, vibradores de 7 cm a ±40 m y letreros a 400 m y 150 m antes
+for(const r of RETENES){const{P,ux,uz,e}=r,nx=-uz,nz=ux,hw=e.w/2,ry0=RDY[e.type]||.05,gy=(x,z)=>H(x,z)+ry0;
+  r.cops=[1,-1].map(d=>{const g=mkMech(r.k==='gn'?0x3b4250:0x1d2c55,r.k==='gn'?0x20242b:0x15203f);g.visible=true;const x=P.x-ux*d*6,z=P.z-uz*d*6;g.position.set(x,gy(x,z),z);g.rotation.y=Math.atan2(-d*ux,-d*uz);pose(g,'stand',0);return g;});
+  r.cars=[1,-1].map(sd=>{const c=makeCop(),x=P.x+ux*sd*12+nx*sd*(hw+2.4),z=P.z+uz*sd*12+nz*sd*(hw+2.4);c.position.set(x,H(x,z),z);c.rotation.set(0,Math.atan2(ux,uz),0);c.traverse(q=>{if(q.isMesh)q.castShadow=true;});scene.add(c);return c;});
+  {const cx=P.x+nx*(hw+7),cz=P.z+nz*(hw+7),y=H(cx,cz),ry=Math.atan2(ux,uz);for(const a of[-2,2])for(const b of[-2,2]){const px=cx+ux*a+nx*b,pz=cz+uz*a+nz*b;box(scene,.12,2.6,.12,0x8e9399,px,H(px,pz)+1.3,pz);}
+   const rf=box(scene,4.3,.18,4.3,r.k==='gn'?0x3b4250:0x1d2c55,cx,y+2.68,cz);rf.rotation.y=ry;const tb=box(scene,1.8,.75,.8,0xe6e2d6,cx,y+.38,cz);tb.rotation.y=ry;
+   for(const sd of[1,-1])signAt('RETÉN · '+r.corp.toUpperCase(),cx+ux*sd*2.2,cz+uz*sd*2.2,Math.atan2(ux*sd,uz*sd),y+3.25,4.2,r.k==='gn'?'#3b4250':'#1d2c55','#ffffff');}
+  for(let a=-24;a<=24;a+=4){if(Math.abs(Math.abs(a)-6)<2.5)continue;const c=mkCone();c.visible=true;const x=P.x+ux*a,z=P.z+uz*a;c.position.set(x,gy(x,z),z);}
+  for(const sd of[-1,1]){const x=P.x+ux*sd*40,z=P.z+uz*sd*40;addBump({kind:'tope',x,z,ux,uz,hw,h:.07,len:.6});const m=box(scene,e.w,.07,1,0xf2c21b,x,gy(x,z)+.035,z);m.rotation.y=Math.atan2(ux,uz);m.receiveShadow=true;}
+  for(const d of[1,-1])for(const D of[400,150]){const q=roadAtS(r.road,r.s-d*D);if(!q)continue;const sx=q.x-q.e.uz*d*(q.e.w/2+1.8),sz=q.z+q.e.ux*d*(q.e.w/2+1.8),y=H(sx,sz);box(scene,.18,3.2,.18,0x8e9399,sx,y+1.6,sz);
+    signAt(`RETÉN A ${D} m · DISMINUYA SU VELOCIDAD`,sx,sz,Math.atan2(-d*q.e.ux,-d*q.e.uz),y+3.4,7,'#f2c21b','#1b1b1d');}}
+function rtShow(eb,title,rows,txt,btns){RTU.m.hidden=false;RTU.e.textContent=eb;RTU.t.textContent=title;RTU.rows.innerHTML='';for(const[k,v,ok]of rows){const d=document.createElement('div');d.textContent=k+' ';const b=document.createElement('b');b.textContent=v+(ok==null?'':ok?' ✔':' ✖');if(ok===false)b.style.color='#ff8a7d';d.appendChild(b);RTU.rows.appendChild(d);}
+  RTU.p.textContent=txt;RTU.b.innerHTML='';for(const[l,fn,cls]of btns){const b=document.createElement('button');b.className='btn '+(cls||'go');b.style.flex='1';b.textContent=l;b.addEventListener('click',fn);RTU.b.appendChild(b);}}
+function rtClose(){RTU.m.hidden=true;if(RT_OPEN)RT_OPEN.st.s=3;RT_OPEN=null;persist();}
+function rtHold(T,msg,then){RT_OPEN.phase='hold';RT_OPEN.T=T;RT_OPEN.msg=msg;RT_OPEN.then=then;RTU.b.innerHTML='';}
+function rtPay(a,msg){save.money-=a;persist();toast(msg,true);}
+function rtInspect(){const{r,st}=RT_OPEN,eb='RETÉN · '+r.corp.toUpperCase(),gross=MASS/1000,lim=grossLim(),over=gross>lim+.05,
+   shift=Math.abs(S.lshift||0)>.12,cows=S.ttype==='jaula'&&S.hitched&&mission.cond<75;
+  const fOver=over&&!mission.overPaid?4000+Math.round((gross-lim)*600/50)*50:0,fPap=mission.papers?umas(50):0,fCar=shift?umas(25):cows?umas(30):0,F=fOver+fPap+fCar;
+  const rows=[['Peso bruto',`${gross.toFixed(1)} t (límite ${lim.toFixed(1)} t)`+(over&&mission.overPaid?' · boleta de báscula':''),!fOver],['Carta porte',mission.papers?'No la traes':'En regla',!fPap],
+    ['Carga',shift?'Recorrida, mal amarrada':cows?'Ganado golpeado':'Bien asegurada',!fCar]];
+  const done=(t)=>rtShow(eb,'Puedes seguir',rows,t,[['Seguir',rtClose]]);
+  if(!F){if(rtRnd()<(r.k==='gn'?.1:.3)){rtShow(eb,'¿Y para el refresco?',rows,'Todo está en regla, pero el oficial se recarga en la puerta: "¿No trae algo para el refresco, jefe?"',
+      [['Dar P$200',()=>{rtPay(200,'Le diste P$200 al oficial "para el refresco"');done('"Gracias, jefe. Que le vaya bien."');}],
+       ['Todo está en regla',()=>{if(rtRnd()<.7)done('"Ándele pues." Te deja ir.');else{rtShow(eb,'Revisión a fondo',rows,'',[]);rtHold(20,'"Bájese, vamos a revisar todo." Revisan cabina y carga',()=>done('No encontraron nada. Perdiste tiempo, pero no dinero.'));}},'ghost']]);}
+    else done('Todo en regla. "¡Buen viaje!"');return;}
+  const M=Math.max(500,Math.round(F*.4/100)*100),gn=r.k==='gn',pa=(gn?.5:.7)-(F>8000?.1:0),ph=(gn?.35:.18)+(F>8000?.1:0);
+  rows.push(['Multa',fmtMoney(F)+` (${Math.round(F/UMA)} UMA)`,null]);
+  rtShow(eb,'Te encontraron algo',rows,`Puedes pagar la multa o "arreglarte" con el oficial por ${fmtMoney(M)}. La mordida sale más barata, pero puede salir mal.`,
+   [[`Pagar multa · ${fmtMoney(F)}`,()=>{rtPay(F,`Retén ${r.corp}: pagaste multa de ${fmtMoney(F)}`);done('Te dan tu boleta de infracción.');}],
+    [`Dar mordida · ${fmtMoney(M)}`,()=>{const x=rtRnd();
+      if(x<pa){rtPay(M,`Le diste ${fmtMoney(M)} de mordida al oficial`);done('"Ándele pues, jefe. Con cuidado." Se guarda el billete y te deja ir.');}
+      else if(x<pa+ph){const C=umas(30);rtPay(F+C,`¡No aceptó la mordida! Multa del retén de ${fmtMoney(F)} más ${fmtMoney(C)} por cohecho`);rtShow(eb,'Salió mal',rows,'',[]);
+        rtHold(20,'"¿Me está queriendo sobornar?" Te levantan multa por cohecho y revisan todo',()=>done('Pagaste la multa y la de cohecho. Ya puedes seguir.'));}
+      else{rtPay(M+F,`El oficial se quedó con la mordida (${fmtMoney(M)}) y aun así te puso multa del retén de ${fmtMoney(F)}`);done('Se guardó el billete… y aun así te levantó la infracción.');}},'ghost']]);}
+function retenTick(dt){const fl=Math.floor(S.t*4)%2,act=mission&&mission.phase==='deliver';if(act)mission.rz=mission.rz||{};
+  if(RT_OPEN){S.v=0;if(RT_OPEN.phase==='check'||RT_OPEN.phase==='hold'){RT_OPEN.T-=dt;if(RT_OPEN.phase==='check')RTU.p.textContent=`El oficial revisa tu carta porte, el peso y cómo va la carga… ${Math.max(0,RT_OPEN.T).toFixed(0)} s`;
+      else RTU.p.textContent=`${RT_OPEN.msg}… ${Math.max(0,RT_OPEN.T).toFixed(0)} s`;if(RT_OPEN.T<=0){if(RT_OPEN.phase==='check'){RT_OPEN.phase='res';rtInspect();}else{RT_OPEN.phase='res';RT_OPEN.then();}}}return;}
+  const[fx,fz]=fwdOf(S.h);
+  for(const r of RETENES){const dx=S.x-r.P.x,dz=S.z-r.P.z;if(Math.abs(dx)>420||Math.abs(dz)>420)continue;
+    for(const c of r.cars){c.userData.lb[0].material.color.setHex(fl?0xff2b2b:0x3a0a0a);c.userData.lb[1].material.color.setHex(fl?0x0a1a3a:0x2b6bff);}
+    const mv=(fx*r.ux+fz*r.uz)*(S.v<0?-1:1);if(Math.abs(S.v)>.5)r.dir=mv>=0?1:-1;const dir=r.dir||1,lat=Math.abs(-dx*r.uz+dz*r.ux),hw=r.e.w/2;
+    let st=act?(mission.rz[r.i]||(mission.rz[r.i]={s:0})):(r.free||(r.free={s:3}));if(!act)r.free.s=3;if(st.s===2)st.s=1;
+    const sd=st.dir||dir,along=(dx*r.ux+dz*r.uz)*sd;
+    if(st.s===0){if(lat<hw+6&&along<-30&&along>-240){st.dir=dir;const gross=MASS/1000,p=(r.k==='gn'?.55:.45)+(gross>grossLim()+.05?.2:0)+(Math.abs(S.lshift||0)>.12?.15:0);
+        if(rtRnd()<p){st.s=1;toast(`Retén de la ${r.corp}: te marcan el alto. Detente junto al oficial`,true);siren();}else{st.s=3;toast(`Retén de la ${r.corp}: te hacen señas de que sigas`,true);}}
+      else if(along>-30&&lat<hw+6)st.s=3;}
+    else if(st.s===1){if(along>=-30&&along<=6&&lat<hw+4&&Math.abs(S.v)<.4){st.s=2;RT_OPEN={r,st,phase:'check',T:4};rtShow('RETÉN · '+r.corp.toUpperCase(),'Revisión de rutina',[],'',[]);}
+      else if(along>28||lat>80){st.s=3;const f=umas(40);save.money-=f;persist();toast(`¡Te pasaste el retén de la ${r.corp}! Multa de ${fmtMoney(f)} (40 UMA)`,true);siren();}}
+    // oficiales: el de tu sentido levanta la mano si te toca revisión; si no, te hace señas de pasar
+    if(Math.hypot(dx,dz)<160){const cop=r.cops[sd>0?0:1],U=cop.userData;if(st.s===1){U.aR.sh.rotation.set(-1.55,0,0);U.aR.el.rotation.set(-.15,0,0);}else{U.aR.sh.rotation.set(-1.2,0,.5+.45*Math.sin(S.t*5));U.aR.el.rotation.set(-.4,0,0);}}}}
 /* ===== cansancio ===== */
 const FATIGUE_ON=false;const fatChip=$('#fatChip'),btnRest=$('#btnRest'),sleepFx=$('#sleepFx');let microT=0,microCD=20;
 function fatigueTick(dt){if(!FATIGUE_ON){fatChip.hidden=true;btnRest.hidden=true;return;}save.fat=save.fat||0;if(S.running)save.fat=Math.min(100,save.fat+dt/60/14*100*(env.day<.3?1.4:1));
@@ -7155,7 +7225,7 @@ function loopBody(now){
   ignTick(dt);keyTick(dt);fxTick(dt);if(S.view===0)interiorTick(dt);tireTick(dt);try{spareTick(dt);spareUI();}catch(e){}sigTick(dt);if(frame%3===0)turnTick();if(frame%6===0)tempUI();
   atStation=STATIONS.find(s=>inObb(s.area,S.x,S.z))||null;fuelBtn.hidden=!(atStation&&Math.abs(S.v)<.3&&S.fuel<tankCap()-1);
   if(!fuelBtn.hidden)fuelBtn.textContent=`Cargar diésel · ${Math.round(tankCap()-S.fuel)} L · ${fmtMoney((tankCap()-S.fuel)*(atStation?atStation.price:FUEL_PRICE))}`;
-  try{if(LOAD.active)loadTick(dt);else{missionTick(dt);weighTick(dt);}tollTick();}catch(e){showErr('flete',e);if(LOAD.active){LOAD.active=false;}}animTrailerParts(dt);fatigueTick(dt);corpTick(dt);
+  try{if(LOAD.active)loadTick(dt);else{missionTick(dt);weighTick(dt);}retenTick(dt);tollTick();}catch(e){showErr('flete',e);if(LOAD.active){LOAD.active=false;}}animTrailerParts(dt);fatigueTick(dt);corpTick(dt);
   wheelRot.rotation.z=-S.steer*Math.PI/180;const lshk=S.running?(.006+.012*(S.jud||0)+.02*(S.camKick||0))*Math.sin(S.t*2*Math.PI*Math.max(S.rpm,300)/60*1.5):0;leverPiv.rotation.x=S.ky*.32+lshk;leverPiv.rotation.z=-S.kx*.22;leverPiv.userData.rs.position.y=S.range==='H'?.5:.42;
   pbLever.rotation.x=S.pbrake?-.9:0;for(const kk in pedals3)pedals3[kk].piv.rotation.x=S.ped[kk]*.55;
   const shifting=S.drag||S.path.length>0||(S.t-S.lastShift<.55);S.handT+=(1-S.handT)*lerpK(9,dt);S.crashT=Math.max(0,S.crashT-dt);
@@ -7510,7 +7580,7 @@ function applySkin(){if(!SKIN)return;const on=UP(S.model).skin==='deli';if(on)sk
   notify('banco','brebreuvaA','Depósito de '+fmtMoney(tot+tip+(bono||0))+' por el flete de '+m.cargo.toLowerCase(),()=>openCel('banco'));if(open&&app==='banco')render();};
  // el resto de los movimientos se detecta solo y toma el concepto del último aviso del juego (multa, báscula, grúa, taller…)
  let lastMsg={m:'',t:0};const _toast=toast;toast=function(m,g){lastMsg={m:String(m),t:performance.now()};return _toast(m,g);};
- function concept(d){const m=performance.now()-lastMsg.t<4000?lastMsg.m:'';if(/patrulla|Multa|multa/.test(m))return 'Multa · '+(m.match(/(patrulla|rojo|báscula|direccional|sobrepeso|cancelado)/i)||['tránsito'])[0];
+ function concept(d){const m=performance.now()-lastMsg.t<4000?lastMsg.m:'';if(/^Le diste .*(mordida|refresco)/.test(m))return 'Retiro en efectivo';if(/patrulla|Multa|multa/.test(m))return 'Multa · '+(m.match(/(patrulla|rojo|báscula|retén|direccional|sobrepeso|cancelado)/i)||['tránsito'])[0];
   if(/[Bb]áscula/.test(m))return 'Multa por sobrepeso';if(/grúa/.test(m))return 'Grúa y diésel';if(/[Cc]aseta|Peaje|peaje/.test(m)||/: P\$\d/.test(m)&&/\(\d/.test(m))return 'Caseta';
   if(d<0&&typeof atStation!=='undefined'&&atStation)return 'Diésel · '+(atStation.name||'gasolinera');if(/[Ll]lanta|parchad/.test(m))return 'Llantera';if(/[Ee]strenas/.test(m))return 'Compra de celular';
   if(/código|Regalo|regalo|Listo! Camión/.test(m))return 'Regalo';if(/repuse/.test(m))return 'Reposición de flete';if(d<0&&!$('#shop').hidden)return 'Taller';return d>0?'Depósito':'Cargo';}
@@ -7659,6 +7729,7 @@ function applySkin(){if(!SKIN)return;const on=UP(S.model).skin==='deli';if(on)sk
 })();
 
 window.__S=S;window.__dbg={get SPX(){return SPX},REALCAL:typeof REALCAL!=="undefined"?REALCAL:null,startLoad,LOAD,TRG,get LOADER(){return LOADER},restoreJob,MAPV,snapJob,renderer,scene,hash,OBST,inObb,hk,CELL,BB,REAL,DEPOTS,STATIONS,edges,nodes,LIGHTS,lows,highs,trees,lamps,applyModel,setView,env,save,physics,BUMPS,hitAt,bodyPoints,get mission(){return mission},PARK,LOAD,hinge,truckHit,planRoute,drawMap,drawCluster,drawGpsDev,persist,chunkTick,trafficStep,updMass,WEIGHS,get MASS(){return MASS},grossLim,makeJobs,traffic,snapJob,revPath,pathPos,get job(){return save.job},fwdOf,startMission,CARGO,loadTick,TRG,camera,scene,renderer,CHUNKS};
+Object.assign(window.__dbg,{RETENES,WEIGHS,UMA,rtOpen:()=>RT_OPEN});
 })();
 </script>
 <script>

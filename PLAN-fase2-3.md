@@ -86,9 +86,14 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - Los camiones comprados ya se guardan (antes se reiniciaban).
 - Pendiente: probarlo manejando con remolque; pintura sale blanca lisa (la textura con franjas no se exportó).
 
+### Hecho en v160 · Fase 4, etapa 1 (retenes y básculas)
+- 2 básculas (Libramiento Sur m 1285, Carretera a Pesquería m 1670) en tramos rectos y planos medidos (rumbo ±3.4°, desnivel <1.2 m en ±70 m, >140 m de cruces, >300 m de patios); plancha a la altura del terreno. Si pagas sobrepeso en báscula, el retén acepta la boleta.
+- 3 retenes: Guardia Nacional (Libramiento Sur, más estricta), Policía Estatal (Pesquería), Tránsito Estatal (Sierra). Oficiales por sentido, patrullas, carpa, conos, vibradores a ±40 m y letreros a 400 y 150 m.
+- Revisión: peso, carta porte (fletes nuevos "sin carta porte" pagan +25%), carga recorrida o ganado golpeado. Multa en UMA o mordida (~40%): la acepta / la rechaza (multa + 30 UMA cohecho + 20 s) / se la queda y multa igual. Pasarse el retén: 40 UMA. A veces piden "para el refresco".
+
 ## Fase 4 · Confirmado por Juan (21 nov 2026), falta hacer
 1. **Clima y temporadas:** calor de verano, frío, lluvias.
-2. **Retenes y básculas en carretera.** En el retén, si te encuentran algo (sobrepeso, papeles, carga irregular, etc.), hay opción de **sobornar** (“mordida”), como en México; también pagar la multa normal (en UMA, P$117.31). Definir riesgo de que el soborno salga mal.
+2. ✔ (v160) **Retenes y básculas en carretera.** En el retén, si te encuentran algo (sobrepeso, papeles, carga irregular, etc.), hay opción de **sobornar** (“mordida”), como en México; también pagar la multa normal (en UMA, P$117.31). Definir riesgo de que el soborno salga mal.
 3. **Más camiones para comprar** además del Chato.
 4. **Reajustar cargas:** cargas frágiles (daño y castigo), deslizamiento/oleaje de la carga y otros detalles de cómo se comporta la carga (Juan dará detalles; preguntarle qué se siente mal antes de cambiar).
 
