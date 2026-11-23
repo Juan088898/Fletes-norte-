@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v187">
+<meta name="fn-version" content="v188">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -635,7 +635,7 @@ body.cine .quick{display:none}
           <button class="st-opt" id="startSet">Ajustes <small>Manejo y sonido</small></button>
           <button class="st-opt" id="startTut">Tutorial <small>Aprende a manejarlo</small></button>
         </div>
-        <div class="st-foot"><span id="stVer">v187 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
+        <div class="st-foot"><span id="stVer">v188 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
       </div>
       <div class="st-garage" id="startGarage" hidden>
         <h3>TU CAMIÓN</h3><div class="n">Semi Lowpoly</div>
@@ -4794,7 +4794,7 @@ const SWW=3,SWH=.18,SWT={st:1,av:1,hwy:1},SWMAT=M(0xcfccc4).clone(),CURBM=new TH
 function curb(P,y0,y1){const n=P.length;if(n<2)return;const pos=new Float32Array(n*6),idx=[];for(let k=0;k<n;k++){pos.set([P[k].x,P[k].y+y0,P[k].z,P[k].x,P[k].y+y1,P[k].z],k*6);if(k<n-1)idx.push(k*2,k*2+2,k*2+1,k*2+1,k*2+2,k*2+3);}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();const m=new THREE.Mesh(g,CURBM);m.receiveShadow=true;scene.add(m);}SWMAT.userData.keep=1;SWMAT.polygonOffset=true;SWMAT.polygonOffsetFactor=SWMAT.polygonOffsetUnits=-3;
 function offPts(P,o){const n=P.length,r=[];for(let k=0;k<n;k++){const a=P[Math.max(0,k-1)],b=P[Math.min(n-1,k+1)];let dx=b.x-a.x,dz=b.z-a.z;const l=Math.hypot(dx,dz)||1;dx/=l;dz/=l;r.push({x:P[k].x-dz*o,y:P[k].y,z:P[k].z+dx*o});}return r;}
 function swRuns(P,subs){const own=new Set(subs.map(e=>e.i)),out=[];let cur=[];for(const p of P){let bad=false;for(const e of edgesNear(p.x,p.z,1)){if(own.has(e.i))continue;if(segDist(p.x,p.z,e).d<e.w/2+SWW*.5+1){bad=true;break;}}if(bad){if(cur.length>1)out.push(cur);cur=[];}else cur.push(p);}if(cur.length>1)out.push(cur);return out;}
-function swAt(x,z){const i=Math.floor(x/EGC),j=Math.floor(z/EGC);for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++){const l=EGM.get(egk(i+a,j+b));if(!l)continue;for(const e of l){if(!SWT[e.type])continue;const d=segDist(x,z,e).d-e.w/2;if(d>.05&&d<SWW-.1)return urban(x,z).d>.25;}}return false;}
+function swAt(x,z){const i=Math.floor(x/EGC),j=Math.floor(z/EGC);for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++){const l=EGM.get(egk(i+a,j+b));if(!l)continue;for(const e of l){if(!SWT[e.type])continue;const d=segDist(x,z,e).d-e.w/2;if(d>.05&&d<(e.z3?1.12:SWW-.1))return e.z3||urban(x,z).d>.25;}}return false;}
 {const gI=new THREE.CircleGeometry(11,24);gI.rotateX(-Math.PI/2);const gS=new THREE.CircleGeometry(7.6,16);gS.rotateX(-Math.PI/2);const gR=new THREE.CircleGeometry(7,16);gR.rotateX(-Math.PI/2);
  {const R0=new Map(),HUL=new Map(),CUT=new Map();
   for(let ni=0;ni<nodes.length;ni++){const n=nodes[ni];if(n.kind==='shape'||n.edges.length<2||n.edges.every(q=>edges[q].z3))continue;const E=n.edges.map(q=>edges[q]),mw=Math.max(...E.map(e=>e.w));
@@ -5011,6 +5011,7 @@ terrainLOD(DEPOTS[0].E,99);
    if(allSt&&D.length===3)add(K.inter,pl);else if(allSt&&D.length===4)add(K.x4,pl);else quad(n,t,nb,S,y);});
  const endLine=(ni,ei,d)=>{const n=nodes[ni],j=J.get(ni);
    if(j){if(j.thr.has(ei)){const sg=Math.sign(d.x*j.t.x+d.z*j.t.z)||1;return{p:{x:n.x+j.t.x*sg*j.S/2,z:n.z+j.t.z*sg*j.S/2},l:j.nb,j:1};}const sg=Math.sign(d.x*j.nb.x+d.z*j.nb.z)||1;return{p:{x:n.x+j.nb.x*sg*j.S/2,z:n.z+j.nb.z*sg*j.S/2},l:j.t,j:1};}
+   if(n.edges.length>=3&&n.jr)return{p:{x:n.x+d.x*n.jr,z:n.z+d.z*n.jr},l:{x:-d.z,z:d.x}};   /* v188: cruce con calles viejas: antes las piezas llegaban al centro y se cruzaban encima unas de otras */
    const oth=n.edges.filter(q=>q!==ei&&edges[q].z3);if(n.edges.length===2&&oth.length===1&&edges[oth[0]].kl===edges[ei].kl){const e2=edges[oth[0]],o2=e2.a===ni?nodes[e2.b]:nodes[e2.a],d2=dirOf(n,o2),bx=d.x+d2.x,bz=d.z+d2.z,bl=Math.hypot(bx,bz);
      if(bl>1e-3)return{p:{x:n.x,z:n.z},l:{x:bx/bl,z:bz/bl}};}
    return{p:{x:n.x,z:n.z},l:{x:-d.z,z:d.x}};};
@@ -5018,6 +5019,12 @@ terrainLOD(DEPOTS[0].E,99);
    const along=(Ln,q)=>{const ox=A.x+nr.x*q-Ln.p.x,oz=A.z+nr.z*q-Ln.p.z,den=cr(d.x,d.z,Ln.l.x,Ln.l.z);return Math.abs(den)<1e-6?0:-cr(ox,oz,Ln.l.x,Ln.l.z)/den;};
    for(let c=0;c<e.kl;c++){const off=e.kl===2?(c?1:-1)*KITW/2:0,len=along(L1,off)-along(L0,off);if(len<.5)continue;const n=Math.max(1,Math.round(len/KITW));
      for(let k=0;k<n;k++){const pc=(k===0&&L0.j)||(k===n-1&&L1.j)?K.cross:K.straight;add(pc,(x,z)=>{const q=z*KITW+off,a0=along(L0,q),a1=along(L1,q),a=a0+(a1-a0)*(k+x+.5)/n,f=Math.max(0,Math.min(1,a/e.L));return{x:A.x+d.x*a+nr.x*q,y:(A.y||0)+((B.y||0)-(A.y||0))*f,z:A.z+d.z*a+nr.z*q};});}}}
+ /* v188: cruce de calle 3D con calles viejas: placa de asfalto del kit que une las puntas de todas (las 3D llegan a n.jr, las viejas se cortan ahí también) */
+ nodes.forEach((n,ni)=>{if(n.edges.length<3||!n.jr||!n.edges.some(q=>edges[q].z3)||n.edges.every(q=>edges[q].z3))return;const pts=[];
+   for(const q of n.edges){const e=edges[q],o=e.a===ni?nodes[e.b]:nodes[e.a],d=dirOf(n,o),hw=e.z3?e.kl*KITW/2:e.w0?e.w0/2:e.w/2,r=n.jr+.6;pts.push([n.x+d.x*r-d.z*hw,n.z+d.z*r+d.x*hw],[n.x+d.x*r+d.z*hw,n.z+d.z*r-d.x*hw]);}
+   pts.sort((a,b)=>a[0]-b[0]||a[1]-b[1]);const c3=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]),lo=[],up=[];for(const p of pts){while(lo.length>=2&&c3(lo[lo.length-2],lo[lo.length-1],p)<=0)lo.pop();lo.push(p);}
+   for(let i=pts.length-1;i>=0;i--){const p=pts[i];while(up.length>=2&&c3(up[up.length-2],up[up.length-1],p)<=0)up.pop();up.push(p);}const h=lo.slice(0,-1).concat(up.slice(0,-1)),y=(n.y||0)+.007*KITW+Y0+.006;
+   for(let k=1;k<h.length-1;k++)for(const v of[h[0],h[k+1],h[k]]){P.push(v[0],y,v[1]);U.push(K.asph[0],K.asph[1]);}});
  if(P.length){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));g.computeVertexNormals();
    const m=new THREE.Mesh(g,mat);m.receiveShadow=true;m.userData.keep=1;scene.add(m);window.__kit={tris:P.length/9,J:J.size};}}
 /* Canal del Norte: agua en el fondo y puentes con pretil donde lo cruza una calle */
@@ -7315,7 +7322,7 @@ function loopBody(now){
    const dF=(tF-S.lF)/sdt,dR=(tR-S.lR)/sdt;S.lF=tF;S.lR=tR;const hit=Math.max(Math.abs(dF),Math.abs(dR));
    if(hit>.9&&S.t-(S.thT||0)>.12){S.thT=S.t;const k=clamp(hit/4,.1,1);
      if(k>.4&&Math.abs(S.v)>1.5){const w=MT(),w0=w.susp||0;w.susp=Math.min(1,w0+(k-.4)*(k-.4)*.03*(1+ldT/25)*((save.up[S.model]||0).susp?.45:1));if(w0<.35&&w.susp>=.35)toast('Amortiguadores golpeados: el camión rebota más. Repáralos en el Taller');else if(w0<.7&&w.susp>=.7){toast('Suspensión muy dañada: baja la velocidad y ve al Taller');buzz(150);}
-       if(k>.7&&mission&&mission.phase==='deliver'&&!mission.fragile)damage((k-.7)*4);}if(k>.55&&Math.abs(S.v)>8&&!S.flat&&Math.random()<.07)flatTire();if(mission&&mission.fragile&&mission.phase==='deliver'&&k>.3){damage(k*3.5);if(!S.fragT||S.t-S.fragT>6){S.fragT=S.t;toast(`¡Cuidado! Carga frágil · ${Math.round(mission.cond)}%`);}}noise(.18,110,'lowpass',.25+.5*k);if(S.offroad&&k>.2)noise(.12,600+Math.random()*500,'bandpass',.07+.1*k);S.camKick=Math.max(S.camKick||0,k*.8);if(k>.35)buzz(Math.round(25+50*k));}
+       if(k>.7&&mission&&mission.phase==='deliver'&&!mission.fragile)damage((k-.7)*4);}if(k>.75&&Math.abs(S.v)>8&&!S.flat&&Math.random()<.035)flatTire();   /* v188 (Juan: se ponchaban a cada rato): antes bastaba subirse a la banqueta rápido (golpe ≥2.2 m/s, 7 %); ahora golpe ≥3 m/s (bache o guarnición muy fuerte) y 3.5 % */if(mission&&mission.fragile&&mission.phase==='deliver'&&k>.3){damage(k*3.5);if(!S.fragT||S.t-S.fragT>6){S.fragT=S.t;toast(`¡Cuidado! Carga frágil · ${Math.round(mission.cond)}%`);}}noise(.18,110,'lowpass',.25+.5*k);if(S.offroad&&k>.2)noise(.12,600+Math.random()*500,'bandpass',.07+.1*k);S.camKick=Math.max(S.camKick||0,k*.8);if(k>.35)buzz(Math.round(25+50*k));}
    // cabina sobre sus amortiguadores (va arriba del eje delantero)
    const af=(S.fyv-fv0)/sdt;S.byv+=(-S.by*28-S.byv*3.1-clamp(af,-120,120)*.2)*sdt;S.by=clamp(S.by+S.byv*sdt,-.16,.16);S.pv+=-clamp(af,-120,120)*.002*sdt*60;}
   truck.position.set(S.x,S.cy,S.z);truck.rotation.set(S.cp,S.h,S.cr);if(CARM)carFrame(dt,delta);
