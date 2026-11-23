@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v189">
+<meta name="fn-version" content="v190">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -635,7 +635,7 @@ body.cine .quick{display:none}
           <button class="st-opt" id="startSet">Ajustes <small>Manejo y sonido</small></button>
           <button class="st-opt" id="startTut">Tutorial <small>Aprende a manejarlo</small></button>
         </div>
-        <div class="st-foot"><span id="stVer">v189 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
+        <div class="st-foot"><span id="stVer">v190 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
       </div>
       <div class="st-garage" id="startGarage" hidden>
         <h3>TU CAMIÓN</h3><div class="n">Semi Lowpoly</div>
@@ -8212,6 +8212,9 @@ function verBuild(root){root.position.z=VER.ax;carM.add(root);carG.updateMatrixW
   /* v184 (Juan): fuera las carátulas fijas del modelo. Medido: caras blancas c (.312,.959,2.042) 26×7.5 cm, aros cromados c (.343,.973,1.991) 28×10 cm,
      vidrio a z 2.03, todo inclinado 30° (normal 0,.5,−.87). Se borran esas piezas (blanco, rojo, lcd, cromo y vidrio) y el tablero animado va 1.5 cm delante de la cara negra, del tamaño de los aros */
   carCut(root,(x,y,z,n)=>/white1|red1|lcd|chrome1|clearglass1/.test(n)&&x>.14&&x<.54&&y>.925&&y<1.012&&z>1.94&&z<2.08);
+  /* v190 (Juan: bordes que sobresalen): aros y viseras negras de las carátulas del modelo que quedan delante de la cara (0.5 a 4 cm hacia el chofer) dentro de la ventana del tablero: fuera */
+  {const N=new THREE.Vector3(0,.5,-.87).normalize(),P0=new THREE.Vector3(.343,.966,2.04),UY=new THREE.Vector3(0,-.87,-.5).normalize(),q=new THREE.Vector3();
+   carCut(root,(x,y,z,n)=>{if(!/black1/.test(n))return false;q.set(x,y,z).sub(P0);const d=q.dot(N),a=q.x,b=q.dot(UY);return d>.005&&d<.04&&Math.abs(a)<.15&&b>-.045&&b<.07;});}
   {const n=new THREE.Vector3(0,.5,-.87).normalize(),P=new THREE.Vector3(.343,.966,2.04).addScaledVector(n,.015),cp=new THREE.Mesh(new THREE.PlaneGeometry(.283,.083),new THREE.MeshBasicMaterial({map:carCluTex,transparent:true}));cp.position.copy(P);cp.rotation.set(Math.atan2(n.y,-n.z),Math.PI,0);cp.position.add(new THREE.Vector3(-.0085,-.0085,0).applyEuler(cp.rotation));cp.userData.clu=1;carIntr.add(cp);carDrawClu();}   /* v189: medido con rayos desde el ojo: lo que se ve entre el cofre del tablero, el aro y el centro del volante es 28.3 × 8.3 cm; antes el tablero era de 12.4 cm de alto y se cortaba arriba y abajo */
   // retrovisor con imagen
   carMirRT=new THREE.WebGLRenderTarget(256,80);carMirCam=new THREE.PerspectiveCamera(32,256/80,.3,300);carMirCam.position.set(0,1.27,1.58);carM.add(carMirCam);
