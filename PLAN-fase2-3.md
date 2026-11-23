@@ -217,3 +217,22 @@ Base: rama `etapa2-mapa-nuevo` (v140). Packs subidos en el chat: Kenney Game Ico
 - v183: voz del GPS en YiYi (antes solo hablaba con flete de JaleYa): "Viaje aceptado. Ve por X, a N metros", vueltas a 320 y 80 m, "Ahí está X", "Iniciando viaje a…", "Llegaste…". Bug: 6 de cada 10 destinos de YiYi caían en calle sin nombre y decía "Llévalo a " vacío → ahora "cerca de <calle con nombre más cercana>". Barrido general (botones, cámaras, apps del cel, manejo en ambos modos): 0 errores, 0 valores NaN.
 - v184 (Juan, carro): automático de 4 (RE4F03B 2.861/1.562/1.000/0.697, R 2.310, final 4.072; sube a 2,100–5,900 rpm según acelerador, baja a 1,100–2,700, kickdown, convertidor bloquea en 3a/4a >43 km/h): el sonido ya hace los cambios (prueba: 0→53 km/h en 1a a 5,820 rpm, cambia a 2a a 3,263). Palanca: perilla + tallo se deslizan por la ranura 8.6 cm de P a D (medido de las letras P-R-N-D del modelo). Tablero: se borran carátulas, agujas, aros y vidrio del modelo y el tablero animado va en su lugar (28.5×12.4 cm, inclinado 30°). Humo: ya no sale de los escapes del camión; vapor tenue por el escape de atrás solo en frío (90 s) o acelerando fuerte.
 - Pendiente (después del martes): calles con piezas 3D tipo kit a medida real (3.5 m por carril), todo el mapa, en etapas; primero prueba de un cruce y una cuadra.
+
+## Calles 3D con City Kit Roads · Zona de prueba 1 (Juan, 22 nov 2026)
+Kits guardados en `assets/kenney/` (CC0). Se convierte el mapa por zonas; lo no convertido se queda como está.
+
+### Etapa 1 · medidas (hecha)
+- Pieza del kit = cuadro 1×1, alturas 0 / 0.01 / 0.02. Corte de `road-straight` (medido de la textura): banqueta 0.10 · franja oscura (orilla/estacionamiento) 0.10 · 2 carriles de 0.30 con raya central · franja 0.10 · banqueta 0.10.
+- Escala real: carril 0.30 u = 3.5 m → **1 u = 11.67 m**. Queda: arroyo de asfalto 7.0 m + 2 orillas de 1.17 m = 9.33 m de calle; banquetas de 1.17 m; guarnición 0.23 m de alto (0.02 u). Hoy una calle `st` mide 11.5 m → baja a 9.33 m.
+- Camión (2.5 m de ancho) y carro (1.70 m) ya están a tamaño real; con carril de 3.5 m quedan a escala.
+- Zona 1 (la más transitada: 33 km de las 210 rutas de flete pasan por la cuadra de LG): caja x 740…1260, z 120…480. Todo plano (altura 0).
+  - Avenida Séptima: 732 m en 2 tramos casi rectos (rumbo −5° y −10°).
+  - Parque Industrial La Silla: 462 m en 4 tramos, dobleces de hasta 79°; cruza el canal (puente).
+  - Boulevard Parque Industrial Monterrey: 305 m recto (rumbo −115°).
+  - 1 tramo sin nombre de 26 m.
+  - 1 cruce en T en (854, 282) con ángulos 106° / 71° / 183° (no es de 90°).
+- Piezas a usar: `road-straight` (rectas, estiradas a lo largo hasta ±5 %), `road-bend`/`road-curve` en dobleces, `road-intersection` en la T, `road-crossing` (paso peatonal) antes del cruce, `road-bridge` en el canal, semáforos y señales del kit. Donde el ángulo no es de 90° se rellena la cuña con asfalto y guarnición del mismo kit.
+
+### Etapa 2 · armar la zona (pendiente)
+Poner las piezas sobre el trazo, ancho 9.33 m en esa zona (choques, GPS, tráfico y banqueta), reacomodar edificios y pretiles a la nueva orilla, quitar el asfalto viejo en la zona.
+### Etapa 3 · probar y subir al APK (pendiente)
