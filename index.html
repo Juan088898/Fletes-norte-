@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v193">
+<meta name="fn-version" content="v194">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -635,7 +635,7 @@ body.cine .quick{display:none}
           <button class="st-opt" id="startSet">Ajustes <small>Manejo y sonido</small></button>
           <button class="st-opt" id="startTut">Tutorial <small>Aprende a manejarlo</small></button>
         </div>
-        <div class="st-foot"><span id="stVer">v193 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
+        <div class="st-foot"><span id="stVer">v194 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
       </div>
       <div class="st-garage" id="startGarage" hidden>
         <h3>TU CAMIÓN</h3><div class="n">Semi Lowpoly</div>
@@ -8360,7 +8360,7 @@ function show(){$('#startSave').textContent=money();$('#startGarage').hidden=tru
 function pick(m){if(m===mode()){hide();if(m==='jale')$('#startPlay').click();return;}if(window.__setMode)window.__setMode(m);try{sessionStorage.setItem('fn_skip','1');}catch(e){}setTimeout(()=>location.reload(),150);}
 function hide(){st.style.display='none';}
 $('#startPlay').onclick=hide;$('#startCont').onclick=hide;$('#startJale').onclick=()=>pick('jale');$('#startYiyi').onclick=()=>pick('yiyi');
-$('#startTruck').onclick=()=>{if(save.mode==='yiyi'){save.yiyi=save.yiyi||{};save.yiyi.car=save.yiyi.car==='jetta'?'versa':'jetta';persist();toast('Cambiando a '+(save.yiyi.car==='jetta'?'Folks Yeta GLX':'Nizzan Versito')+'…');setTimeout(()=>location.reload(),600);return;}const g=$('#startGarage');g.hidden=!g.hidden;};   /* v193: en YiYi, Carro cambia entre Versa y Jetta (prueba) */
+$('#startTruck').onclick=()=>{if(save.mode==='yiyi'){save.yiyi=save.yiyi||{};save.yiyi.car=save.yiyi.car==='jetta'?'versa':'jetta';persist();toast('Cambiando a '+(save.yiyi.car==='jetta'?'Folks Yeta GLX':'Nizzan Versito')+'…',true);$('#startTruck').querySelector('small').textContent=save.yiyi.car==='jetta'?'Folks Yeta GLX':'Nizzan Versito';try{localStorage.setItem('fletes_apo',JSON.stringify(save));}catch(e){}setTimeout(()=>{try{location.reload();}catch(e){}setTimeout(()=>location.replace(location.pathname+'?c='+Date.now()),1200);},700);return;}   /* v194: si el visor no recarga, se vuelve a abrir la página */const g=$('#startGarage');g.hidden=!g.hidden;};   /* v193: en YiYi, Carro cambia entre Versa y Jetta (prueba) */
 $('#startSet').onclick=()=>{hide();const b=$('#btnSet');if(b)b.click();};$('#startTut').onclick=()=>{hide();if(window.__tut)window.__tut(0);};
 $('#btnHome').onclick=()=>{const m=$('#menu');if(m)m.hidden=true;show();};
 let skip=false;try{skip=!!sessionStorage.getItem('fn_skip');sessionStorage.removeItem('fn_skip');}catch(e){}
