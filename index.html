@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v194">
+<meta name="fn-version" content="v195">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -635,7 +635,7 @@ body.cine .quick{display:none}
           <button class="st-opt" id="startSet">Ajustes <small>Manejo y sonido</small></button>
           <button class="st-opt" id="startTut">Tutorial <small>Aprende a manejarlo</small></button>
         </div>
-        <div class="st-foot"><span id="stVer">v194 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
+        <div class="st-foot"><span id="stVer">v195 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
       </div>
       <div class="st-garage" id="startGarage" hidden>
         <h3>TU CAMIÓN</h3><div class="n">Semi Lowpoly</div>
@@ -7989,7 +7989,8 @@ function carArmTick(dt){const A=carArms;if(!A||!carLever)return;const sh=S.drag|
     if(!(k==='R'&&A.hand>.5)){const off=_cYv.clone().multiplyScalar(GC.y).addScaledVector(_cZ,GC.z),hd=off.clone().normalize(),fa=_cW.clone().sub(_cE).normalize(),tg=hd.clone().lerp(fa,.55).normalize(),rq=new THREE.Quaternion().setFromUnitVectors(hd,tg);
       P.bend=+(hd.angleTo(fa)*180/Math.PI).toFixed(1);off.applyQuaternion(rq);_cQ.premultiply(rq);W.copy(to).sub(off);carSolve(P.out,P.sh,W);P.bend2=+(off.clone().normalize().angleTo(_cW.clone().sub(_cE).normalize())*180/Math.PI).toFixed(1);}
     placeLimb(a.up,P.sh,_cE);placeLimb(a.fo,_cE,_cW);a.el.position.copy(_cE);a.h.position.copy(_cW);a.h.quaternion.copy(_cQ);}}
-function carPhoneTick(dt){const P=carPhone;if(!P)return;P.t-=dt;const q=YY&&YY.req;if(P.t>0)return;P.t=q?.25:.5;const g=P.g,W=96,H=192;g.setTransform(2,0,0,2,0,0);
+function carPhoneTick(dt){const P=carPhone;if(!P)return;P.t-=dt;const q=YY&&YY.req;if(P.t>0)return;P.t=q?.25:.5;const g=P.g,W=P.W||96,H=P.H||192;g.setTransform(2,0,0,2,0,0);
+  if(q&&P.W){g.fillStyle='#1a1533';g.fillRect(0,0,W,H);g.fillStyle='#b9a8ff';g.font='700 10px sans-serif';g.textAlign='left';g.textBaseline='middle';g.fillText('YIYI · SOLICITUD  '+Math.ceil(q.T)+' s',8,14);g.fillStyle='#fff';g.font='700 20px sans-serif';g.fillText(fmtMoney(q.net),8,40);g.font='500 10px sans-serif';g.fillStyle='#e4e0ff';g.fillText(q.pas.n+' ★'+q.pas.st.toFixed(1)+' · '+(q.pick/1000).toFixed(1)+' km · viaje '+(q.len/1000).toFixed(1)+' km'+(q.prisa?' · ⚡ prisa':''),8,62);g.fillStyle='#7a5cff';g.fillRect(8,74,W-16,16);g.fillStyle='#fff';g.font='700 10px sans-serif';g.fillText('Acepta en el celular 📱',14,82);P.tex.needsUpdate=true;return;}
   if(q){g.fillStyle='#1a1533';g.fillRect(0,0,W,H);g.fillStyle='#b9a8ff';g.font='700 10px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('YIYI · SOLICITUD',W/2,16);
     const f=clamp(q.T/15,0,1);g.lineWidth=6;g.strokeStyle='#3a3060';g.beginPath();g.arc(W/2,58,24,0,7);g.stroke();g.strokeStyle='#7a5cff';g.beginPath();g.arc(W/2,58,24,-Math.PI/2,-Math.PI/2+f*Math.PI*2);g.stroke();
     g.fillStyle='#fff';g.font='700 18px "Share Tech Mono",monospace';g.fillText(String(Math.ceil(q.T)),W/2,59);g.font='700 17px sans-serif';g.fillText(fmtMoney(q.net),W/2,104);
@@ -8240,9 +8241,9 @@ function verBuild(root){root.position.z=JT?1.34:VER.ax;carM.add(root);carG.updat
   // palanca: pivote 16 cm abajo de la perilla
   /* v184 (Juan): la palanca no hacía su recorrido. Medido en el modelo: perilla y 13 cm abajo, tallo negro x −0.003…0.038, y .525….659, z 1.751…1.806;
      letras P-R-N-D encendidas a un lado de la ranura de z 1.765 (P) a 1.679 (D) = 8.6 cm. Ahora perilla + tallo se deslizan juntos por la ranura esos 8.6 cm */
-  {const K=JT?new THREE.Vector3(.02,.62,1.70):new THREE.Vector3(.017,.627,1.779),lp=new THREE.Group();lp.position.set(K.x,K.y-.16,K.z);carIntr.add(lp);lp.updateMatrixWorld(true);const ks=[];root.traverse(o=>{if(o.isMesh&&(/^KNOB(_\d+)?$/.test(o.name)||(o.parent&&/^KNOB(_\d+)?$/.test(o.parent.name))))ks.push(o);});ks.forEach(o=>grab(o,lp));
-   if(!JT)carCut(root,(x,y,z,n)=>/black1/.test(n)&&x>-.006&&x<.041&&y>.52&&y<.662&&z>1.748&&z<1.81,lp,1);
-   const mk=new THREE.Object3D();mk.position.set(0,.16,0);lp.add(mk);carLever=lp;carLever.userData.knob=mk;carLever.userData.z0=lp.position.z;carLever.userData.trav=.086;}
+  {const K=JT?new THREE.Vector3(0,.699,1.740):new THREE.Vector3(.017,.627,1.779),lp=new THREE.Group();   /* v195 Jetta: perilla medida (pieza suelta de 4.6 × 6 × 4.7 cm con centro en 0, .699, 1.740) */lp.position.set(K.x,K.y-.16,K.z);carIntr.add(lp);lp.updateMatrixWorld(true);const ks=[];root.traverse(o=>{if(o.isMesh&&(/^KNOB(_\d+)?$/.test(o.name)||(o.parent&&/^KNOB(_\d+)?$/.test(o.parent.name))))ks.push(o);});ks.forEach(o=>grab(o,lp));
+   if(!JT)carCut(root,(x,y,z,n)=>/black1/.test(n)&&x>-.006&&x<.041&&y>.52&&y<.662&&z>1.748&&z<1.81,lp,1);else carCut(root,(x,y,z,n)=>Math.abs(x)<.032&&y>.665&&y<.74&&z>1.712&&z<1.768,lp,1);
+   const mk=new THREE.Object3D();mk.position.set(0,.16,0);lp.add(mk);carLever=lp;carLever.userData.knob=mk;carLever.userData.z0=lp.position.z;carLever.userData.trav=JT?.07:.086;}
   carM.updateMatrixWorld(true);const E=new THREE.Vector3(CAR.eye.x,CAR.eye.y,CAR.eye.z+carOff);
   const rayTo=(t,back)=>{const eW=carM.localToWorld(E.clone()),tW=carM.localToWorld(t.clone()),h=new THREE.Raycaster(eW,tW.clone().sub(eW).normalize(),0,2).intersectObject(root,true).find(q=>!/glass/i.test(q.object.material.name||''));
     if(!h)return t.clone();const hp=carM.worldToLocal(h.point.clone());return hp.addScaledVector(E.clone().sub(hp).normalize(),back);};
@@ -8254,7 +8255,12 @@ function verBuild(root){root.position.z=JT?1.34:VER.ax;carM.add(root);carG.updat
   /* v190 (Juan: bordes que sobresalen): aros y viseras negras de las carátulas del modelo que quedan delante de la cara (0.5 a 4 cm hacia el chofer) dentro de la ventana del tablero: fuera */
   {const N=new THREE.Vector3(0,.5,-.87).normalize(),P0=new THREE.Vector3(.343,.966,2.04),UY=new THREE.Vector3(0,-.87,-.5).normalize(),q=new THREE.Vector3();
    if(!JT)carCut(root,(x,y,z,n)=>{if(!/black1/.test(n))return false;q.set(x,y,z).sub(P0);const d=q.dot(N),a=q.x,b=q.dot(UY);return d>.005&&d<.04&&Math.abs(a)<.15&&b>-.045&&b<.07;});}
-  {const n=new THREE.Vector3(0,.5,-.87).normalize(),P=JT?rayTo(new THREE.Vector3(.352,.985,2.06),.012):new THREE.Vector3(.343,.966,2.04).addScaledVector(n,.015),cp=new THREE.Mesh(new THREE.PlaneGeometry(.30,.11),new THREE.MeshBasicMaterial({map:carCluTex,transparent:true}));cp.position.copy(P);cp.rotation.set(Math.atan2(n.y,-n.z),Math.PI,0);if(!JT)cp.position.add(new THREE.Vector3(-.0015,-.0055,0).applyEuler(cp.rotation));   /* v190: sin los bordes del modelo el hueco creció (rayos: 28 × 10 cm, arriba en arco); el tablero queda 1 cm más grande por lado y lo tapan el cofre y el volante, así no queda franja */cp.userData.clu=1;carIntr.add(cp);carDrawClu();}   /* v189: medido con rayos desde el ojo: lo que se ve entre el cofre del tablero, el aro y el centro del volante es 28.3 × 8.3 cm; antes el tablero era de 12.4 cm de alto y se cortaba arriba y abajo */
+  /* v195 (Juan): en el Jetta el tablero animado va justo sobre su pantalla digital (esquinas del modelo: x .228….471, y .891….978, z 1.984…2.010 → 24.3 × 9.1 cm) y el mapa del celular en la pantalla central (esquinas medidas, 23.3 × 10.9 cm, girada hacia el chofer) */
+  const quad=(TL,TR,BL,BR,mat,off)=>{const n=new THREE.Vector3().subVectors(TR,TL).cross(new THREE.Vector3().subVectors(BL,TL)).normalize();if(n.dot(new THREE.Vector3().subVectors(E,TL))<0)n.negate();const o=n.multiplyScalar(off),P=[TL,TR,BL,BR].map(v=>v.clone().add(o));
+    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P.flatMap(v=>v.toArray()),3));g.setAttribute('uv',new THREE.Float32BufferAttribute([0,1,1,1,0,0,1,0],2));g.setIndex([0,2,1,1,2,3]);const m=new THREE.Mesh(g,mat);m.material.side=THREE.DoubleSide;carIntr.add(m);return m;};
+  if(JT){const V=(x,y,z)=>new THREE.Vector3(x,y,z+1.34);const cq=quad(V(.471,.978,.670),V(.228,.978,.670),V(.471,.891,.644),V(.228,.891,.644),new THREE.MeshBasicMaterial({map:carCluTex}),.003);cq.userData.clu=1;carDrawClu();
+   const cv=document.createElement('canvas');cv.width=416;cv.height=196;const tex=new THREE.CanvasTexture(cv);tex.encoding=THREE.sRGBEncoding;quad(V(.105,1.006,.579),V(-.121,1.007,.523),V(.109,.899,.560),V(-.117,.900,.504),new THREE.MeshBasicMaterial({map:tex}),.003);carPhone={g:cv.getContext('2d'),tex,t:0,W:208,H:98};}
+  else{const n=new THREE.Vector3(0,.5,-.87).normalize(),P=JT?rayTo(new THREE.Vector3(.352,.985,2.06),.012):new THREE.Vector3(.343,.966,2.04).addScaledVector(n,.015),cp=new THREE.Mesh(new THREE.PlaneGeometry(.30,.11),new THREE.MeshBasicMaterial({map:carCluTex,transparent:true}));cp.position.copy(P);cp.rotation.set(Math.atan2(n.y,-n.z),Math.PI,0);if(!JT)cp.position.add(new THREE.Vector3(-.0015,-.0055,0).applyEuler(cp.rotation));   /* v190: sin los bordes del modelo el hueco creció (rayos: 28 × 10 cm, arriba en arco); el tablero queda 1 cm más grande por lado y lo tapan el cofre y el volante, así no queda franja */cp.userData.clu=1;carIntr.add(cp);carDrawClu();}   /* v189: medido con rayos desde el ojo: lo que se ve entre el cofre del tablero, el aro y el centro del volante es 28.3 × 8.3 cm; antes el tablero era de 12.4 cm de alto y se cortaba arriba y abajo */
   // retrovisor con imagen
   /* v192: puerta trasera derecha (lado −X): se corta del modelo por medidas (z .45…1.05 arriba del arco, .30…1.05 encima de .62 m, y .28…1.42, x < −.55) y gira en su bisagra delantera (−.86, z 1.05) */
   if(JT){const dp=new THREE.Group();dp.position.set(-.88,0,1.135);carM.add(dp);carM.updateMatrixWorld(true);const dl=[];root.traverse(o=>{if(o.isMesh&&/^DRRB/.test(o.name))dl.push(o);});dl.forEach(o=>grab(o,dp));carDoor=dp;}   /* v193: puerta trasera derecha del Jetta (pieza suelta del modelo), bisagra adelante: x −.88, z 1.135 */
@@ -8263,7 +8269,7 @@ function verBuild(root){root.position.z=JT?1.34:VER.ax;carM.add(root);carG.updat
   {const dk=new THREE.MeshLambertMaterial({color:0x1d1e21}),mf=new THREE.Mesh(new THREE.BoxGeometry(.24,.075,.03),dk);mf.position.set(0,JT?1.30:1.29,JT?1.64:1.66);carIntr.add(mf);
    carMir=new THREE.Mesh(new THREE.PlaneGeometry(.225,.064),new THREE.MeshBasicMaterial({map:carMirRT.texture}));carMir.position.set(0,JT?1.30:1.29,JT?1.624:1.644);carMir.rotation.y=Math.PI;carMirRT.texture.repeat.x=-1;carMirRT.texture.offset.x=1;carIntr.add(carMir);}
   // celular en soporte en la ventila central, 3.5 cm enfrente de lo que toca el rayo del ojo
-  {const blk=new THREE.MeshPhongMaterial({color:0x15171a,shininess:30}),pg=new THREE.Group();pg.position.copy(rayTo(JT?new THREE.Vector3(.03,.86,1.86):new THREE.Vector3(.03,.88,1.92),.035));carIntr.add(pg);
+  if(!JT){const blk=new THREE.MeshPhongMaterial({color:0x15171a,shininess:30}),pg=new THREE.Group();pg.position.copy(rayTo(JT?new THREE.Vector3(.03,.86,1.86):new THREE.Vector3(.03,.88,1.92),.035));carIntr.add(pg);
    pg.quaternion.setFromRotationMatrix(new THREE.Matrix4().lookAt(E,pg.position,new THREE.Vector3(0,1,0)));
    pg.add(new THREE.Mesh(new THREE.BoxGeometry(.074,.152,.009),new THREE.MeshPhongMaterial({color:0x2a2b30,shininess:60})));const cl=new THREE.Mesh(new THREE.BoxGeometry(.09,.03,.03),blk);cl.position.set(0,-.085,-.012);pg.add(cl);
    const cv=document.createElement('canvas');cv.width=192;cv.height=384;const tex=new THREE.CanvasTexture(cv),sc=new THREE.Mesh(new THREE.PlaneGeometry(.068,.144),new THREE.MeshBasicMaterial({map:tex}));sc.position.z=.0047;pg.add(sc);carPhone={g:cv.getContext('2d'),tex,t:0};}
