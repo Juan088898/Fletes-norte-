@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v185">
+<meta name="fn-version" content="v186">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -635,7 +635,7 @@ body.cine .quick{display:none}
           <button class="st-opt" id="startSet">Ajustes <small>Manejo y sonido</small></button>
           <button class="st-opt" id="startTut">Tutorial <small>Aprende a manejarlo</small></button>
         </div>
-        <div class="st-foot"><span id="stVer">v185 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
+        <div class="st-foot"><span id="stVer">v186 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
       </div>
       <div class="st-garage" id="startGarage" hidden>
         <h3>TU CAMIÓN</h3><div class="n">Semi Lowpoly</div>
@@ -5185,6 +5185,18 @@ const HIGHMATS=[0,1,2].map(st=>new THREE.MeshLambertMaterial({color:0xffffff,map
  // árboles de la ciudad que quedaron dentro de un edificio
  for(let q=trees.length-1;q>=0;q--){const t=trees[q];const arr=hash.get(hk(Math.floor(t.x/CELL),Math.floor(t.z/CELL)));if(arr&&arr.some(o=>inObb(o,t.x,t.z)))trees.splice(q,1);}
  for(let q=PADS.length-1;q>=0;q--)if(inJHull(PADS[q].cx,PADS[q].cz))PADS.splice(q,1);edges.forEach(e=>{if(e.z3)e.w=KITC;});   /* v185: en la zona 3D la calle mide 9.33 m (después de acomodar edificios, para que la ciudad salga igual) */   /* v181: sin pisos de concreto encima de un cruce */
+ /* v186 (Juan): en la zona 3D los edificios a tamaño real. Medido: casa de un piso del kit = 7 m de alto (real 4.5–5.5 m) → ×0.7.
+    Cada edificio que da a una calle de la zona se encoge desde su frente y se recorre 2.9 m hacia la calle (la orilla de banqueta pasó de 8.75 a 5.83 m del centro);
+    las filas de atrás se recorren igual, así nunca se enciman. Cocheras y cercas de esas casas fuera; postes de luz a la orilla de la banqueta nueva */
+ {const F=.7,DS=(11.5/2+SWW)-KITW/2,ZE=edges.filter(e=>e.z3),near=(x,z)=>{let best=null;for(const e of edgesNear(x,z,1)){if(e.type==='ring')continue;const q=segDist(x,z,e);if(!best||q.d<best.q.d)best={e,q};}return best;},moved=new Set();
+  for(const b of keep){const nb=near(b.cx,b.cz);if(!nb||!nb.e.z3||nb.q.d>70||Math.abs(b.ux*nb.e.ux+b.uz*nb.e.uz)<.9)continue;const e=nb.e,sd=Math.sign((b.cx-e.ax)*-e.uz+(b.cz-e.az)*e.ux)||1,nx=-e.uz*sd,nz=e.ux*sd;
+   const d=nb.q.d,front=d-b.hd,nd=front-DS+b.hd*F,dx=nx*(nd-d),dz=nz*(nd-d);b.cx+=dx;b.cz+=dz;b.hw*=F;b.hd*=F;const k=b._k;k.x+=dx;k.z+=dz;k.sx*=F;k.sy*=F;k.sz*=F;
+   if(b.deco)b.deco=b.deco.filter(o=>/tree/.test(o.k)).map(o=>({...o,x:o.x+dx,z:o.z+dz}));moved.add(b);}
+  for(const arr of hash.values())for(let q=arr.length-1;q>=0;q--)if(moved.has(arr[q]))arr.splice(q,1);moved.forEach(addObb);
+  for(let q=PADS.length-1;q>=0;q--){const p=PADS[q],nb=near(p.cx,p.cz);if(nb&&nb.e.z3&&nb.q.d<40)PADS.splice(q,1);}
+  for(let q=trees.length-1;q>=0;q--){const t=trees[q];for(const b of moved)if(inObb(b,t.x,t.z)){trees.splice(q,1);break;}}
+  for(const l of lamps){const nb=near(l.x,l.z);if(!nb||!nb.e.z3||nb.q.d>14)continue;const e=nb.e,sd=Math.sign((l.x-e.ax)*-e.uz+(l.z-e.az)*e.ux)||1;l.x=nb.q.px-e.uz*sd*(KITW/2-.35);l.z=nb.q.pz+e.ux*sd*(KITW/2-.35);}
+  window.__z3b=moved.size;}
  window.__mapFix=why;for(const b of keep){KL.push(b._k);if(b.deco)KL.push(...b.deco);}kPlace(KL);}
 // v138 · piso de concreto bajo los edificios de la ciudad (frente, patio y entre casas): ya no quedan sueltos en el pasto
 {const pm=M(0xd3cfc4).clone();pm.polygonOffset=true;pm.polygonOffsetFactor=pm.polygonOffsetUnits=-1.5;const g=new THREE.PlaneGeometry(1,1);g.rotateX(-Math.PI/2);const im=new THREE.InstancedMesh(g,pm,Math.max(1,PADS.length));im.count=PADS.length;im.frustumCulled=false;im.receiveShadow=true;
