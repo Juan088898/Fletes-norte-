@@ -8025,7 +8025,7 @@ function carBuild(){if(carG)return;carWheels=[];carF=0;carG=new THREE.Group();sc
         const piv=new THREE.Group(),sp=new THREE.Group();piv.position.set(c.x*CAR.s,c.y*CAR.s,c.z*CAR.s+carOff);carM.add(piv);piv.add(sp);sp.scale.setScalar(CAR.s);w.parent.remove(w);w.position.set(0,0,0);sp.add(w);
         carWheels.push({piv,sp,front:c.z>0});}
     }catch(e){showErr('carro',e);}},e=>showErr('carro',e));
-    if(JT){fetch('jetta.glb').then(r=>{if(!r.ok)throw new Error('jetta.glb '+r.status);return r.arrayBuffer();}).then(go).catch(e=>showErr('carro',e));}
+    if(JT){const dec=()=>{const b=atob(window.__JETTA_B64),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);window.__JETTA_B64=null;go(u.buffer);};if(window.__JETTA_B64)dec();else{const sc=document.createElement('script');sc.src='jetta.js';sc.onload=dec;sc.onerror=()=>showErr('carro',new Error('no cargó jetta.js'));document.head.appendChild(sc);}}   /* v193: el Jetta va en jetta.js (la página no pasa de 20 MB) */
     else{const el=document.getElementById(CARK==='versa'?'glbVersa':'glbLoyale');if(!el||!THREE.GLTFLoader)return;const b=atob(el.textContent.trim()),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);go(u.buffer);}
   }catch(e){showErr('carro',e);}}
 /* interior a la medida del Loyale (metros, marco del carro: +Z al frente, +X a la izquierda, eje trasero en z=0)

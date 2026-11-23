@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     branches: [etapa2-mapa-nuevo]
-    paths: [index.html, version.json, jetta.glb, apk/**, .github/workflows/android-prueba.yml]
+    paths: [index.html, version.json, jetta.js, apk/**, .github/workflows/android-prueba.yml]
 permissions:
   contents: write
 jobs:
@@ -33,7 +33,7 @@ jobs:
       - name: Instalar Capacitor
         run: npm install
       - name: Copiar el juego a www
-        run: mkdir -p www && cp index.html version.json sw.js jetta.glb www/
+        run: mkdir -p www && cp index.html version.json sw.js jetta.js www/
       - name: Crear proyecto Android
         run: npx cap add android && npx cap sync android
       - name: Pantalla completa (modo inmersivo) y pantalla siempre encendida
