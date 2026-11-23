@@ -256,3 +256,4 @@ Poner las piezas sobre el trazo, ancho 9.33 m en esa zona (choques, GPS, tráfic
   Pendiente Jetta: medir la palanca (DSG) y el tablero digital con rayos, retrovisor, relieve del logo del volante; luego Yaris (inicial) y Dzire reflejados; tienda Autos con crédito.
 - v194: el botón "Carro" del inicio no hacía nada (ese menú vive fuera del juego y no veía la partida); ahora cambia el carro en la partida guardada y recarga.
 - v195 (Juan, Jetta): palanca DSG medida (perilla suelta 4.6 × 6 × 4.7 cm en 0, .699, 1.740) que se desliza 7 cm de P a D con la mano; tablero animado justo sobre la pantalla digital (esquinas del modelo, 24.3 × 9.1 cm); mapa/solicitudes de YiYi en la pantalla central (23.3 × 10.9 cm, girada hacia el chofer) en lugar del celular en soporte.
+- v196 (Juan): mapa de la pantalla central del Jetta sin letreros: llena la pantalla con su proporción (sin estirarse) y solo una flecha y la distancia chiquitas en la esquina.

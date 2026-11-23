@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v195">
+<meta name="fn-version" content="v196">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -635,7 +635,7 @@ body.cine .quick{display:none}
           <button class="st-opt" id="startSet">Ajustes <small>Manejo y sonido</small></button>
           <button class="st-opt" id="startTut">Tutorial <small>Aprende a manejarlo</small></button>
         </div>
-        <div class="st-foot"><span id="stVer">v195 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
+        <div class="st-foot"><span id="stVer">v196 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
       </div>
       <div class="st-garage" id="startGarage" hidden>
         <h3>TU CAMIÓN</h3><div class="n">Semi Lowpoly</div>
@@ -6095,6 +6095,10 @@ function drawClusterCab(){const g=cluCtx;g.setTransform(2,0,0,2,0,0);g.clearRect
   g.setTransform(2,0,0,2,0,0);cluTex.needsUpdate=true;drawTurboG();}
 /* navegación en el celular del soporte (la usa el Chato Dormitorio, que no trae GPS en el tablero) */
 window.__navDraw=(g,W,H)=>{let gi={txt:'',sub:'',ang:0};try{gi=gpsInfo();}catch(e){}
+  if(W>H){/* v196 (Juan): pantalla horizontal del Jetta: el mapa llena la pantalla sin estirarse (recorte con la misma proporción, 2.12:1) y solo una flecha y la distancia chiquitas en la esquina */
+    try{if((cluMapN++)%2===0)drawMap(cluMap,cluMapG,232,300,2,false);const h=232*H/W;g.drawImage(cluMap,116,324-h/2,232,h,0,0,W,H);}catch(e){g.fillStyle='#08121f';g.fillRect(0,0,W,H);}
+    let d='';const m=(gi.txt||'').match(/^En (\d+) m/);if(m)d=m[1]+' m';g.fillStyle='rgba(8,12,18,.75)';g.fillRect(3,3,d?40:16,14);g.save();g.translate(10,10);g.rotate((gi.ang||0)*Math.PI/180);g.fillStyle='#3fd08a';g.beginPath();g.moveTo(0,-5);g.lineTo(4,4);g.lineTo(0,2);g.lineTo(-4,4);g.closePath();g.fill();g.restore();
+    if(d){g.fillStyle='#e8eef5';g.font='600 8px sans-serif';g.textAlign='left';g.textBaseline='middle';g.fillText(d,17,10.5);}return;}
   try{if((cluMapN++)%2===0)drawMap(cluMap,cluMapG,232,300,2,false);g.drawImage(cluMap,116,174,232,300,0,0,W,H);}catch(e){g.fillStyle='#08121f';g.fillRect(0,0,W,H);}
   g.fillStyle='rgba(8,12,18,.9)';g.fillRect(0,0,W,44);g.save();g.translate(14,22);g.rotate((gi.ang||0)*Math.PI/180);g.fillStyle='#3fd08a';g.beginPath();g.moveTo(0,-10);g.lineTo(8,7);g.lineTo(0,3);g.lineTo(-8,7);g.closePath();g.fill();g.restore();
   let d='',t=gi.txt||'',m;if(m=t.match(/^En (\d+) m (.*)$/)){d=m[1]+' m';t=m[2].replace(/^gira a la /,'').replace(/^entra a la /,'');}else if(!mission&&!(CARM&&YY&&YY.trip)){d=CARM?'YiYi':'Sin flete';t=CARM?(gi.txt||'').replace('YiYi · ',''):'';}else d=(gi.sub||'').replace(' al destino','');
