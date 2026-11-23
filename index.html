@@ -7936,15 +7936,16 @@ function cGauge(g,cx,cy,r,val,min,max,step,lab,redFrom,fmt){const a0=Math.PI*.8,
   const a=A(val);g.save();g.translate(cx,cy);g.rotate(a);g.beginPath();g.moveTo(-r*.12,-r*.025);g.lineTo(r*.9,-r*.008);g.lineTo(r*.9,r*.008);g.lineTo(-r*.12,r*.025);g.closePath();g.fillStyle='#ff8a1e';g.fill();g.restore();
   g.beginPath();g.arc(cx,cy,r*.09,0,7);g.fillStyle='#2c2f33';g.fill();}
 function carDrawClu(){if(!carClu)return;const g=carClu.getContext('2d'),W=600,H=carClu.height;g.clearRect(0,0,W,H);
-  const pn=g.createLinearGradient(0,0,0,H);pn.addColorStop(0,'#26292d');pn.addColorStop(1,'#111315');g.fillStyle=pn;g.beginPath();g.roundRect?g.roundRect(4,4,W-8,H-8,30):g.rect(4,4,W-8,H-8);g.fill();g.strokeStyle='#3d4147';g.lineWidth=3;g.stroke();
+  const pn=g.createLinearGradient(0,0,0,H);pn.addColorStop(0,'#141618');pn.addColorStop(1,'#0d0e10');g.fillStyle=pn;g.fillRect(0,0,W,H);   /* v190: fondo parejo hasta la orilla, sin marco claro: las orillas quedan detrás del cofre del tablero */
   const kmh=Math.abs(S.v)*3.6,rpm=S.rpm||0,fu=clamp(S.fuel/tankCap(),0,1),tmp=S.running?.55:.15;
   /* v189: 600 × 176 px = 28.3 × 8.3 cm (21.2 px por cm). Velocímetro y tacómetro de Ø 7.5 cm, gasolina y temperatura de Ø 3.8 cm a los lados, testigos y odómetro en medio */
+  const oy=(H-176)/2;g.save();g.translate(0,oy);
   cGauge(g,192,90,80,kmh,0,180,20,'km/h',null,v=>String(v));
   cGauge(g,408,90,80,rpm/1000,0,7,1,'×1000 rpm',6,v=>String(v));
   cGauge(g,58,98,40,fu,0,1,.5,'GAS',null,v=>v===0?'E':v===1?'F':'');
   cGauge(g,542,98,40,tmp,0,1,.5,'TEMP',.85,v=>v===0?'C':v===1?'H':'');
   const lt=(x,y,col,on)=>{g.beginPath();g.arc(x,y,7,0,7);g.fillStyle=on?col:'#3a332c';g.fill();};lt(288,58,'#ff4a3d',S.pbrake);lt(312,58,'#ffb53d',!S.running&&S.ign>0);lt(288,82,'#3fd08a',S.carHL);lt(312,82,'#7cc4ff',!!S.wipM);{const b=(S.sig||S.haz)&&Math.floor(S.t/.42)%2===1;const ar=(x,d,on)=>{g.beginPath();g.moveTo(x+d*11,28);g.lineTo(x,19);g.lineTo(x,37);g.closePath();g.fillStyle=on?'#3fd08a':'#2a2e2a';g.fill();};ar(290,-1,b&&(S.haz||S.sig<0));ar(310,1,b&&(S.haz||S.sig>0));}
-  g.fillStyle='#000';g.fillRect(272,104,56,22);g.fillStyle='#7fd0a0';g.font='600 15px "Share Tech Mono",monospace';g.textAlign='center';g.textBaseline='middle';g.fillText(String(Math.floor((save.yiyi&&save.yiyi.odo||0)+184213)).padStart(6,'0'),300,115);   // odómetro
+  g.fillStyle='#000';g.fillRect(272,104,56,22);g.fillStyle='#7fd0a0';g.font='600 15px "Share Tech Mono",monospace';g.textAlign='center';g.textBaseline='middle';g.fillText(String(Math.floor((save.yiyi&&save.yiyi.odo||0)+184213)).padStart(6,'0'),300,115);g.restore();   // odómetro
   carCluTex.needsUpdate=true;}
 var _ca=new THREE.Vector3(),_cb=new THREE.Vector3(),_cR=new THREE.Vector3(),_cT=new THREE.Vector3(),_cX=new THREE.Vector3(),_cYv=new THREE.Vector3(),_cZ=new THREE.Vector3(),_cE=new THREE.Vector3(),_cW=new THREE.Vector3(),_cM=new THREE.Matrix4(),_cQ=new THREE.Quaternion(),_cQ2=new THREE.Quaternion();
 // IK de 2 huesos como solveArm, pero en el marco del carro (+Z al frente, +X a la izquierda): el codo baja y se abre hacia su lado
@@ -8208,14 +8209,14 @@ function verBuild(root){root.position.z=VER.ax;carM.add(root);carG.updateMatrixW
   const rayTo=(t,back)=>{const eW=carM.localToWorld(E.clone()),tW=carM.localToWorld(t.clone()),h=new THREE.Raycaster(eW,tW.clone().sub(eW).normalize(),0,2).intersectObject(root,true).find(q=>!/glass/i.test(q.object.material.name||''));
     if(!h)return t.clone();const hp=carM.worldToLocal(h.point.clone());return hp.addScaledVector(E.clone().sub(hp).normalize(),back);};
   // tablero animado: en la ventana que deja el volante (rayos por el cubo y el aro: y .958 a 1.093 en z 1.92), pegado 1 cm enfrente de la cara del tablero
-  carClu=document.createElement('canvas');carClu.width=600;carClu.height=CARK==='versa'?176:260;carCluTex=new THREE.CanvasTexture(carClu);carCluTex.encoding=THREE.sRGBEncoding;
+  carClu=document.createElement('canvas');carClu.width=600;carClu.height=CARK==='versa'?220:260;carCluTex=new THREE.CanvasTexture(carClu);carCluTex.encoding=THREE.sRGBEncoding;
   /* v184 (Juan): fuera las carátulas fijas del modelo. Medido: caras blancas c (.312,.959,2.042) 26×7.5 cm, aros cromados c (.343,.973,1.991) 28×10 cm,
      vidrio a z 2.03, todo inclinado 30° (normal 0,.5,−.87). Se borran esas piezas (blanco, rojo, lcd, cromo y vidrio) y el tablero animado va 1.5 cm delante de la cara negra, del tamaño de los aros */
   carCut(root,(x,y,z,n)=>/white1|red1|lcd|chrome1|clearglass1/.test(n)&&x>.14&&x<.54&&y>.925&&y<1.012&&z>1.94&&z<2.08);
   /* v190 (Juan: bordes que sobresalen): aros y viseras negras de las carátulas del modelo que quedan delante de la cara (0.5 a 4 cm hacia el chofer) dentro de la ventana del tablero: fuera */
   {const N=new THREE.Vector3(0,.5,-.87).normalize(),P0=new THREE.Vector3(.343,.966,2.04),UY=new THREE.Vector3(0,-.87,-.5).normalize(),q=new THREE.Vector3();
    carCut(root,(x,y,z,n)=>{if(!/black1/.test(n))return false;q.set(x,y,z).sub(P0);const d=q.dot(N),a=q.x,b=q.dot(UY);return d>.005&&d<.04&&Math.abs(a)<.15&&b>-.045&&b<.07;});}
-  {const n=new THREE.Vector3(0,.5,-.87).normalize(),P=new THREE.Vector3(.343,.966,2.04).addScaledVector(n,.015),cp=new THREE.Mesh(new THREE.PlaneGeometry(.283,.083),new THREE.MeshBasicMaterial({map:carCluTex,transparent:true}));cp.position.copy(P);cp.rotation.set(Math.atan2(n.y,-n.z),Math.PI,0);cp.position.add(new THREE.Vector3(-.0085,-.0085,0).applyEuler(cp.rotation));cp.userData.clu=1;carIntr.add(cp);carDrawClu();}   /* v189: medido con rayos desde el ojo: lo que se ve entre el cofre del tablero, el aro y el centro del volante es 28.3 × 8.3 cm; antes el tablero era de 12.4 cm de alto y se cortaba arriba y abajo */
+  {const n=new THREE.Vector3(0,.5,-.87).normalize(),P=new THREE.Vector3(.343,.966,2.04).addScaledVector(n,.015),cp=new THREE.Mesh(new THREE.PlaneGeometry(.30,.11),new THREE.MeshBasicMaterial({map:carCluTex,transparent:true}));cp.position.copy(P);cp.rotation.set(Math.atan2(n.y,-n.z),Math.PI,0);cp.position.add(new THREE.Vector3(-.0015,-.0055,0).applyEuler(cp.rotation));   /* v190: sin los bordes del modelo el hueco creció (rayos: 28 × 10 cm, arriba en arco); el tablero queda 1 cm más grande por lado y lo tapan el cofre y el volante, así no queda franja */cp.userData.clu=1;carIntr.add(cp);carDrawClu();}   /* v189: medido con rayos desde el ojo: lo que se ve entre el cofre del tablero, el aro y el centro del volante es 28.3 × 8.3 cm; antes el tablero era de 12.4 cm de alto y se cortaba arriba y abajo */
   // retrovisor con imagen
   carMirRT=new THREE.WebGLRenderTarget(256,80);carMirCam=new THREE.PerspectiveCamera(32,256/80,.3,300);carMirCam.position.set(0,1.27,1.58);carM.add(carMirCam);
   {const dk=new THREE.MeshLambertMaterial({color:0x1d1e21}),mf=new THREE.Mesh(new THREE.BoxGeometry(.24,.075,.03),dk);mf.position.set(0,1.29,1.66);carIntr.add(mf);
