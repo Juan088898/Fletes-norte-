@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="fn-version" content="v191">
+<meta name="fn-version" content="v192">
 <title>Fletes del Norte</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -635,7 +635,7 @@ body.cine .quick{display:none}
           <button class="st-opt" id="startSet">Ajustes <small>Manejo y sonido</small></button>
           <button class="st-opt" id="startTut">Tutorial <small>Aprende a manejarlo</small></button>
         </div>
-        <div class="st-foot"><span id="stVer">v191 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
+        <div class="st-foot"><span id="stVer">v192 · Apodaca</span><span>Modelo Lowpoly Semi · CC BY-NC-SA</span></div>
       </div>
       <div class="st-garage" id="startGarage" hidden>
         <h3>TU CAMIÓN</h3><div class="n">Semi Lowpoly</div>
@@ -6862,6 +6862,7 @@ function pose(R,kind,t){const U=R.userData,s=Math.sin(t*7),set=(o,x,z)=>{o.rotat
   [U.aL.sh,U.aL.el,U.aR.sh,U.aR.el,U.lL.hp,U.lL.kn,U.lR.hp,U.lR.kn].forEach(o=>o.rotation.set(0,0,0));U.body.position.y=.93;U.body.rotation.x=0;U.head.rotation.x=0;
   if(kind==='walk'||kind==='roll'){set(U.lL.hp,s*.55);set(U.lR.hp,-s*.55);set(U.lL.kn,Math.max(0,-s)*.7);set(U.lR.kn,Math.max(0,s)*.7);U.body.position.y=.93+.025*Math.abs(Math.cos(t*7));
     if(kind==='roll'){set(U.aL.sh,-.75);set(U.aR.sh,-.75);U.body.rotation.x=.18;}else{set(U.aL.sh,-s*.45);set(U.aR.sh,s*.45);}}
+  else if(kind==='sit'){U.body.position.y=.5;set(U.lL.hp,-1.45);set(U.lR.hp,-1.45);set(U.lL.kn,1.45);set(U.lR.kn,1.45);set(U.aL.sh,-.55);set(U.aR.sh,-.55);set(U.aL.el,-.6);set(U.aR.el,-.6);U.body.rotation.x=-.08;}
   else if(kind!=='stand'){U.body.position.y=.5;set(U.lL.hp,-1.55);set(U.lL.kn,1.55);set(U.lR.hp,.15);set(U.lR.kn,1.7);U.body.rotation.x=.25;U.head.rotation.x=.25;
     if(kind==='pump'){const p=Math.sin(t*6);set(U.aR.sh,-1.2+.55*p);set(U.aR.el,-.3);set(U.aL.sh,-.4);}
     else if(kind==='wrench'){set(U.aL.sh,-1.45+.25*Math.sin(t*5));set(U.aR.sh,-1.45-.25*Math.sin(t*5));set(U.aL.el,-.2);set(U.aR.el,-.2);}
@@ -8141,13 +8142,20 @@ function yyEnd(){YY.trip=null;gps={pts:[],names:[],len:0};beacon.visible=false;y
 function yyDest(P){YY.dest={e:P.e,t:P.t,E:P.E,zone:P.zone,name:P.name};gps=planRoute(S.x,S.z,S.h,YY.dest,'dist');YY.trip.gT=.7;beacon.position.set(P.zone.x,H(P.zone.x,P.zone.z)+100,P.zone.z);beaconMat.color.setHex(0x7a5cff);beacon.visible=true;}
 /* ---- pasajero (mismo muñeco de los mecánicos y oficiales) ---- */
 function yyPasSpawn(q){if(!YY.pm){YY.pm=mkMech(0xd94f4f,0x2a1d16);}const R=YY.pm;R.traverse(o=>{if(o.isMesh&&o.material&&o.material.color&&o.parent===R.userData.body&&o.geometry.parameters&&o.geometry.parameters.height===.56)o.material=o.material.clone(),o.material.color.setHex(YYSH[Math.floor(Math.random()*YYSH.length)]);});
-  R.position.set(q.P.zone.x,H(q.P.zone.x,q.P.zone.z),q.P.zone.z);R.rotation.y=q.P.face;R.visible=true;YY.pas={R,mode:'wait',to:null,t:0};}
-function yyPasHide(){if(YY&&YY.pas){YY.pas.R.visible=false;YY.pas=null;}}
-function yyDoor(){const[fx,fz]=fwdOf(S.h),[rx,rz]=rightOf(S.h);return{x:S.x+fx*.95+rx*1.25,z:S.z+fz*.95+rz*1.25};}   // puerta trasera derecha: 95 cm adelante del eje trasero, 1.25 m al lado (banqueta)
+  if(R.parent!==scene)scene.attach(R);R.position.set(q.P.zone.x,H(q.P.zone.x,q.P.zone.z),q.P.zone.z);R.rotation.set(0,q.P.face,0);R.visible=true;YY.pas={R,mode:'wait',to:null,t:0};}
+function yyPasHide(){if(YY&&YY.pas){if(YY.pas.R.parent!==scene)scene.attach(YY.pas.R);YY.pas.R.visible=false;YY.pas=null;}yyDoorAng(0);}
+function yyDoor(){if(carM){const o=carM.localToWorld(YOUT.clone());return{x:o.x,z:o.z};}const[fx,fz]=fwdOf(S.h),[rx,rz]=rightOf(S.h);return{x:S.x+fx*.95+rx*1.25,z:S.z+fz*.95+rz*1.25};}   // puerta trasera derecha: 95 cm adelante del eje trasero, 1.25 m al lado (banqueta)
+/* v192 (Juan): el pasajero abre la puerta trasera derecha (60° en 0.6 s), se mete y se sienta atrás a la derecha (asiento en x −.37, z .15 del carro), cierra; al llegar abre, sale, cierra y se va */
+const YSEAT=new THREE.Vector3(-.37,.08,.15),YOUT=new THREE.Vector3(-1.3,0,.7);
+function yyDoorAng(a){if(carDoor)carDoor.rotation.y=a;}
 function yyPasTick(dt){const p=YY.pas;if(!p)return;const R=p.R;p.t+=dt;
-  if(p.mode==='wait'){pose(R,'stand',p.t);return;}if(p.mode==='in')return;   // va adentro del carro
+  if(p.mode==='enter'||p.mode==='exit'){const k=p.k=(p.k||0)+dt,inn=p.mode==='enter',op=Math.min(1,k/.6),cl=Math.max(0,Math.min(1,(k-2)/.6)),mv=Math.max(0,Math.min(1,(k-.6)/1.3)),f=inn?mv:1-mv;
+    yyDoorAng(1.05*(op-cl));const out=carM.localToWorld(YOUT.clone()),seat=carM.localToWorld(YSEAT.clone());if(R.parent!==scene)scene.attach(R);
+    R.position.lerpVectors(out,seat,f);const f2=Math.max(0,Math.min(1,(f-.3)/.7)),gy=H(R.position.x,R.position.z);R.position.y=gy+(seat.y-gy)*f2;R.rotation.set(0,S.h+Math.PI/2*(1-f2),0);
+    pose(R,f>.45?'sit':'walk',p.t);if(k>2.65){yyDoorAng(0);p.k=0;if(inn){carM.attach(R);R.position.copy(YSEAT);R.rotation.set(0,0,0);p.mode='in';yyBoarded();}else{const o=carM.localToWorld(YOUT.clone());R.position.set(o.x,H(o.x,o.z),o.z);p.mode='leave';}}return;}
+  if(p.mode==='wait'){pose(R,'stand',p.t);return;}if(p.mode==='in'){pose(R,'sit',0);return;}   // va sentado atrás
   const tx=p.mode==='board'?yyDoor():p.to,dx=tx.x-R.position.x,dz=tx.z-R.position.z,d=Math.hypot(dx,dz);
-  if(d<.25){if(p.mode==='board'){R.visible=false;p.mode='in';yyBoarded();}else if(p.mode==='leave'){yyPasHide();}return;}
+  if(d<.25){if(p.mode==='board'){p.mode='enter';p.k=0;}else if(p.mode==='leave'){yyPasHide();}return;}
   const st=Math.min(d,1.35*dt);R.position.x+=dx/d*st;R.position.z+=dz/d*st;R.position.y=H(R.position.x,R.position.z);R.rotation.y=Math.atan2(dx,dz);pose(R,'walk',p.t);}
 function yyBoarded(){const t=YY.trip;t.phase='ride';t.t1=S.t;yyChime(true);yyDest(t.D);toast(`Subió ${t.pas.n}${t.prisa?' (¡va con prisa!)':''}. Llévalo a ${t.D.name}`,true);window.__say&&window.__say(`Iniciando viaje a ${t.D.name}`+(t.prisa?'. El pasajero va con prisa':''));yyRefresh();}
 /* ---- viaje ---- */
@@ -8155,7 +8163,7 @@ function yyTripTick(dt){const t=YY.trip;t.gT-=dt;if(t.gT<=0&&YY.dest){gps=planRo
   const sp=Math.abs(S.v);
   if(t.phase==='pickup'){const d=Math.hypot(S.x-t.P.zone.x,S.z-t.P.zone.z);if(d<13&&sp<.6){t.phase='board';YY.pas.mode='board';toast(`${t.pas.n} se está subiendo…`);}}
   else if(t.phase==='board'){if(sp>1.2||Math.hypot(S.x-t.P.zone.x,S.z-t.P.zone.z)>18){t.phase='pickup';YY.pas.mode='wait';const R=YY.pas.R;R.position.set(t.P.zone.x,H(t.P.zone.x,t.P.zone.z),t.P.zone.z);R.rotation.y=t.P.face;toast('Espera a que se suba: frena junto a la banqueta');}}
-  else if(t.phase==='ride'){const d=Math.hypot(S.x-t.D.zone.x,S.z-t.D.zone.z);if(d<14&&sp<.6){t.phase='drop';const dr=yyDoor(),R=YY.pas.R;R.position.set(dr.x,H(dr.x,dr.z),dr.z);R.visible=true;YY.pas.mode='leave';YY.pas.to={x:t.D.zone.x,z:t.D.zone.z};yyPay();}}}
+  else if(t.phase==='ride'){const d=Math.hypot(S.x-t.D.zone.x,S.z-t.D.zone.z);if(d<14&&sp<.6){t.phase='drop';const R=YY.pas.R;R.visible=true;YY.pas.mode='exit';YY.pas.k=0;YY.pas.to={x:t.D.zone.x,z:t.D.zone.z};yyPay();}}}
 function yyPay(){const t=YY.trip,y=yyS(),st=Math.max(1,5-t.hits-t.fines),fast=t.prisa&&(S.t-t.t1)<=t.eta*1.25,tip=fast?Math.round(t.fare*.1/10)*10:0,tot=t.net+tip;
   save.money+=tot;yyPush(y.rat,st,40);y.tot+=tot;y.n++;y.hist.unshift({n:t.pas.n,km:+(t.len/1000).toFixed(1),fare:t.fare,net:t.net,tip,st,h:Math.round(env.tod*100)/100});if(y.hist.length>15)y.hist.length=15;
   if(window.__bankTx)window.__bankTx(t.net,`YiYi · viaje con ${t.pas.n} (${fmtMoney(t.fare)} − 20 % YiYi)`);if(tip&&window.__bankTx)window.__bankTx(tip,`Propina YiYi · ${t.pas.n}`);persist();
@@ -8189,10 +8197,16 @@ function yyGps(){const y=yyS(),t=YY&&YY.trip;if(!t||gps.pts.length<2)return{txt:
    Perilla (.017,.627,.574) → (.017,.627,1.779). Ojo: 50 cm detrás del volante a y 1.18 (techo interior 1.40), x .341. */
 const VER={ax:1.2045};
 /* v184: el modelo viene unido por material; para mover o quitar una pieza se cortan sus triángulos por medidas (centro del triángulo dentro de la caja, en el marco del carro) */
-function carCut(root,test,par){carG.updateMatrixWorld(true);const inv=carM.matrixWorld.clone().invert(),v=[0,1,2].map(()=>new THREE.Vector3()),out=new Map();const ms=[];root.traverse(o=>{if(o.isMesh)ms.push(o);});
+function carCut(root,test,par,isl){carG.updateMatrixWorld(true);const inv=carM.matrixWorld.clone().invert(),v=[0,1,2].map(()=>new THREE.Vector3()),out=new Map();const ms=[];root.traverse(o=>{if(o.isMesh)ms.push(o);});
+  if(isl){const t0=test;const pick=new Map();for(const o of ms){const g=o.geometry,p=g.attributes.position,ix=g.index;if(!ix)continue;const M=inv.clone().multiply(o.matrixWorld),n=ix.count/3,par0=new Int32Array(p.count).map((_,i)=>i),fd=i=>{while(par0[i]!==i)i=par0[i]=par0[par0[i]];return i;};
+      for(let k=0;k<ix.count;k+=3){const a=fd(ix.getX(k)),b=fd(ix.getX(k+1)),c=fd(ix.getX(k+2));par0[b]=a;par0[fd(c)]=a;}
+      const grp=g.groups.length?g.groups:[{start:0,count:ix.count,materialIndex:0}],st=new Map(),tri=new Int32Array(n);
+      for(const gr of grp){const mat=Array.isArray(o.material)?o.material[gr.materialIndex]:o.material;for(let k=gr.start;k<gr.start+gr.count;k+=3){for(let q=0;q<3;q++)v[q].fromBufferAttribute(p,ix.getX(k+q)).applyMatrix4(M);const r=fd(ix.getX(k));tri[k/3]=r;const e=st.get(r)||(st.set(r,[0,0]).get(r));e[1]++;if(t0((v[0].x+v[1].x+v[2].x)/3,(v[0].y+v[1].y+v[2].y)/3,(v[0].z+v[1].z+v[2].z)/3,mat.name||''))e[0]++;}}
+      const ok=new Set();for(const[r,e]of st)if(e[0]/e[1]>.6)ok.add(r);pick.set(o,{tri,ok});}
+    test=(x,y,z,n,o,k)=>{const P=pick.get(o);return P&&P.ok.has(P.tri[k/3]);};}
   for(const o of ms){const g=o.geometry,p=g.attributes.position,nr=g.attributes.normal,ix=g.index;if(!ix)continue;const M=inv.clone().multiply(o.matrixWorld),grp=g.groups.length?g.groups:[{start:0,count:ix.count,materialIndex:0}];let ch=false;
     for(const gr of grp){const mat=Array.isArray(o.material)?o.material[gr.materialIndex]:o.material;for(let k=gr.start;k<gr.start+gr.count;k+=3){for(let q=0;q<3;q++)v[q].fromBufferAttribute(p,ix.getX(k+q)).applyMatrix4(M);
-      if(!test((v[0].x+v[1].x+v[2].x)/3,(v[0].y+v[1].y+v[2].y)/3,(v[0].z+v[1].z+v[2].z)/3,mat.name||''))continue;
+      if(!test((v[0].x+v[1].x+v[2].x)/3,(v[0].y+v[1].y+v[2].y)/3,(v[0].z+v[1].z+v[2].z)/3,mat.name||'',o,k))continue;
       if(par){let L=out.get(mat);if(!L)out.set(mat,L={P:[],N:[]});const W=o.matrixWorld,NM=new THREE.Matrix3().getNormalMatrix(W);for(let q=0;q<3;q++){const i=ix.getX(k+q),w=new THREE.Vector3().fromBufferAttribute(p,i).applyMatrix4(W);L.P.push(w);L.N.push(nr?new THREE.Vector3().fromBufferAttribute(nr,i).applyMatrix3(NM).normalize():new THREE.Vector3(0,1,0));}}
       const a=ix.getX(k);ix.setX(k+1,a);ix.setX(k+2,a);ch=true;}}
     if(ch)ix.needsUpdate=true;}
@@ -8219,7 +8233,7 @@ function verBuild(root){root.position.z=VER.ax;carM.add(root);carG.updateMatrixW
   /* v184 (Juan): la palanca no hacía su recorrido. Medido en el modelo: perilla y 13 cm abajo, tallo negro x −0.003…0.038, y .525….659, z 1.751…1.806;
      letras P-R-N-D encendidas a un lado de la ranura de z 1.765 (P) a 1.679 (D) = 8.6 cm. Ahora perilla + tallo se deslizan juntos por la ranura esos 8.6 cm */
   {const K=new THREE.Vector3(.017,.627,1.779),lp=new THREE.Group();lp.position.set(K.x,K.y-.16,K.z);carIntr.add(lp);lp.updateMatrixWorld(true);const ks=[];root.traverse(o=>{if(o.isMesh&&(/^KNOB(_\d+)?$/.test(o.name)||(o.parent&&/^KNOB(_\d+)?$/.test(o.parent.name))))ks.push(o);});ks.forEach(o=>grab(o,lp));
-   carCut(root,(x,y,z,n)=>/black1/.test(n)&&x>-.006&&x<.041&&y>.52&&y<.662&&z>1.748&&z<1.81,lp);
+   carCut(root,(x,y,z,n)=>/black1/.test(n)&&x>-.006&&x<.041&&y>.52&&y<.662&&z>1.748&&z<1.81,lp,1);
    const mk=new THREE.Object3D();mk.position.set(0,.16,0);lp.add(mk);carLever=lp;carLever.userData.knob=mk;carLever.userData.z0=lp.position.z;carLever.userData.trav=.086;}
   carM.updateMatrixWorld(true);const E=new THREE.Vector3(CAR.eye.x,CAR.eye.y,CAR.eye.z+carOff);
   const rayTo=(t,back)=>{const eW=carM.localToWorld(E.clone()),tW=carM.localToWorld(t.clone()),h=new THREE.Raycaster(eW,tW.clone().sub(eW).normalize(),0,2).intersectObject(root,true).find(q=>!/glass/i.test(q.object.material.name||''));
@@ -8234,6 +8248,8 @@ function verBuild(root){root.position.z=VER.ax;carM.add(root);carG.updateMatrixW
    carCut(root,(x,y,z,n)=>{if(!/black1/.test(n))return false;q.set(x,y,z).sub(P0);const d=q.dot(N),a=q.x,b=q.dot(UY);return d>.005&&d<.04&&Math.abs(a)<.15&&b>-.045&&b<.07;});}
   {const n=new THREE.Vector3(0,.5,-.87).normalize(),P=new THREE.Vector3(.343,.966,2.04).addScaledVector(n,.015),cp=new THREE.Mesh(new THREE.PlaneGeometry(.30,.11),new THREE.MeshBasicMaterial({map:carCluTex,transparent:true}));cp.position.copy(P);cp.rotation.set(Math.atan2(n.y,-n.z),Math.PI,0);cp.position.add(new THREE.Vector3(-.0015,-.0055,0).applyEuler(cp.rotation));   /* v190: sin los bordes del modelo el hueco creció (rayos: 28 × 10 cm, arriba en arco); el tablero queda 1 cm más grande por lado y lo tapan el cofre y el volante, así no queda franja */cp.userData.clu=1;carIntr.add(cp);carDrawClu();}   /* v189: medido con rayos desde el ojo: lo que se ve entre el cofre del tablero, el aro y el centro del volante es 28.3 × 8.3 cm; antes el tablero era de 12.4 cm de alto y se cortaba arriba y abajo */
   // retrovisor con imagen
+  /* v192: puerta trasera derecha (lado −X): se corta del modelo por medidas (z .45…1.05 arriba del arco, .30…1.05 encima de .62 m, y .28…1.42, x < −.55) y gira en su bisagra delantera (−.86, z 1.05) */
+  {const dp=new THREE.Group();dp.position.set(-.86,0,1.05);carM.add(dp);carM.updateMatrixWorld(true);carCut(root,(x,y,z,n)=>!/tire|rim/.test(n)&&x<-.55&&y>.28&&y<1.42&&z<1.05&&(z>.45||(z>.30&&y>.62)),dp,1);carDoor=dp;}
   carMirRT=new THREE.WebGLRenderTarget(256,80);carMirCam=new THREE.PerspectiveCamera(32,256/80,.3,300);carMirCam.position.set(0,1.27,1.58);carM.add(carMirCam);
   {const dk=new THREE.MeshLambertMaterial({color:0x1d1e21}),mf=new THREE.Mesh(new THREE.BoxGeometry(.24,.075,.03),dk);mf.position.set(0,1.29,1.66);carIntr.add(mf);
    carMir=new THREE.Mesh(new THREE.PlaneGeometry(.225,.064),new THREE.MeshBasicMaterial({map:carMirRT.texture}));carMir.position.set(0,1.29,1.644);carMir.rotation.y=Math.PI;carMirRT.texture.repeat.x=-1;carMirRT.texture.offset.x=1;carIntr.add(carMir);}
@@ -8248,7 +8264,7 @@ function verBuild(root){root.position.z=VER.ax;carM.add(root);carG.updateMatrixW
   carArms={L:{a:armL,out:1,sh:new THREE.Vector3(E.x+.19,E.y-.25,E.z-.08)},R:{a:armR,out:-1,sh:new THREE.Vector3(E.x-.19,E.y-.25,E.z-.08)},C,n:ax.clone(),u,r:.19,hand:0};}
 
 /* v179 · luces, limpiadores, palanca y sonido del carro */
-var carLx=null,carWip=null;
+var carLx=null,carWip=null,carDoor=null;
 function carLvT(){return {P:-1,R:-.33,N:.33,D:1}[S.autoSel||'P'];}
 function carLvBusy(){return !!(CAR.auto&&carLever&&S.lvK!=null&&Math.abs(S.lvK-carLvT())>.01);}
 // palanca: la mano llega a la perilla y la lleva; 23.5° a cada lado con pivote 16 cm abajo = 12 cm de recorrido de P a D (2·0.16·sin 22°)
@@ -8319,7 +8335,7 @@ function carAudio(run,inCab,tt){if(!AC)return;try{if(!CA){const out=AC.createGai
  if(wp)wp.addEventListener('click',()=>{S.wipM=((S.wipM||0)+1)%3;wp.classList.toggle('on',S.wipM>0);wp.dataset.m=['','1','2'][S.wipM];clunk();toast('Limpiaparabrisas: '+['apagado','lento','rápido'][S.wipM]);});
  if(hz)hz.addEventListener('click',()=>{S.haz=!S.haz;S.hzPh=-1;clunk();});}
 
-window.__S=S;window.__carName=CARMD.name;window.__yy=()=>({YY,yyS,yyToggle,yyOffer,yyAccept,yyReject,yyCancel,yyTick,yyGps});window.__setMode=m=>{save.mode=m==='yiyi'?'yiyi':'jale';persist();};window.__mode=()=>CARM?'yiyi':'jale';window.__car=()=>({carWheels,carG,carM,carIntr,carLx,carWip,carLever,CA});window.__carT=(dt,n)=>{let d=0;for(let i=0;i<(n||1);i++){S.ped.clutch=S.tgt.clutch;S.ped.gas=S.tgt.gas;S.ped.brake=S.tgt.brake;d=carPhysics(dt);S.t+=dt;}return d;};window.__dbg={get SPX(){return SPX},REALCAL:typeof REALCAL!=="undefined"?REALCAL:null,startLoad,LOAD,TRG,get LOADER(){return LOADER},restoreJob,MAPV,snapJob,renderer,scene,hash,OBST,inObb,hk,CELL,BB,REAL,DEPOTS,STATIONS,edges,nodes,LIGHTS,lows,highs,trees,lamps,applyModel,setView,env,save,physics,BUMPS,hitAt,bodyPoints,get mission(){return mission},PARK,LOAD,hinge,truckHit,planRoute,drawMap,drawCluster,drawGpsDev,persist,chunkTick,trafficStep,updMass,WEIGHS,get MASS(){return MASS},grossLim,makeJobs,traffic,snapJob,revPath,pathPos,get job(){return save.job},fwdOf,startMission,CARGO,loadTick,TRG,camera,scene,renderer,CHUNKS};
+window.__S=S;window.__carName=CARMD.name;window.__yy=()=>({YY,yyS,yyToggle,yyOffer,yyAccept,yyReject,yyCancel,yyTick,yyGps});window.__setMode=m=>{save.mode=m==='yiyi'?'yiyi':'jale';persist();};window.__mode=()=>CARM?'yiyi':'jale';window.__car=()=>({carWheels,carG,carM,carIntr,carLx,carWip,carLever,carDoor,CA});window.__carT=(dt,n)=>{let d=0;for(let i=0;i<(n||1);i++){S.ped.clutch=S.tgt.clutch;S.ped.gas=S.tgt.gas;S.ped.brake=S.tgt.brake;d=carPhysics(dt);S.t+=dt;}return d;};window.__dbg={get SPX(){return SPX},REALCAL:typeof REALCAL!=="undefined"?REALCAL:null,startLoad,LOAD,TRG,get LOADER(){return LOADER},restoreJob,MAPV,snapJob,renderer,scene,hash,OBST,inObb,hk,CELL,BB,REAL,DEPOTS,STATIONS,edges,nodes,LIGHTS,lows,highs,trees,lamps,applyModel,setView,env,save,physics,BUMPS,hitAt,bodyPoints,get mission(){return mission},PARK,LOAD,hinge,truckHit,planRoute,drawMap,drawCluster,drawGpsDev,persist,chunkTick,trafficStep,updMass,WEIGHS,get MASS(){return MASS},grossLim,makeJobs,traffic,snapJob,revPath,pathPos,get job(){return save.job},fwdOf,startMission,CARGO,loadTick,TRG,camera,scene,renderer,CHUNKS};
 Object.assign(window.__dbg,{RETENES,WEIGHS,UMA,rtOpen:()=>RT_OPEN});
 })();
 </script>
